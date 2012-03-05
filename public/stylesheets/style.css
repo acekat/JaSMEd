@@ -1,0 +1,24 @@
+#container {
+	margin: 20px;
+}
+
+#container,
+.note {
+	float: left;
+	clear: left;
+}
+
+.box {
+	float: left;
+	width: 30px;
+	height: 15px;
+	border: 1px solid black;
+}
+
+.note .box:first-child {
+	border: none;
+}
+
+#do .box.on { background: #ee3e64; }
+#mi .box.on { background: #b7d84b; }
+#sol .box.on { background: #44accf; }

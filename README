@@ -53,7 +53,7 @@ Commandes Git:
 	
 	Envoyer un commit au serveur:
 	> git checkout develop
-	> git push				// Envoie du commit de la branche develop sur la branche develop du serveur
+	> git push origin develop	// Envoie du commit de la branche develop sur la branche develop du serveur
 
 	Ajouter/Mettre-à-jour des fichier sur Git:
 	> git add <nom.fichier>

@@ -1,13 +1,22 @@
+// Module dependencies
+
 var express = require('express')
-, app = module.exports = express.createServer()
-, io = require('socket.io').listen(app);
+	, app = module.exports = express.createServer()
+	, io = require('socket.io').listen(app)
+	, stylus = require('stylus');
+
+// Configuration
 
 app.configure(function() {
-	app.set('views', __dirname + '/views');
+	app.set('views', __dirname + '/views/template');
 	app.set('view engine', 'jade');
 	app.set('view options', {
 		layout: false
 	});
+	app.use(stylus.middleware({ 
+		src: __dirname + '/views',
+		dest: __dirname + '/public'
+	}));
 	app.use(express.static(__dirname + '/public'));
 });
 
@@ -19,11 +28,15 @@ app.configure('production', function() {
 	app.use(express.errorHandler());
 });
 
+// Routes
+
 app.get('/', function(req, res) {
 	res.render('index', {
 		title : 'psar 1st draft'
 	});
 });
+
+// Socket 
 
 io.sockets.on('connection', function (socket) {
 	socket.on('toggleNote', function (note) {

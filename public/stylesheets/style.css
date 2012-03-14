@@ -1,24 +1,25 @@
 #container {
-	margin: 20px;
+  margin: 20px;
 }
-
-#container,
-.note {
-	float: left;
-	clear: left;
+#container .note {
+  float: left;
+  clear: left;
 }
-
-.box {
-	float: left;
-	width: 30px;
-	height: 15px;
-	border: 1px solid black;
+#container .note .box {
+  float: left;
+  width: 30px;
+  height: 15px;
+  border: 1px solid #000;
 }
-
-.note .box:first-child {
-	border: none;
+#container .note .box:first-child {
+  border: none;
 }
-
-#do .box.on { background: #ee3e64; }
-#mi .box.on { background: #b7d84b; }
-#sol .box.on { background: #44accf; }
+#do.box.on {
+  background: #ee3e64;
+}
+#mi.box.on {
+  background: #b7d84b;
+}
+#sol.box.on {
+  background: #44accf;
+}

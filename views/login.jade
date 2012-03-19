@@ -1,0 +1,15 @@
+extends layout
+
+block content
+	h2= title
+	if (flash.warn)
+		p.flash.warn= flash.warn
+	form(method='post', action='/login')
+		p
+			label Username:
+				input(name='username', type='text')
+		p
+			label Password:
+				input(name='password', type='password')
+		p
+			button(type='submit') Login

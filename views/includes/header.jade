@@ -1,0 +1,15 @@
+header#header.clearfix
+	h1#title.float-left
+		.no JaSMEd <span class="blue">Ja</span>va<span class="blue">S</span>cript <span class="blue">M</span>usic <span class="blue">Ed</span>itor
+		div
+			a(href='/') YAMEd™
+			<span class="blue">  Y</span>et <span class="blue">A</span>nother JS <span class="blue">M</span>usic <span class="blue">Ed</span>itor
+	#credentials.float-right
+		if (session.login)
+			p locked in as 
+				span.dark #{session.login}
+			a(href='/logout') logout
+		else
+			p please lockin to the ting!
+			p
+				a(href='/login') login

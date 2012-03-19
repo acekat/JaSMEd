@@ -1,25 +1,82 @@
-#container {
-  margin: 20px;
+body {
+  padding: 20px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	min-width: 960px;
 }
-#container .note {
-  float: left;
-  clear: left;
+
+a {
+  color: #00B7FF;
 }
-#container .note .box {
-  float: left;
-  width: 30px;
-  height: 15px;
-  border: 1px solid #000;
+
+.float-left {
+	float: left;
 }
-#container .note .box:first-child {
-  border: none;
+
+.float-right {
+	float: right;
 }
-#do.box.on {
-  background: #ee3e64;
+
+.clear-left {
+	clear: left;
 }
-#mi.box.on {
-  background: #b7d84b;
+
+.clearfix:after {
+	content: "";
+	clear: both;
+	display: block;
 }
-#sol.box.on {
-  background: #44accf;
+
+#header,
+#footer {
+	padding: 0 20px;
+	background: #F2F2F2;
 }
+
+#footer p {
+	text-align: center;
+}
+
+.no {
+	font-size: .5em;
+	text-decoration: line-through;
+}
+
+#content {
+	padding: 20px;
+}
+
+.flash {
+	display: inline-block;
+	padding: 5px;
+}
+
+.warn {
+	color: #DF013A;
+	background: #F5A9A9;
+	border: 1px solid #DF013A;
+}
+
+.blue {
+	color: #00B7FF;
+}
+
+#container,
+.note {
+	float: left;
+	clear: left;
+}
+
+.box {
+	float: left;
+	width: 30px;
+	height: 15px;
+	border: 1px solid black;
+}
+
+.note .box:first-child {
+	border: none;
+}
+
+#do .box.on { background: #ee3e64; }
+#mi .box.on { background: #b7d84b; }
+#sol .box.on { background: #44accf; }

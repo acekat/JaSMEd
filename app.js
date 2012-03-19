@@ -1,21 +1,43 @@
-// Module dependencies
-
 var express = require('express')
-	, app = module.exports = express.createServer()
+	, connect = require('express/node_modules/connect');
+
+var app = module.exports = express.createServer()
 	, io = require('socket.io').listen(app)
 	, stylus = require('stylus');
+	
+var MemoryStore = connect.middleware.session.MemoryStore
+	, parseCookie = connect.utils.parseCookie
+	, sessionStore = new MemoryStore();
+
+var users = require('./users');
+//  , routes = require('./routes');
+var core = require('./core');
+
+core.init();
 
 // Configuration
-
 app.configure(function() {
-	app.set('views', __dirname + '/views/template');
+	//app.use(express.logger());
+	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
-	app.set('view options', {
-		layout: false
-	});
+	//activer new inheritance (extends et block)
+	app.set('view options', { layout: false });
+	/*
 	app.use(stylus.middleware({ 
 		src: __dirname + '/views',
 		dest: __dirname + '/public'
+	}));
+	*/
+	app.use(express.bodyParser());
+	app.use(express.methodOverride());
+	app.use(express.cookieParser());
+	// Populates:
+	  //   - req.session
+	  //   - req.sessionStore
+	  //   - req.sessionID (or req.session.id)
+	app.use(express.session({
+		secret: 'mama loves mambo',
+		store: sessionStore
 	}));
 	app.use(express.static(__dirname + '/public'));
 });
@@ -28,78 +50,120 @@ app.configure('production', function() {
 	app.use(express.errorHandler());
 });
 
-// Routes
+// pour avoir accès à ces variables dans les views (sans passer en paramètre)
+app.dynamicHelpers({
+	session: function(req, res) {
+		return req.session;
+	},
+	flash: function(req, res) {
+		return req.flash();
+	}
+});
 
+/** Middleware for limited access */
+function requireLogin(req, res, next) {
+	if (req.session.login) {
+		// User is authenticated, let him in
+		next();
+	} else {
+		// Otherwise, we redirect him to login form
+		req.flash('warn', 'login needz yo!!');
+		//pour le rediriger...
+		req.session.redir = req.path;
+		res.redirect('/login');
+	}
+}
+
+/**
+ * routes
+ */
+//app.get('/', routes.index);
 app.get('/', function(req, res) {
-	res.render('index', {
-		title : 'psar 1st draft'
+	res.render('index');
+});
+
+app.get('/test', requireLogin, function(req, res) {
+	res.render('test', {
+		seq: core.seq
 	});
 });
 
-// Socket 
+app.get('/session', requireLogin, function(req, res) {
+	if (req.session.views)
+		++req.session.views;
+	else
+		req.session.views = 1;
+
+	res.render('session', {
+		title: 'session!',
+		sessionID: req.sessionID
+	});
+});
+
+app.get('/login', function(req, res) {
+	res.render('login', {
+		title: 'LOGIN!!!'
+	});
+});
+
+app.get('/logout', function(req, res) {
+	delete req.session.login;
+	//ne détruit pas la session... seulement .login
+	res.redirect('/');
+});
+
+app.post('/login', function(req, res) {
+	users.authenticate(req.body.username, req.body.password, function(user) {
+		if (user) {
+			req.session.login = user.login;
+			//ps.. pas forcé de supprimé req.session.redir
+			var redir = req.session.redir || '/';
+			delete req.session.redir;
+			res.redirect(redir);
+		} else {
+			req.flash('warn', 'tough luck, login failed brother');
+			res.redirect('/login');
+		}
+	});
+});
+
+/**
+ * socket.io
+ */
+io.configure(function() {
+	io.set('log level', 1); //sinon il log beaucoup trop, ça me rend fou :)
+	io.set('authorization', function(data, callback) {
+		if (data.headers.cookie) {
+			var cookie = parseCookie(data.headers.cookie);
+			sessionStore.get(cookie['connect.sid'], function(err, session) {
+				if (err || !session) {
+					callback('Error', false);
+				} else {
+					data.session = session;
+					callback(null, true);
+				}
+			});
+		} else {
+			callback('No cookie', false);
+		}
+	});
+});
 
 io.sockets.on('connection', function (socket) {
-	socket.on('toggleNote', function (note) {
-		console.log('msg reçu: toggleNote ' + note.name + ' ' + note.num);
+	var session = socket.handshake.session;
+	
+	//need to only allow 1 sessionID
+	
+	socket.on('msg', function(data) {
+		console.log('msg by ' + session.login + ': ' + data);
+	});
+
+	socket.on('toggleNote', function(note) {
+		console.log(session.login + ' toggled ' + note.name + ' ' + note.num);
+		core.toggleNote(note.name, note.num);
 		socket.broadcast.emit('toggleNote', note);
 	});
 });
 
-app.listen(2222);
+app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-
-/*
-var APP = (function() {
-	var doTab = [];
-	var miTab = [];
-	var solTab = [];
-	var sequencer = [doTab, miTab, solTab];	
-	
-	var initSequencer = function() {
-		var i;
-		
-		for (row in sequencer) {
-			for (i = 0; i < 16; i++) {
-				sequencer[row][i] = 0;
-			}
-		}
-	}
-	
-	var toggleSeqNote = function(seqNote) {
-		if (seqNote)
-			seqNote = 0
-		else seqNote = 1;
-		
-		return seqNote;
-	}
-	
-	var toggleNote = function(note, num) {		 
-		switch(note) {
-			case 'do':
-				doTab[num - 1] = toggleSeqNote(doTab[num - 1]);
-				break;
-			
-			case 'mi':
-				miTab[num - 1] = toggleSeqNote(miTab[num - 1]);
-				break;
-				
-			case 'sol':
-				solTab[num - 1] = toggleSeqNote(solTab[num - 1]);
-				break;
-				
-			default:
-				console.log('switch error, note not recognized');
-				break;
-		}
-		
-		$('#' + note).children(':nth-child(' + (num + 1) + ')').toggleClass('on');
-		console.log(note + ' ' + num + ' toggled');
-	}
-	
-	return {
-		init: initSequencer,
-		toggleNote: toggleNote,
-		seq: sequencer,
-	}
-})();
-*/

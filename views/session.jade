@@ -1,0 +1,14 @@
+extends layout
+
+block content
+	h1= title
+	p sessionID: #{sessionID}
+	ul
+	each val, key in session
+		unless (typeof val === 'function' || typeof val === 'object')
+			li #{key}: #{val}
+	p cookie:
+	ul
+	each val, key in session.cookie
+		unless (typeof val === 'function' || typeof val === 'object')
+			li #{key}: #{val}

@@ -1,0 +1,30 @@
+extends layout
+
+block content
+	#container.clearfix
+		.note#do
+			.box do
+
+			each note, i in seq[0]
+				if note
+					.box.on
+				else
+					.box
+			
+		.note#mi
+			.box mi
+
+			each note, i in seq[1]
+				if note
+					.box.on
+				else
+					.box
+
+		.note#sol
+			.box sol
+
+			each note, i in seq[2]
+				if note
+					.box.on
+				else
+					.box

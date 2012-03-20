@@ -27,10 +27,9 @@ Ajouter/Mettre-à-jour des fichier sur Git:
 	git add <nom.fichier>
 
 Envoyer un commit au serveur:
-	git checkout develop
-	git push origin develop	// Envoie du commit de la branche develop sur la branche develop du serveur
-**PAS D'ENVOIE DE COMMIT SUR LA BRANCHE MASTER**
-*sauf pour un fichier spécifique à la branche (.gitignore)*
+	git checkout <branch>
+	git push origin <branch>	// Envoie du commit de la branche <branch> sur la branche <branch> du serveur
+*Les pushs sur la branche master sont fait uniquement après un merge d'une version stable de la branche develop*
 
 Commit:
 	git commit -m 'Message de description du commit'

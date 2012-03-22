@@ -1,30 +1,38 @@
 extends layout
 
 block content
-	#container.clearfix
-		.note#do
-			.box do
-
-			each note, i in seq[0]
-				if note
-					.box.on
-				else
-					.box
-			
-		.note#mi
-			.box mi
-
-			each note, i in seq[1]
-				if note
-					.box.on
-				else
-					.box
-
-		.note#sol
-			.box sol
-
-			each note, i in seq[2]
-				if note
-					.box.on
-				else
-					.box
+	- var notes = ["do", "re", "mi", "fa", "sol", "la", "si", "do", "re", "mi", "fa", "sol", "la", "si"]
+	section#grid
+		#grid-layer
+			for col in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+				if !(col % 2)
+					div(id="bc#{col}").bar-container.sub4
+						each note in notes
+							div(class="note #{note}")
+								.sub-note.sn1
+								.sub-note.sn2
+								.sub-note.sn3
+								.sub-note.sn4
+				else 
+					div(id="bc#{col}").bar-container.sub3
+						each note in notes
+							div(class="note #{note}")
+								.sub-note.sn1
+								.sub-note.sn2
+								.sub-note.sn3
+								.sub-note.sn4
+								.sub-note.sn5
+								.sub-note.sn6
+								.sub-note.sn7
+								.sub-note.sn8
+								.sub-note.sn9
+								.sub-note.sn10
+								.sub-note.sn11
+								.sub-note.sn12
+								.sub-note.sn13
+								.sub-note.sn14
+								.sub-note.sn15
+								.sub-note.sn16
+								.sub-note.sn17
+								.sub-note.sn18
+								

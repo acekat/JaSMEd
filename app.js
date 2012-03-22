@@ -22,12 +22,10 @@ app.configure(function() {
 	app.set('view engine', 'jade');
 	//activer new inheritance (extends et block)
 	app.set('view options', { layout: false });
-	/*
 	app.use(stylus.middleware({ 
 		src: __dirname + '/views',
 		dest: __dirname + '/public'
 	}));
-	*/
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
 	app.use(express.cookieParser());

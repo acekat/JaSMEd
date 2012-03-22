@@ -61,6 +61,11 @@ $(function() {
 		console.log('socket.io connection established');
 	});
 
+	$(".sub-note").on("click", function(event) {
+		$(this).toggleClass('on');
+	});
+	
+
 	$('.box:not(:first-child)').bind('dblclick', function(e) {
 		var self = $(this);
 		//emit to server

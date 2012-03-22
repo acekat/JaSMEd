@@ -1,82 +1,104 @@
 body {
-  padding: 20px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-	min-width: 960px;
+  min-width: 960px;
+  padding: 30px;
 }
-
 a {
-  color: #00B7FF;
+  color: #00b7ff;
 }
-
 .float-left {
-	float: left;
+  float: left;
 }
-
 .float-right {
-	float: right;
+  float: right;
 }
-
 .clear-left {
-	clear: left;
+  clear: left;
 }
-
 .clearfix:after {
-	content: "";
-	clear: both;
-	display: block;
+  content: "";
+  clear: both;
+  display: block;
 }
-
 #header,
 #footer {
-	padding: 0 20px;
-	background: #F2F2F2;
+  padding: 0 20px;
+  background: #f2f2f2;
 }
-
 #footer p {
-	text-align: center;
+  text-align: center;
 }
-
 .no {
-	font-size: .5em;
-	text-decoration: line-through;
+  font-size: 0.5em;
+  text-decoration: line-through;
 }
-
 #content {
-	padding: 20px;
+  padding: 20px;
 }
-
 .flash {
-	display: inline-block;
-	padding: 5px;
+  display: inline-block;
+  padding: 5px;
 }
-
 .warn {
-	color: #DF013A;
-	background: #F5A9A9;
-	border: 1px solid #DF013A;
+  color: #df013a;
+  background: #f5a9a9;
+  border: 1px solid #df013a;
 }
-
 .blue {
-	color: #00B7FF;
+  color: #00b7ff;
 }
-
-#container,
+#grid {
+  display: block;
+  width: 75%;
+  height: 300px;
+  margin: auto;
+  background: #ddd;
+  border: 1px solid;
+  overflow: auto;
+}
+#grid-layer {
+  display: table-cell;
+  white-space: nowrap;
+  width: 9999px;
+}
+.bar-container {
+  display: inline-table;
+  width: 25%;
+  border-right: 1px solid #aaa;
+}
 .note {
-	float: left;
-	clear: left;
+  display: table-row;
 }
-
-.box {
-	float: left;
-	width: 30px;
-	height: 15px;
-	border: 1px solid black;
+.sub-note {
+  display: table-cell;
+  width: 1%;
+  height: 25px;
+  border-right: 1px dotted #bbb;
 }
-
-.note .box:first-child {
-	border: none;
+.note:nth-child(odd) {
+  background: #ccc;
 }
-
-#do .box.on { background: #ee3e64; }
-#mi .box.on { background: #b7d84b; }
-#sol .box.on { background: #44accf; }
+.note:nth-child(even) {
+  background: #ddd;
+}
+.do .on {
+  background: #c00;
+}
+.re .on {
+  background: #0c0;
+}
+.mi .on {
+  background: #00c;
+}
+.fa .on {
+  background: #d00;
+}
+.sol .on {
+  background: #0d0;
+}
+.la .on {
+  background: #00d;
+}
+.si .on {
+  background: #cd0;
+}

@@ -7,7 +7,7 @@ header#header.clearfix
 	#credentials.float-right
 		if (session.login)
 			p locked in as 
-				span.dark #{session.login}
+				span(class='login #{session.login}') #{session.login}
 			a(href='/logout') logout
 		else
 			p please lockin to the ting!

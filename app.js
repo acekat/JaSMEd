@@ -80,9 +80,10 @@ app.get('/', function(req, res) {
 	res.render('index');
 });
 
-app.get('/test', requireLogin, function(req, res) {
-	res.render('test', {
-		seq: core.seq
+app.get('/draft', requireLogin, function(req, res) {
+	res.render('draft', {
+		seq: core.seq,
+		pitches: core.pitches
 	});
 });
 
@@ -150,15 +151,19 @@ io.configure(function() {
 io.sockets.on('connection', function (socket) {
 	var session = socket.handshake.session;
 	
+	socket.emit('loginSync', session.login);
+	
 	//need to only allow 1 sessionID
 	
+	//nothing (used to test...)
 	socket.on('msg', function(data) {
 		console.log('msg by ' + session.login + ': ' + data);
 	});
 
 	socket.on('toggleNote', function(note) {
-		console.log(session.login + ' toggled ' + note.name + ' ' + note.num);
-		core.toggleNote(note.name, note.num);
+		console.log(session.login + ' toggled note');
+		core.toggleNote(note, session.login);
+		note.login = session.login;
 		socket.broadcast.emit('toggleNote', note);
 	});
 });

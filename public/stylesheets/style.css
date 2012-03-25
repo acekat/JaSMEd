@@ -1,3 +1,4 @@
+/*color variables*/
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   min-width: 960px;
@@ -47,8 +48,7 @@ a {
 .blue {
   color: #00b7ff;
 }
-#grid {
-  display: block;
+.grid {
   width: 75%;
   height: 300px;
   margin: auto;
@@ -56,7 +56,7 @@ a {
   border: 1px solid;
   overflow: auto;
 }
-#grid-layer {
+.grid-layer {
   display: table-cell;
   white-space: nowrap;
   width: 9999px;
@@ -66,39 +66,54 @@ a {
   width: 25%;
   border-right: 1px solid #aaa;
 }
-.note {
+.pitch {
   display: table-row;
 }
-.sub-note {
+.note {
   display: table-cell;
   width: 1%;
   height: 25px;
   border-right: 1px dotted #bbb;
 }
-.note:nth-child(odd) {
+.pitch:nth-child(odd) {
   background: #ccc;
 }
-.note:nth-child(even) {
+.pitch:nth-child(even) {
   background: #ddd;
 }
-.do .on {
-  background: #c00;
+.login.thibaud {
+  color: #44accf;
 }
-.re .on {
-  background: #0c0;
+.login.jaimito {
+  color: #ee3e64;
 }
-.mi .on {
-  background: #00c;
+.login.acekat {
+  color: #b7d84b;
 }
-.fa .on {
-  background: #d00;
+.login.esj {
+  color: #8904b1;
 }
-.sol .on {
-  background: #0d0;
+.login.grizix {
+  color: #e2a741;
 }
-.la .on {
-  background: #00d;
+.login.berthou {
+  color: #000;
 }
-.si .on {
-  background: #cd0;
+.note.on.login-thibaud {
+  background: #44accf;
+}
+.note.on.login-jaimito {
+  background: #ee3e64;
+}
+.note.on.login-acekat {
+  background: #b7d84b;
+}
+.note.on.login-esj {
+  background: #8904b1;
+}
+.note.on.login-grizix {
+  background: #e2a741;
+}
+.note.on.login-berthou {
+  background: #000;
 }

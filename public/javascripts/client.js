@@ -1,50 +1,38 @@
-var socket = io.connect('http://localhost');
+var socket = io.connect('http://localhost/');
 
 var APP = (function() {
-	var doTab = [];
-	var miTab = [];
-	var solTab = [];
-	var sequencer = [doTab, miTab, solTab];	
-	
+	var sequencer = [];
+	var pitches = ['do4', 'do#4', 're4', 're#4', 'mi4', 'fa4', 'fa#4', 'sol4', 'sol#4', 'la4', 'sib4', 'si4',
+									'do5', 'do#5', 're5', 're#5', 'mi5', 'fa5', 'fa#5', 'sol5', 'sol#5', 'la5', 'sib5', 'si5'];
+	var nbBars = 12;
+
 	var initSequencer = function() {
-		var i;
-		
-		for (row in sequencer) {
-			for (i = 0; i < 16; i++) {
-				sequencer[row][i] = 0;
+		var i = 0, j = 0, k = 0;
+
+		//tous les impaires -> collonne + 2
+		//tous les paires = 4
+		for (i = 0; i < nbBars; i++) {
+			sequencer[i] = [];
+			for (j = 0; j < pitches.length; j++) {
+				sequencer[i][j] = [];
+				if (i % 2) {
+					for (k = 0; k < (i + 2); k++) {
+						sequencer[i][j][k] = null;
+					}
+				} else {
+					for (k = 0; k < 4; k++) {
+						sequencer[i][j][k] = null;
+					}
+				}
 			}
 		}
-	}
+	};
 	
-	var toggleSeqNote = function(seqNote) {
-		if (seqNote)
-			seqNote = 0
-		else seqNote = 1;
-		
-		return seqNote;
-	}
-	
-	var toggleNote = function(note, num) {		 
-		switch(note) {
-			case 'do':
-				doTab[num - 1] = toggleSeqNote(doTab[num - 1]);
-				break;
-			
-			case 'mi':
-				miTab[num - 1] = toggleSeqNote(miTab[num - 1]);
-				break;
-				
-			case 'sol':
-				solTab[num - 1] = toggleSeqNote(solTab[num - 1]);
-				break;
-				
-			default:
-				console.log('switch error, note not recognized');
-				break;
-		}
-		
-		$('#' + note).children(':nth-child(' + (num + 1) + ')').toggleClass('on');
-		console.log(note + ' ' + num + ' toggled');
+	var toggleNote = function(note, login) {
+		if (sequencer[note.bar][note.pitch][note.noteNum])
+			sequencer[note.bar][note.pitch][note.noteNum] = null;
+		else
+			sequencer[note.bar][note.pitch][note.noteNum] = {login: login};
 	}
 	
 	return {
@@ -60,24 +48,55 @@ $(function() {
 	socket.on('connect', function (data) {
 		console.log('socket.io connection established');
 	});
-
-	$(".sub-note").on("click", function(event) {
-		$(this).toggleClass('on');
+	
+	socket.on('error', function (reason) {
+	  console.error('Unable to connect Socket.IO', reason);
 	});
 	
+	socket.on('loginSync', function (login) {
+		console.log('login: ' + login);
+		APP.login = login;
+	});
+	
+	var visualToggle = function(el, login) {
+		var loginClass = 'login-' + login;
+		var curClass = el.attr('class').match('login-[^ ]*');
+				
+		if (curClass)
+			el.removeClass(curClass[0]);
+		
+		el.toggleClass('on');
+		
+		if (el.hasClass('on'))
+			el.addClass(loginClass);
+	}
 
-	$('.box:not(:first-child)').bind('dblclick', function(e) {
-		var self = $(this);
-		//emit to server
-		socket.emit('toggleNote', {
-			name: self.parent().attr('id'),
-			num: self.index()
-		});
-		//console.log('dblclicked: ' + self.parent().attr('id') + self.index());
-		APP.toggleNote(self.parent().attr('id'), self.index());
+	$('.note').on('dblclick', function(event) {
+		var el = $(this);
+		var noteNum = el.attr('class').match('sn-[0-9]*')[0].split('-')[1];
+		var pitch = el.parent().attr('class').split(' ')[1];
+		var pNum = el.parent().attr('class').match('p-[0-9]*')[0].split('-')[1];
+		var bar = el.parent().parent().attr('class').match('bc-[0-9]*')[0].split('-')[1];
+		
+		var note = {
+			bar: bar - 1,
+			pitch: pNum - 1,
+			noteNum: noteNum - 1
+		};
+		console.log('clicked on ');
+		console.log(note);
+		
+		APP.toggleNote(note, APP.login);
+		
+		socket.emit('toggleNote', note);
+		
+		visualToggle(el, APP.login);
 	});
 	
 	socket.on('toggleNote', function (note) {
-		APP.toggleNote(note.name, note.num);
+		APP.toggleNote(note, note.login);
+		var selector = '.bc-' + (note.bar + 1) + ' > .p-' + (note.pitch + 1) + ' > .sn-' + (note.noteNum + 1);
+		
+		visualToggle($(selector), note.login);
 	});
 });

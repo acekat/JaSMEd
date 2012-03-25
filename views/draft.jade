@@ -1,0 +1,20 @@
+extends layout
+
+block scripts
+	include includes/scripts
+
+block content
+	.grid
+		.grid-layer
+			each bar, i in seq
+				- var n = i + 2; 
+				unless (i % 2)
+					n = 4
+				div(class='bar-container bc-#{i+1} sub-#{n}')
+					each pitch, j in pitches
+						div(class='pitch #{pitch} p-#{j+1}')
+							each note, k in bar[j]
+								- var noteOn = '';
+								if (note)
+									noteOn = ' on ' + 'login-' + note.login;
+								div(class='note sn-#{k+1}' + noteOn)

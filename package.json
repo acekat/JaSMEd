@@ -1,11 +1,12 @@
 {
-	"name": "JaSMEd"
-, "version": "0.0.2"
-, "private": true
-, "dependencies": {
-		"express": "2.5.8"
-	, "jade": ">= 0.22.0"
-	, "socket.io": ">= 0.9.4"
-	, "stylus": ">= 0.24.0"
-	}
+		"name": "JaSMEd"
+	, "version": "0.0.2"
+	, "private": true
+	, "dependencies": {
+			"express": "2.5.8"
+		, "jade": "0.22.0"
+		, "socket.io": "0.9.4"
+		, "stylus": "0.24.0"
+		}
+	, "engine": "node >= 0.6.12 && < node 0.7.0"
 }

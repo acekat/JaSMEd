@@ -29,11 +29,21 @@ jasmed.song = {
     title: "Untitled",
     tempo: 120,
     tracks: [],
+    blocks: 32,
     
     addTrack: function(name) {
-        this.tracks.push(jasmed.track.extend({
+        var newTrack = jasmed.track.extend({
             name: name || "Track " + (this.tracks.length()+1)
-        }));
+        });
+        this.tracks.push(newTrack);
+        return newTrack;
+    },
+    
+    addBlocks: function(n, pos) {
+        var i, nTracks = this.tracks.length;
+        for(i = 0 ; i < nTracks ; i++) {
+            this.tracks[i].addblocks(n, pos);
+        }
     },
     
     extend: jasmed.extend
@@ -54,14 +64,18 @@ jasmed.track = {
             this.blocks = this.blocks.slice(0,pos);
         }
         this.blocks = this.blocks.concat(add);
+        
     },
     
     extend: jasmed.extend
 };
 
 jasmed.block = {
-    addNote: function(note, layer, start, end) {
-        var pgcd;
+    lnFw: false,
+    lnBw: false,
+    
+    addNote: function(note, layer, start, end, link) {
+        var pgcd, i;
         if(end) {
             pgcd = jasmed.pgcd(end, start);
         }
@@ -76,7 +90,7 @@ jasmed.block = {
             this[layer] = [];
         }
         
-        for(var i = start, link = 0 ; i < end ; i++, link++) {
+        for(i = start, link = link || 0 ; i < end ; i++, link++) {
             this[layer][i] = note.extend({linked: link});
         }
     },
@@ -93,3 +107,5 @@ jasmed.note = {
 jasmed.newNote = function(pitch) {
     return jasmed.note.extend({pitch: pitch});
 };
+
+// TODO accords !!!

@@ -35,6 +35,7 @@ jasmed.song = {
         var newTrack = jasmed.track.extend({
             name: name || "Track " + (this.tracks.length()+1)
         });
+        newTrack.addBlocks(this.blocks);
         this.tracks.push(newTrack);
         return newTrack;
     },
@@ -74,7 +75,7 @@ jasmed.block = {
     lnFw: false,
     lnBw: false,
     
-    addNote: function(note, layer, start, end, link) {
+    addNote: function(pitch, layer, start, end, link) {
         var pgcd, i;
         if(end) {
             pgcd = jasmed.pgcd(end, start);
@@ -85,13 +86,24 @@ jasmed.block = {
             end /= pgcd;
         }
         
-        layer = layer.toString();
-        if(!(layer in this)) {
-            this[layer] = [];
+        var strLayer = layer.toString();
+        if(!(strLayer in this)) {
+            this.initLayer(layer);
         }
         
         for(i = start, link = link || 0 ; i < end ; i++, link++) {
-            this[layer][i] = note.extend({linked: link});
+            this[strLayer][i].push(jasmed.note.extend({
+                linked: link,
+                pitch: pitch
+            }));
+        }
+    },
+    
+    initLayer: function(layer) {
+        var strLayer = layer.toString();
+        this[strLayer] = [];
+        for(var i = 0 ; i < layer ; i++) {
+            this[strLayer][i] = [];
         }
     },
 
@@ -108,4 +120,6 @@ jasmed.newNote = function(pitch) {
     return jasmed.note.extend({pitch: pitch});
 };
 
-// TODO accords !!!
+// TODOs
+//      initTrack(layer)
+//      track.addNote

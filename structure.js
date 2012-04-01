@@ -31,11 +31,14 @@ jasmed.song = {
     tracks: [],
     blocks: 32,
     
-    addTrack: function(name) {
+    addTrack: function(name, layer) {
         var newTrack = jasmed.track.extend({
             name: name || "Track " + (this.tracks.length()+1)
         });
         newTrack.addBlocks(this.blocks);
+        if(layer) {
+            newTrack.init(layer);
+        }
         this.tracks.push(newTrack);
         return newTrack;
     },
@@ -66,6 +69,13 @@ jasmed.track = {
         }
         this.blocks = this.blocks.concat(add);
         
+    },
+    
+    init: function(layer) {
+        var i, n = this.blocks.length;
+        for(i = 0 ; i < n ; i++) {
+            this.blocks[i].initLayer(layer);
+        }
     },
     
     extend: jasmed.extend
@@ -121,5 +131,4 @@ jasmed.newNote = function(pitch) {
 };
 
 // TODOs
-//      initTrack(layer)
 //      track.addNote

@@ -59,20 +59,33 @@ jasmed.track = {
     blocks: [],
     
     addNote: function(pitch, start, end) {
+        var startBlk = this.blocks[start.block], link;
+        
         if(!end) {
-            return this.blocks[start.block].addNote(pitch, start.layer, start.start);
+            return startBlk.addNote(pitch, start.layer, start.start);
         }
         
         if(start.block == end.block) {
             if(start.layer == end.layer) {
-                return this.blocks[start.block].addNote(pitch, start.layer, start.start, end.end);
+                return startBlk.addNote(pitch, start.layer, start.start, end.end);
             }
             
-            alert("Not yet implemented");
-            // TODO link notes through different layers
+            var midLayer = jasmed.pgcd(start.layer, end.layer),
+                div1 = start.layer/midLayer,
+                mid1 = Math.ceil(start.start/div1),
+                cut1 = mid1*div1,
+                div2 = end.layer/midLayer,
+                mid2 = Math.floor(end.end/div2),
+                cut2 = mid2*div2;
+            
+            link = startBlk.addNote(pitch, start.layer, start.start, cut1);
+            if(mid1 != mid2) {
+                link = startBlk.addNote(pitch, midLayer, mid1, mid2, link);
+            }
+            return startBlk.addNote(pitch, end.layer, cut2, end.end, link);
         }
         
-        var link = this.blocks[start.block].addNote(pitch, start.layer, start.start, start.layer);
+        link = startBlk.addNote(pitch, start.layer, start.start, start.layer);
         for(var i = start.block + 1 ; i < end.block ; i++) {
             link = this.blocks[i].addNote(pitch, 1, 0, 1, link);
         }

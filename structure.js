@@ -48,6 +48,7 @@ jasmed.song = {
         for(i = 0 ; i < nTracks ; i++) {
             this.tracks[i].addblocks(n, pos);
         }
+        return (this.blocks += n);
     },
     
     extend: jasmed.extend
@@ -102,7 +103,7 @@ jasmed.track = {
             this.blocks = this.blocks.slice(0,pos);
         }
         this.blocks = this.blocks.concat(add);
-        
+        return this.blocks.length;
     },
     
     init: function(layer) {

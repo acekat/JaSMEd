@@ -58,6 +58,27 @@ jasmed.track = {
     instrument: "Piano",
     blocks: [],
     
+    addNote: function(pitch, start, end) {
+        if(!end) {
+            return this.blocks[start.block].addNote(pitch, start.layer, start.start);
+        }
+        
+        if(start.block == end.block) {
+            if(start.layer == end.layer) {
+                return this.blocks[start.block].addNote(pitch, start.layer, start.start, end.end);
+            }
+            
+            alert("Not yet implemented");
+            // TODO link notes through different layers
+        }
+        
+        var link = this.blocks[start.block].addNote(pitch, start.layer, start.start, start.layer);
+        for(var i = start.block + 1 ; i < end.block ; i++) {
+            link = this.blocks[i].addNote(pitch, 1, 0, 1, link);
+        }
+        return this.blocks[end.block].addNote(pitch, end.layer, 0, end.end, link);
+    },
+    
     addBlocks: function(n, pos) {
         var i, nb = n||1, add = [];
         for(i = 0 ; i < nb ; i++) {
@@ -87,10 +108,9 @@ jasmed.block = {
     
     addNote: function(pitch, layer, start, end, link) {
         var pgcd, i;
-        if(end) {
-            pgcd = jasmed.pgcd(end, start);
-        }
-        if((pgcd = jasmed.pgcd(layer, end ? jasmed.pgcd(end, start) : start)) != 1) {
+        if(!end) {
+            end = start+1;
+        } else if((pgcd = jasmed.pgcd(layer, jasmed.pgcd(end, start))) != 1) {
             layer /= pgcd;
             start /= pgcd;
             end /= pgcd;
@@ -107,6 +127,7 @@ jasmed.block = {
                 pitch: pitch
             }));
         }
+        return link;
     },
     
     initLayer: function(layer) {
@@ -125,10 +146,3 @@ jasmed.note = {
     linked: 0,
     extend: jasmed.extend
 };
-
-jasmed.newNote = function(pitch) {
-    return jasmed.note.extend({pitch: pitch});
-};
-
-// TODOs
-//      track.addNote

@@ -70,7 +70,7 @@ jasmed.song = {
     
     /**
      * Add blocks to each track of the song, at any position, or at the end if not specified.
-     * @param {number} n The number of blocks to add.
+     * @param {number} [n] The number of blocks to add.
      * @param {number} [pos] Number of the block before the new blocks, starting with 1.
      * @returns {number} The new number of blocks.
      * @example
@@ -82,7 +82,7 @@ jasmed.song = {
         for(i = 0 ; i < nTracks ; i++) {
             this.tracks[i].addblocks(n, pos);
         }
-        return (this.blocks += n);
+        return (this.blocks += n || 1);
     },
     
     /** @see jasmed.extend */

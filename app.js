@@ -1,17 +1,16 @@
-var express = require('express')
-	, connect = require('express/node_modules/connect');
-
-var app = module.exports = express.createServer()
+ar express = require('express')
+	, connect = require('express/node_modules/connect')
+	, app = module.exports = express.createServer()
 	, io = require('socket.io').listen(app)
-	, stylus = require('stylus');
-	
-var MemoryStore = connect.middleware.session.MemoryStore
+	, stylus = require('stylus')
+	, MemoryStore = connect.middleware.session.MemoryStore
+	, Session = connect.middleware.session.Session
 	, parseCookie = connect.utils.parseCookie
-	, sessionStore = new MemoryStore();
+	, sessionStore = new MemoryStore()
+	, users = require('./users')
+	, core = require('./core');
 
-var users = require('./users');
-//  , routes = require('./routes');
-var core = require('./core');
+//var Session = require('connect').middleware.session.Session;
 
 core.init();
 
@@ -22,9 +21,9 @@ app.configure(function() {
 	app.set('view engine', 'jade');
 	//activer new inheritance (extends et block)
 	app.set('view options', { layout: false });
-	app.use(stylus.middleware({ 
-		src: __dirname + '/views',
-		dest: __dirname + '/public'
+	app.use(stylus.middleware({
+			src: __dirname + '/views'
+		,	dest: __dirname + '/public'
 	}));
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
@@ -34,8 +33,9 @@ app.configure(function() {
 	  //   - req.sessionStore
 	  //   - req.sessionID (or req.session.id)
 	app.use(express.session({
-		secret: 'mama loves mambo',
-		store: sessionStore
+			secret: 'mama loves mambo'
+		, store: sessionStore
+		,	key: 'express.sid'
 	}));
 	app.use(express.static(__dirname + '/public'));
 });
@@ -93,6 +93,12 @@ app.get('/session', requireLogin, function(req, res) {
 	else
 		req.session.views = 1;
 
+	console.log('session: ')
+	for (props in req.session) {
+		console.log(props + '\n');
+	};
+
+
 	res.render('session', {
 		title: 'session!',
 		sessionID: req.sessionID
@@ -129,35 +135,65 @@ app.post('/login', function(req, res) {
 /**
  * socket.io
  */
+/*
+io.configure(function() {
+	io.set('log level', 1); //sinon il log beaucoup trop, ça me rend fou :)
+	io.set('authorization', function (data, callback) {
+		if (!data.headers.cookie) 
+			return callback('No cookie transmitted.', false);
+
+		data.cookie = parseCookie(data.headers.cookie);
+		data.sessionID = data.cookie['express.sid'];
+		// save the session store to the data object 
+		// (as required by the Session constructor)
+		data.sessionStore = sessionStore;
+
+		sessionStore.get(data.sessionID, function (err, session) {
+			if (err || !session)
+				return callback('Error', false);
+
+			// create a session object, passing data as request and our
+			// just acquired session data
+			data.session = new Session(data, session);
+			return callback(null, true);
+		});
+	});
+});
+*/
+
 io.configure(function() {
 	io.set('log level', 1); //sinon il log beaucoup trop, ça me rend fou :)
 	io.set('authorization', function(data, callback) {
-		if (data.headers.cookie) {
-			var cookie = parseCookie(data.headers.cookie);
-			sessionStore.get(cookie['connect.sid'], function(err, session) {
-				if (err || !session) {
-					callback('Error', false);
-				} else {
-					data.session = session;
-					callback(null, true);
-				}
-			});
-		} else {
+		if (!data.headers.cookie)
 			callback('No cookie', false);
-		}
+
+		var cookie = parseCookie(data.headers.cookie);
+		data.sessionID = cookie['express.sid'];
+		data.sessionStore = sessionStore;
+
+		sessionStore.load(data.sessionID, function(err, session) {
+			if (err || !session)
+				callback('Error', false);
+
+			//data.session = new Session(data, session)
+			data.session = session;
+			callback(null, true);
+		});
 	});
 });
 
 io.sockets.on('connection', function (socket) {
 	var session = socket.handshake.session;
-	
+
 	socket.emit('loginSync', session.login);
-	
+
 	//need to only allow 1 sessionID
-	
+
 	//nothing (used to test...)
-	socket.on('msg', function(data) {
-		console.log('msg by ' + session.login + ': ' + data);
+	socket.on('add', function(data) {
+		session.newattr = data;
+		console.log(session.newattr + ' added to ' + session.login + '\'s session');
+		session.save();
 	});
 
 	socket.on('toggleNote', function(note) {

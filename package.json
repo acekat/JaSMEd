@@ -1,9 +1,10 @@
 {
   "name": "JaSMEd",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
+	"author": "PSAR team",
   "dependencies": {
-    "express": "~2.5.8",
+    "express": "~2.5.9",
     "jade": "~0.22.0",
     "socket.io": "~0.9.4",
     "stylus": "~0.24.0",
@@ -11,5 +12,8 @@
     "connect-redis": "~1.3.0",
     "hiredis": "~0.1.14"
   },
-  "engine": "node >= 0.6.12 && < node 0.7.0"
+  "devDependencies": {
+    "node-dev": "~0.2.2"
+  },
+  "engine": "node >= 0.6.12 && < node 0.7.0",
 }

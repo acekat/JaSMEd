@@ -18,6 +18,7 @@ app.configure(function() {
 	app.set('view engine', 'jade');
 	//activer new inheritance (extends et block)
 	app.set('view options', { layout: false });
+	app.set('port', 3000);
 	app.use(stylus.middleware({
 			src: __dirname + '/views' //mettre ça ailleurs non ?
 		,	dest: __dirname + '/public'
@@ -173,5 +174,5 @@ io.sockets.on('connection', function (socket) {
 	});
 });
 
-app.listen(3000);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+app.listen(app.settings.port);
+console.log("Express server listening on port %d in %s mode", app.settings.port, app.settings.env);

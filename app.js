@@ -3,14 +3,11 @@ var express = require('express')
 	, app = module.exports = express.createServer()
 	, io = require('socket.io').listen(app)
 	, stylus = require('stylus')
-	, MemoryStore = connect.middleware.session.MemoryStore
-	, Session = connect.middleware.session.Session
+	, RedisStore = require('connect-redis')(express)
 	, parseCookie = connect.utils.parseCookie
-	, sessionStore = new MemoryStore()
+	, sessionStore = new RedisStore()
 	, users = require('./users')
 	, core = require('./core');
-
-//var Session = require('connect').middleware.session.Session;
 
 core.init();
 
@@ -22,11 +19,12 @@ app.configure(function() {
 	//activer new inheritance (extends et block)
 	app.set('view options', { layout: false });
 	app.use(stylus.middleware({
-			src: __dirname + '/views'
+			src: __dirname + '/views' //mettre ça ailleurs non ?
 		,	dest: __dirname + '/public'
 	}));
 	app.use(express.bodyParser());
-	app.use(express.methodOverride());
+	//hack pour transformer POST en DEL
+	//app.use(express.methodOverride());
 	app.use(express.cookieParser());
 	// Populates:
 	  //   - req.session
@@ -82,8 +80,8 @@ app.get('/', function(req, res) {
 
 app.get('/draft', requireLogin, function(req, res) {
 	res.render('draft', {
-		seq: core.seq,
-		pitches: core.pitches
+			seq: core.seq
+		,	pitches: core.pitches
 	});
 });
 
@@ -100,15 +98,13 @@ app.get('/session', requireLogin, function(req, res) {
 
 
 	res.render('session', {
-		title: 'session!',
-		sessionID: req.sessionID
+			title: 'session!'
+		,	sessionID: req.sessionID
 	});
 });
 
 app.get('/login', function(req, res) {
-	res.render('login', {
-		title: 'LOGIN!!!'
-	});
+	res.render('login', { title: 'LOGIN!!!'	});
 });
 
 app.get('/logout', function(req, res) {
@@ -141,6 +137,7 @@ io.configure(function() {
 		if (!data.headers.cookie)
 			callback('No cookie', false);
 
+		//data est ce qui sera exposé dans socket.handshake.session
 		var cookie = parseCookie(data.headers.cookie);
 		data.sessionID = cookie['express.sid'];
 		data.sessionStore = sessionStore;
@@ -149,7 +146,6 @@ io.configure(function() {
 			if (err || !session)
 				callback('Error', false);
 
-			//data.session = new Session(data, session)
 			data.session = session;
 			callback(null, true);
 		});

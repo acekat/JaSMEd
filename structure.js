@@ -70,7 +70,7 @@ jasmed.song = {
     
     /**
      * Add blocks to each track of the song, at any position, or at the end if not specified.
-     * @param {number} n The number of blocks to add.
+     * @param {number} [n] The number of blocks to add.
      * @param {number} [pos] Number of the block before the new blocks, starting with 1.
      * @returns {number} The new number of blocks.
      * @example
@@ -82,7 +82,7 @@ jasmed.song = {
         for(i = 0 ; i < nTracks ; i++) {
             this.tracks[i].addblocks(n, pos);
         }
-        return (this.blocks += n);
+        return (this.blocks += n || 1);
     },
     
     /** @see jasmed.extend */
@@ -150,7 +150,7 @@ jasmed.track = {
         for(i = 0 ; i < nb ; i++) {
             add.push(jasmed.block.extend({}));
         }
-        if(pos){
+        if(pos) {
             add = add.concat(this.blocks.slice(pos));
             this.blocks = this.blocks.slice(0,pos);
         }
@@ -197,13 +197,12 @@ jasmed.block = {
             end /= pgcd;
         }
         
-        var strLayer = layer.toString();
-        if(!(strLayer in this)) {
+        if(!(layer in this)) {
             this.initLayer(layer);
         }
         
         for(i = start, link = link || 0 ; i < end ; i++, link++) {
-            this[strLayer][i].push(jasmed.note.extend({
+            this[layer][i].push(jasmed.note.extend({
                 linked: link,
                 pitch: pitch
             }));
@@ -216,10 +215,9 @@ jasmed.block = {
      * @param {number} layer
      */
     initLayer: function(layer) {
-        var strLayer = layer.toString();
-        this[strLayer] = [];
+        this[layer] = [];
         for(var i = 0 ; i < layer ; i++) {
-            this[strLayer][i] = [];
+            this[layer][i] = [];
         }
     },
     

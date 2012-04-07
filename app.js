@@ -1,4 +1,4 @@
-ar express = require('express')
+var express = require('express')
 	, connect = require('express/node_modules/connect')
 	, app = module.exports = express.createServer()
 	, io = require('socket.io').listen(app)
@@ -135,32 +135,6 @@ app.post('/login', function(req, res) {
 /**
  * socket.io
  */
-/*
-io.configure(function() {
-	io.set('log level', 1); //sinon il log beaucoup trop, ça me rend fou :)
-	io.set('authorization', function (data, callback) {
-		if (!data.headers.cookie) 
-			return callback('No cookie transmitted.', false);
-
-		data.cookie = parseCookie(data.headers.cookie);
-		data.sessionID = data.cookie['express.sid'];
-		// save the session store to the data object 
-		// (as required by the Session constructor)
-		data.sessionStore = sessionStore;
-
-		sessionStore.get(data.sessionID, function (err, session) {
-			if (err || !session)
-				return callback('Error', false);
-
-			// create a session object, passing data as request and our
-			// just acquired session data
-			data.session = new Session(data, session);
-			return callback(null, true);
-		});
-	});
-});
-*/
-
 io.configure(function() {
 	io.set('log level', 1); //sinon il log beaucoup trop, ça me rend fou :)
 	io.set('authorization', function(data, callback) {
@@ -189,7 +163,6 @@ io.sockets.on('connection', function (socket) {
 
 	//need to only allow 1 sessionID
 
-	//nothing (used to test...)
 	socket.on('add', function(data) {
 		session.newattr = data;
 		console.log(session.newattr + ' added to ' + session.login + '\'s session');

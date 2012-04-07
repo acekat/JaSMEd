@@ -1,3 +1,20 @@
+# JaSMEd
+
+### Dependances
+
+Pour s'assurer que toutes les dépendances sont installées, exécuter la commande:
+
+	npm install
+
+Pour démarrer la version actuelle de JaSMEd, il faut faire tourner un serveur redis.
+Instructions pour l'installer et le démarrer: [Redis Quick Start](http://redis.io/topics/quickstart)
+
+### Executable
+
+Un dossier bin a été ajouté pour simplifier les choses, pour faire tourner JaSMEd exécuter la commande:
+
+	./bin/devserver
+
 # GIT
 
 ### Master branch

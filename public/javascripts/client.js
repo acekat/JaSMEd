@@ -43,7 +43,7 @@ var APP = (function() {
 })();
 
 $(function() {
-	APP.init();
+	//APP.init();
 
 	socket.on('connect', function (data) {
 		console.log('socket.io connection established');
@@ -86,7 +86,7 @@ $(function() {
 		console.log('clicked on ');
 		console.log(note);
 		
-		APP.toggleNote(note, APP.login);
+		//APP.toggleNote(note, APP.login);
 		
 		socket.emit('toggleNote', note);
 		
@@ -94,7 +94,7 @@ $(function() {
 	});
 	
 	socket.on('toggleNote', function (note) {
-		APP.toggleNote(note, note.login);
+		//APP.toggleNote(note, note.login);
 		var selector = '.bc-' + (note.bar + 1) + ' > .p-' + (note.pitch + 1) + ' > .sn-' + (note.noteNum + 1);
 		
 		visualToggle($(selector), note.login);

@@ -2,7 +2,17 @@
   "name": "JaSMEd",
   "version": "0.0.3",
   "private": true,
-	"author": "PSAR team",
+	"author": "PSAR team purple",
+	"contributors": [
+		{ "name": "thibaud" },
+		{ "name": "grizix" },
+		{ "name": "acekat" },
+		{ "name": "jaimito" }
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Acekat/JaSMEd"
+	},
   "dependencies": {
     "express": "~2.5.9",
     "jade": "~0.22.0",

@@ -6,10 +6,9 @@ var express = require('express')
 	, RedisStore = require('connect-redis')(express)
 	, parseCookie = connect.utils.parseCookie
 	, sessionStore = new RedisStore()
+	, fs = require('fs')
 	, users = require('./users')
 	, core = require('./core');
-
-core.init();
 
 // Configuration
 app.configure(function() {
@@ -76,13 +75,25 @@ function requireLogin(req, res, next) {
  */
 //app.get('/', routes.index);
 app.get('/', function(req, res) {
-	res.render('index');
+	fs.readdir('./store', function(err, files) {
+		if (err) {
+			console.err('problem reading directory');
+			return;
+		}
+
+		res.render('index', { files: files });
+	})
 });
 
 app.get('/draft', requireLogin, function(req, res) {
-	res.render('draft', {
-			seq: core.seq
-		,	pitches: core.pitches
+	core.init(function(seq) {
+		if (!req)
+			return;
+		
+		res.render('draft', {
+				seq: seq
+			,	pitches: core.pitches
+		});
 	});
 });
 
@@ -96,7 +107,6 @@ app.get('/session', requireLogin, function(req, res) {
 	for (props in req.session) {
 		console.log(props + '\n');
 	};
-
 
 	res.render('session', {
 			title: 'session!'
@@ -126,6 +136,18 @@ app.post('/login', function(req, res) {
 			req.flash('warn', 'tough luck, login failed brother');
 			res.redirect('/login');
 		}
+	});
+});
+
+app.get('/store/:name', requireLogin, function(req, res) {
+	core.openSeq(req.params.name, function(seq) {
+		if (!seq)
+			return;
+		
+		res.render('draft', {
+				seq: seq
+			,	pitches: core.pitches
+		});
 	});
 });
 
@@ -164,6 +186,15 @@ io.sockets.on('connection', function (socket) {
 		session.newattr = data;
 		console.log(session.newattr + ' added to ' + session.login + '\'s session');
 		session.save();
+	});
+	
+	socket.on('saveAs', function(fileName) {
+		core.exportSeq(fileName, function(res) {
+			if (!res)
+				console.log(session.login + ' error trying to save sequencer');
+			else
+				console.log(session.login + ' saved current sequencer as ' + fileName);
+		});
 	});
 
 	socket.on('toggleNote', function(note) {

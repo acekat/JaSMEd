@@ -8,5 +8,10 @@ block content
 	p so far there isn't much here but you'll love it soon! promise!
 	p try out our first 
 		a(href='/draft') draft
+	p or check out one of the saved sequences:
+		ul
+			each file in files
+				li
+					a(href='/store/#{file}') #{file} 
 	p check out your 
 		a(href='/session') session

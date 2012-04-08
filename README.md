@@ -34,13 +34,13 @@ directement sur cette branche.
 
 ### Commandes Git
 
-Cloner le dépôt, ceci crée un dossier PSAR dans votre répertoire courant:
+Cloner le dépôt, ceci crée un dossier JaSMEd dans votre répertoire courant:
 
-	git clone https://Acekat@github.com/Acekat/PSAR.git
+	git clone https://Acekat@github.com/Acekat/JaSMEd.git
 
-Seul la branche master est cloné, il faut aussi "tracker" la branche develop:
+Seul la branche develop est cloné, il faut aussi "tracker" la branche master:
 
-	git branch --track develop origin/develop
+	git branch --track master origin/master
 
 Récupérer une version stable:
 
@@ -48,6 +48,7 @@ Récupérer une version stable:
 	git pull origin <branch>	// fetch + merge la branche <branch> du serveur avec la branche courant locale (<branch>)
 
 **A priori on ne pull pas la branche master, sauf pour récupérer une version stable**
+
 *La branche develop est à pullé avec de commencer des modifications*
 
 Ajouter/Mettre-à-jour des fichier sur Git:

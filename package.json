@@ -25,5 +25,5 @@
   "devDependencies": {
     "node-dev": "~0.2.2"
   },
-  "engine": "node >= 0.6.12 && < node 0.7.0",
+  "engine": "node >= 0.6.12 && < node 0.7.0"
 }

@@ -27,6 +27,16 @@ jasmed.pgcd = function(a, b) {
 };
 
 /**
+ * Return the ppcm of two numbers.
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
+jasmed.ppcm = function(a, b) {
+    return a*b/jasmed.pgcd(a, b);
+};
+
+/**
  * Make a copy of the caller adding new properties.
  * Function to use as a copy constructor in a class.
  * @param {Object} [props] The properties to add.

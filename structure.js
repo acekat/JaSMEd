@@ -117,7 +117,7 @@ jasmed.track = {
      * @returns {number} The number of effective notes added.
      */
     addNote: function(pitch, start, end) {
-        var startBlk = this.blocks[start.block], link;
+        var startBlk = this.blocks[start.block];
         
         if(!end) {
             return startBlk.addNote(pitch, start.layer, start.start);
@@ -128,22 +128,14 @@ jasmed.track = {
                 return startBlk.addNote(pitch, start.layer, start.start, end.end);
             }
             
-            var midLayer = jasmed.pgcd(start.layer, end.layer),
-                div1 = start.layer/midLayer,
-                mid1 = Math.ceil(start.start/div1),
-                cut1 = mid1*div1,
-                div2 = end.layer/midLayer,
-                mid2 = Math.floor(end.end/div2),
-                cut2 = mid2*div2;
-            
-            link = startBlk.addNote(pitch, start.layer, start.start, cut1);
-            if(mid1 != mid2) {
-                link = startBlk.addNote(pitch, midLayer, mid1, mid2, link);
-            }
-            return startBlk.addNote(pitch, end.layer, cut2, end.end, link);
+            var layer = jasmed.ppcm(start.layer, end.layer);
+                
+            return startBlk.addNote(pitch, layer,
+                                    start.start*layer/start.layer,
+                                    end.end*layer/end.layer);
         }
         
-        link = startBlk.addNote(pitch, start.layer, start.start, start.layer);
+        var link = startBlk.addNote(pitch, start.layer, start.start, start.layer);
         for(var i = start.block + 1 ; i < end.block ; i++) {
             link = this.blocks[i].addNote(pitch, 1, 0, 1, link);
         }

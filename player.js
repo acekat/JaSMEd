@@ -1,7 +1,7 @@
 /** @namespace */
 var device 
 	,	osc
-	, pianoTrack = []
+	,	pianoTrack = []
 	,	pianoSampler
 	,	songBuffer
 	,	tempo,blockNumber
@@ -10,18 +10,18 @@ var device
 	,	channels = 2;
 
 /**
-* Init and launch the song
-* @param {jasmed} a structure to play
-*/
+ * Init and launch the song
+ * @param {jasmed} a structure to play
+ */
 function player(jasmed) {
 	readSong(jasmed.song);
 	device = Sink(audioCallback, channels);
 }
 
 /**
-* Set info and allocate a Generator per Track(->Instrument)
-* @param {jasmed.song} a song's structure to read 
-*/
+ * Set info and allocate a Generator per Track(->Instrument)
+ * @param {jasmed.song} a song's structure to read 
+ */
 function readSong(song) {
 	blockNumber = song.blocks;
 	samplesPerBlock = device.sampleRate * song.tempo;
@@ -65,7 +65,7 @@ function audioCallBack(buffer, channelCount) {
 			generators.forEach(function(instrument, index) {
 				value = readTrack(instrument);
 
-				if (value == 1) {
+				if (value === 1) {
 					instrument.generate();
 					sample += instrument.getMix();
 				}
@@ -92,7 +92,7 @@ function advanceStep() {
 function setInstrument (name) {
 	//allocate dynamically Generators in a Array
 
-	if(name == 'piano') {
+	if (name === 'piano') {
 		pianoSampler = audioLib.Sampler(device.sampleRate);    
 		pianoRaw = atob(pianoRaw);
 		pianoSampler.loadWav(pianoRaw, true);

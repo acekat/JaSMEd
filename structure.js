@@ -80,11 +80,11 @@ jasmed.song = {
     
     /**
      * Add blocks to each track of the song, at any position, or at the end if not specified.
-     * @param {number} [n] The number of blocks to add.
-     * @param {number} [pos] Number of the block before the new blocks, starting with 1.
+     * @param {number} [n=1] The number of blocks to add.
+     * @param {number} [pos=end] Number of the block before the new blocks, starting with 1.
      * @returns {number} The new number of blocks.
      * @example
-     * mySong.addBlocks(2, 0); // add two blocks before the first block
+     * mySong.addBlocks(2, 0); // add two blocks at the begining
      * mySong.addBlocks(1, 3); // add one block after the third block
      */
     addBlocks: function(n, pos) {

@@ -1,4 +1,3 @@
-/** @namespace */
 var device, 
 osc, 
 pianoTrack = [],
@@ -105,6 +104,7 @@ function advanceStep() {
 function setInstrument (name) {
 
     //allocate dynamically Generators in a Array
+
     if(name == 'piano') {
 	pianoSampler = audioLib.Sampler(device.sampleRate);    
 	pianoRaw = atob(pianoRaw);

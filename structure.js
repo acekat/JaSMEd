@@ -56,7 +56,7 @@ jasmed.extend = function(props) {
 /** @class */
 jasmed.song = {
     title: "Untitled",
-    tempo: 30, // in block per minute
+    tempo: 4000, // in miliseconds per block
     tracks: [],
     blocks: 32,
     

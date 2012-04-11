@@ -1,6 +1,6 @@
 # JaSMEd
 
-### Dependances
+### Dépendances
 
 Pour s'assurer que toutes les dépendances sont installées, exécuter la commande:
 
@@ -49,7 +49,7 @@ Récupérer une version stable:
 
 **A priori on ne pull pas la branche master, sauf pour récupérer une version stable**
 
-*La branche develop est à pullé avec de commencer des modifications*
+*La branche develop est a puller avant de commencer des modifications*
 
 Ajouter/Mettre-à-jour des fichier sur Git:
 

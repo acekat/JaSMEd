@@ -7,7 +7,7 @@ songBuffer,
 tempo,
 blockNumber,
 samplePerBlocks,
-generators,
+generators[],
 channels = 2;
 
 /**
@@ -28,15 +28,19 @@ function readSong(song) {
     samplesPerBlock = device.sampleRate * song.tempo;
     //songBuffer = new Float32Array(samplesPerBlock * song.blocks);
 
-    song.tracks.forEach(function(track, index){
-	setInstrument(track);
-    });
+    for(var i = 0, len = song.tracks.length; i < len; i++){
+	if(!song.tracks[i]) skip;
+	setInstrument(song.tracks[i]);
+    }
+
 }
 
 function readTrack(track) {
 
-    for(var i=0; i < track.blocks.length; i++)
+    for(var i = 0, len = track.blocks.length; i < len; i++){
+	if(!track.blocks[i]) skip;
 	readBlock(track.blocks[i]);
+    }
 }
 
 function readBlock(block) {
@@ -66,13 +70,17 @@ function audioCallBack(buffer, channelCount) {
 		advanceStep();
 
 	    //test each track(allocate Generator) to play
-	    generators.forEach(function(instrument, index){
+	    for(var i = 0, len = generators.length; i < len; i++) {
+		if(!generators[i]) skip; // Skip null, undefined, and nonexistent elements
+
+		var instrument = generators[i];
+
 		value = readTrack(instrument);
 
 		if(value == 1){
 		    instrument.generate();
 		    sample += instrument.getMix();
-		}
+		}	
 	    }
 
 	    for (n=0; n<channelCount; n++)
@@ -97,7 +105,6 @@ function advanceStep() {
 function setInstrument (name) {
 
     //allocate dynamically Generators in a Array
-
     if(name == 'piano') {
 	pianoSampler = audioLib.Sampler(device.sampleRate);    
 	pianoRaw = atob(pianoRaw);

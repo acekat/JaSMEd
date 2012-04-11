@@ -114,7 +114,8 @@ jasmed.track = {
      * @param {{number} block,
      *         {number} layer,
      *         {number} end} [end=start+1] Block, layer and index of the cell just after the note.
-     * @returns {number} The number of effective notes added.
+     * @returns {{number} layer,
+     *           {number} length} The layer and length of the new note.
      */
     addNote: function(pitch, start, end) {
         var startBlk = this.blocks[start.block];
@@ -123,23 +124,24 @@ jasmed.track = {
             return startBlk.addNote(pitch, start.layer, start.start);
         }
         
-        if(start.block == end.block) {
-            if(start.layer == end.layer) {
-                return startBlk.addNote(pitch, start.layer, start.start, end.end);
-            }
-            
-            var layer = jasmed.ppcm(start.layer, end.layer);
-                
-            return startBlk.addNote(pitch, layer,
-                                    start.start*layer/start.layer,
-                                    end.end*layer/end.layer);
+        var layer = start.layer,
+            noteStart = start.start,
+            noteEnd = end.end;
+        if(start.layer != end.layer) {
+            layer = jasmed.ppcm(start.layer, end.layer);
+            noteStart = start.start*layer/start.layer;
+            noteEnd = end.end*layer/end.layer;
         }
         
-        var link = startBlk.addNote(pitch, start.layer, start.start, start.layer);
-        for(var i = start.block + 1 ; i < end.block ; i++) {
-            link = this.blocks[i].addNote(pitch, 1, 0, 1, link);
+        if(start.block == end.block) {
+            return startBlk.addNote(pitch, layer, noteStart, noteEnd);
         }
-        return this.blocks[end.block].addNote(pitch, end.layer, 0, end.end, link);
+        
+        var tmpRes = this.blocks[end.block].addNote(pitch, layer, 0, noteEnd, 0);
+        for(var i = end.block - 1 ; i > start.block ; i--) {
+            tmpRes = this.blocks[i].addNote(pitch, layer, 0, layer, -tmpRes.length);
+        }
+        return startBlk.addNote(pitch, layer, noteStart, layer, tmpRes.length);
     },
     
     /**
@@ -186,30 +188,42 @@ jasmed.block = {
      * @param {number} layer The layer in which add the note.
      * @param {number} start Index of the cell where the note starts.
      * @param {number} [end=start+1] Index of the cell just after the en of the note.
-     * @param {number} [link=0] Should note be used.
-     * @returns {number} The number of effective notes added.
+     * @param {number} [length] Should note be used.
+     * @returns {{number} layer,
+     *           {number} length} The layer and length of the new note.
      */
-    addNote: function(pitch, layer, start, end, link) {
-        var pgcd, i;
+    addNote: function(pitch, layer, start, end, length) {
+        var pgcd, i, ghost = length && length <= 0;
         if(!end) {
             end = start+1;
-        } else if((pgcd = jasmed.pgcd(layer, jasmed.pgcd(end, start))) != 1) {
-            layer /= pgcd;
-            start /= pgcd;
-            end /= pgcd;
+        } else if(length === undefined) {
+            if((pgcd = jasmed.pgcd(layer, jasmed.pgcd(end, start))) != 1) {
+                layer /= pgcd;
+                start /= pgcd;
+                end /= pgcd;
+            }
         }
+        
+        length = ghost ? -length : length||0;
+        length += end - start;
+        var result = {layer: layer,
+                      length: length};
         
         if(!(layer in this)) {
             this.initLayer(layer);
         }
         
-        for(i = start, link = link || 0 ; i < end ; i++, link++) {
+        this[layer][start].push(jasmed.note.extend({
+            pitch: pitch,
+            length: ghost ? -length : length
+        }));
+        for(i = start+1, length-- ; i < end ; i++, length--) {
             this[layer][i].push(jasmed.note.extend({
-                linked: link,
-                pitch: pitch
+                pitch: pitch,
+                length: -length
             }));
         }
-        return link;
+        return result;
     },
     
     /**
@@ -230,7 +244,7 @@ jasmed.block = {
 /** @class */
 jasmed.note = {
     pitch: 0,
-    linked: 0,
+    length: 1,
     
     /** @see jasmed.extend */
     extend: jasmed.extend

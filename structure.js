@@ -67,8 +67,12 @@ jasmed.song = {
      * @returns {track} The new track added.
      */
     addTrack: function(name, layer) {
+        if(!this.hasOwnProperty('tracks')) {
+            this.tracks = this.tracks;
+        }
+        
         var newTrack = jasmed.track.extend({
-            name: name || "Track " + (this.tracks.length()+1)
+            name: name || "Track " + (this.tracks.length+1)
         });
         newTrack.addBlocks(this.blocks);
         if(layer) {
@@ -90,7 +94,7 @@ jasmed.song = {
     addBlocks: function(n, pos) {
         var i, nTracks = this.tracks.length;
         for(i = 0 ; i < nTracks ; i++) {
-            this.tracks[i].addblocks(n, pos);
+            this.tracks[i].addBlocks(n, pos);
         }
         return (this.blocks += n || 1);
     },

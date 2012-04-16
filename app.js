@@ -1,7 +1,6 @@
 var express = require('express')
+	, http = require('http')
 	, connect = require('express/node_modules/connect')
-	, app = module.exports = express.createServer()
-	, io = require('socket.io').listen(app)
 	, stylus = require('stylus')
 	, RedisStore = require('connect-redis')(express)
 	, parseCookie = connect.utils.parseCookie
@@ -10,51 +9,58 @@ var express = require('express')
 	, users = require('./users')
 	, core = require('./core');
 
-// Configuration
+var app = express();
+
 app.configure(function() {
-	//app.use(express.logger());
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
-	//activer new inheritance (extends et block)
-	app.set('view options', { layout: false });
 	app.set('port', 3000);
+	app.use(express.favicon());
+	app.use(express.logger('dev'));
+	app.use(express.static(__dirname + '/public'));
 	app.use(stylus.middleware({
 			src: __dirname + '/views' //mettre ça ailleurs non ?
 		,	dest: __dirname + '/public'
 	}));
 	app.use(express.bodyParser());
-	//hack pour transformer POST en DEL
-	//app.use(express.methodOverride());
-	app.use(express.cookieParser());
-	// Populates:
-	  //   - req.session
-	  //   - req.sessionStore
-	  //   - req.sessionID (or req.session.id)
+	app.use(express.methodOverride());
+	app.use(express.cookieParser('Connect 2. needs a secret!'));
 	app.use(express.session({
 			secret: 'mama loves mambo'
 		, store: sessionStore
 		,	key: 'express.sid'
 	}));
-	app.use(express.static(__dirname + '/public'));
 });
 
-app.configure('development', function() {
-	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
-
-app.configure('production', function() {
+app.configure('development', function(){
 	app.use(express.errorHandler());
 });
 
-// pour avoir accès à ces variables dans les views (sans passer en paramètre)
-app.dynamicHelpers({
-	session: function(req, res) {
-		return req.session;
-	},
-	flash: function(req, res) {
-		return req.flash();
-	}
+/** expose locals to view before rendering */
+app.locals.use(function(req, res, done) {
+	res.locals.session = req.session;
+	res.locals.flashMessages = flash(req);
+	done();
 });
+
+/**
+inspired by Express 2.x req.flash()
+*/
+function flash(req, type, msg) {
+	if (req.session === undefined) throw Error('req.flashMessage() requires sessions');
+	var msgs = req.session.messages = req.session.messages || {};
+	
+	if (type && msg)
+		return (msgs[type] = msgs[type] || []).push(msg);
+	else if (type) {
+		var arr = msgs[type];
+		delete msgs[type];
+		return arr || [];
+	} else {
+		req.session.messages = {};
+		return msgs;
+	}
+};
 
 /** Middleware for limited access */
 function requireLogin(req, res, next) {
@@ -63,8 +69,7 @@ function requireLogin(req, res, next) {
 		next();
 	} else {
 		// Otherwise, we redirect him to login form
-		req.flash('warn', 'login needz yo!!');
-		//pour le rediriger...
+		flash(req, 'warn', 'login needz yo!!');
 		req.session.redir = req.path;
 		res.redirect('/login');
 	}
@@ -73,7 +78,6 @@ function requireLogin(req, res, next) {
 /**
  * routes
  */
-//app.get('/', routes.index);
 app.get('/', function(req, res) {
 	fs.readdir('./store', function(err, files) {
 		if (err) {
@@ -103,11 +107,6 @@ app.get('/session', requireLogin, function(req, res) {
 	else
 		req.session.views = 1;
 
-	console.log('session: ')
-	for (props in req.session) {
-		console.log(props + '\n');
-	};
-
 	res.render('session', {
 			title: 'session!'
 		,	sessionID: req.sessionID
@@ -119,8 +118,7 @@ app.get('/login', function(req, res) {
 });
 
 app.get('/logout', function(req, res) {
-	delete req.session.login;
-	//ne détruit pas la session... seulement .login
+	req.session.regenerate();
 	res.redirect('/');
 });
 
@@ -128,12 +126,11 @@ app.post('/login', function(req, res) {
 	users.authenticate(req.body.username, req.body.password, function(user) {
 		if (user) {
 			req.session.login = user.login;
-			//ps.. pas forcé de supprimé req.session.redir
 			var redir = req.session.redir || '/';
 			delete req.session.redir;
 			res.redirect(redir);
 		} else {
-			req.flash('warn', 'tough luck, login failed brother');
+			flash(req, 'warn', 'tough luck, login failed brother');
 			res.redirect('/login');
 		}
 	});
@@ -151,9 +148,14 @@ app.get('/store/:name', requireLogin, function(req, res) {
 	});
 });
 
+var server = app.listen(app.settings.port);
+
 /**
  * socket.io
  */
+var io = require('socket.io').listen(server);
+
+
 io.configure(function() {
 	io.set('log level', 1); //sinon il log beaucoup trop, ça me rend fou :)
 	io.set('authorization', function(data, callback) {
@@ -162,13 +164,15 @@ io.configure(function() {
 
 		//data est ce qui sera exposé dans socket.handshake.session
 		var cookie = parseCookie(data.headers.cookie);
-		data.sessionID = cookie['express.sid'];
+		//data.sessionID = cookie['express.sid'];
+		data.sessionID = cookie['express.sid'].split('.')[0];
 		data.sessionStore = sessionStore;
 
 		sessionStore.load(data.sessionID, function(err, session) {
-			if (err || !session)
+			if (err || !session) {
 				callback('Error', false);
-
+			}
+			
 			data.session = session;
 			callback(null, true);
 		});
@@ -205,5 +209,4 @@ io.sockets.on('connection', function (socket) {
 	});
 });
 
-app.listen(app.settings.port);
 console.log("Express server listening on port %d in %s mode", app.settings.port, app.settings.env);

@@ -14,9 +14,9 @@
 		"url": "https://github.com/Acekat/JaSMEd"
 	},
   "dependencies": {
-    "express": "~2.5.9",
+    "express": "~3.0.0",
     "jade": "~0.22.0",
-    "socket.io": "~0.9.4",
+    "socket.io": "~0.9.5",
     "stylus": "~0.24.0",
     "redis": "~0.7.1",
     "connect-redis": "~1.3.0",

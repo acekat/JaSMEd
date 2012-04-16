@@ -1,8 +1,8 @@
 extends layout
 
 block content
-	if (flash.warn)
-		p.flash.warn= flash.warn
+	include includes/flash
+
 	if (session.login)
 		p welcome #{session.login}!
 	p so far there isn't much here but you'll love it soon! promise!

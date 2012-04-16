@@ -7,6 +7,11 @@ block content
 	each val, key in session
 		unless (typeof val === 'function' || typeof val === 'object')
 			li #{key}: #{val}
+	p messages: 
+	ul
+	each val, key in session.messages
+		unless (typeof val === 'function' || typeof val === 'object')
+			li #{key}: #{val}
 	p cookie:
 	ul
 	each val, key in session.cookie

@@ -17,9 +17,8 @@ app.configure(function() {
 	app.set('port', 3000);
 	app.use(express.favicon());
 	app.use(express.logger('dev'));
-	app.use(express.static(__dirname + '/public'));
 	app.use(stylus.middleware({
-		  src: __dirname + '/views' //mettre ça ailleurs non ?
+		  src: __dirname + '/views'
 		, dest: __dirname + '/public'
 	}));
 	app.use(express.bodyParser());
@@ -30,6 +29,8 @@ app.configure(function() {
 		, store: sessionStore
 		, key: 'express.sid'
 	}));
+	// order matters: needs to be after stylus for it to recompile
+	app.use(express.static(__dirname + '/public')); 
 });
 
 app.configure('development', function(){

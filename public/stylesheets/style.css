@@ -1,4 +1,33 @@
-/*color variables*/
+/*
+ * CSS reset
+ */
+html,
+button,
+input,
+select,
+textarea {
+  font-family: sans-serif;
+  color: #222;
+}
+body {
+  margin: 0;
+  font-size: 1em;
+  line-height: 1.4;
+}
+a:focus {
+  outline: thin dotted;
+}
+a:hover,
+a:active {
+  outline: 0;
+}
+b,
+strong {
+  font-weight: bold;
+}
+/*
+ * Styling
+ */
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   min-width: 960px;
@@ -7,46 +36,37 @@ body {
 a {
   color: #00b7ff;
 }
-.float-left {
+header,
+footer {
+  padding: 0 20px;
+  background: #e0e0e0;
+}
+header {
+  overflow: hidden;
+}
+header h1 {
   float: left;
 }
-.float-right {
+header span {
+  color: #00b7ff;
+}
+header #credentials {
   float: right;
 }
-.clear-left {
-  clear: left;
-}
-.clearfix:after {
-  content: "";
-  clear: both;
-  display: block;
-}
-#header,
-#footer {
-  padding: 0 20px;
-  background: #f2f2f2;
-}
-#footer p {
+footer p {
   text-align: center;
-}
-.no {
-  font-size: 0.5em;
-  text-decoration: line-through;
 }
 #content {
   padding: 20px;
 }
 .flash {
   display: inline-block;
-  padding: 5px;
+  padding: 0 5px;
 }
 .warn {
   color: #df013a;
   background: #f5a9a9;
   border: 1px solid #df013a;
-}
-.blue {
-  color: #00b7ff;
 }
 .grid {
   width: 75%;

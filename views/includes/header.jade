@@ -1,10 +1,8 @@
-header#header.clearfix
-	h1#title.float-left
-		.no JaSMEd <span class="blue">Ja</span>va<span class="blue">S</span>cript <span class="blue">M</span>usic <span class="blue">Ed</span>itor
-		div
-			a(href='/') YAMEd™
-			<span class="blue">  Y</span>et <span class="blue">A</span>nother JS <span class="blue">M</span>usic <span class="blue">Ed</span>itor
-	#credentials.float-right
+header#header
+	h1#title 
+		a(href='/') JaSMEd
+		|  <span>Ja</span>va<span>S</span>cript <span>M</span>usic <span>Ed</span>itor
+	#credentials
 		if (session.login)
 			p locked in as 
 				span(class='login #{session.login}') #{session.login}

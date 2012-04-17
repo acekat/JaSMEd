@@ -1,0 +1,31 @@
+extends layout
+
+block scripts
+	script(src="/socket.io/socket.io.js")
+
+	// Vendor (order matters)
+	script(src='/javascripts/vendor/jquery-1.7.2.min.js')
+	script(src='/javascripts/vendor/underscore-min.js')
+	script(src='/javascripts/vendor/backbone-min.js')
+
+	// Backbone App
+	script(src='/javascripts/jasmed.js')
+	script(src='/javascripts/client.js')
+
+	// Modules
+	script(src='/javascripts/modules/grid.js')
+
+block content
+	section.grid
+		.grid-layer
+
+
+block template
+	script#bloc-template(type="text/template")
+		<% _.each(pitches, function(pitch) { %>
+		<div class="pitch <%= pitch %>">
+		<% for (i=1; i<=sub; i++) { %>
+		<div class="note sn-<%= i %>"></div>
+		<% }; %>	
+		</div>
+		<% }); %>

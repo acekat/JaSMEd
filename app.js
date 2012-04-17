@@ -19,16 +19,16 @@ app.configure(function() {
 	app.use(express.logger('dev'));
 	app.use(express.static(__dirname + '/public'));
 	app.use(stylus.middleware({
-			src: __dirname + '/views' //mettre ça ailleurs non ?
-		,	dest: __dirname + '/public'
+		  src: __dirname + '/views' //mettre ça ailleurs non ?
+		, dest: __dirname + '/public'
 	}));
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
 	app.use(express.cookieParser('Connect 2. needs a secret!'));
 	app.use(express.session({
-			secret: 'mama loves mambo'
+		  secret: 'mama loves mambo'
 		, store: sessionStore
-		,	key: 'express.sid'
+		, key: 'express.sid'
 	}));
 });
 
@@ -36,7 +36,9 @@ app.configure('development', function(){
 	app.use(express.errorHandler());
 });
 
-/** expose locals to view before rendering */
+/** 
+ * expose locals to view before rendering
+ */
 app.locals.use(function(req, res, done) {
 	res.locals.session = req.session;
 	res.locals.flashMessages = flash(req);
@@ -60,7 +62,9 @@ function flash(req, type, msg) {
 	}
 };
 
-/** Middleware for limited access */
+/** 
+ * Middleware for limited access 
+ */
 function requireLogin(req, res, next) {
 	if (req.session.login) {
 		// User is authenticated, let him in
@@ -74,7 +78,7 @@ function requireLogin(req, res, next) {
 }
 
 /**
- * routes
+ * Routes
  */
 app.get('/', function(req, res) {
 	fs.readdir('./store', function(err, files) {
@@ -145,6 +149,10 @@ app.get('/store/:name', requireLogin, function(req, res) {
 			,	pitches: core.pitches
 		});
 	});
+});
+
+app.get('/backbone', requireLogin, function(req, res) {
+	res.render('backbone');
 });
 
 var server = app.listen(app.settings.port);

@@ -1,4 +1,4 @@
-/*color variables*/
+// color variables
 thibaud = #44ACCF
 jaimito = #EE3E64
 acekat = #B7D84B 
@@ -6,6 +6,25 @@ esj = #8904B1
 grizix = #E2A741
 berthou = #000000
 
+
+/*
+ * CSS reset
+ */
+html, button, input, select, textarea 
+	font-family: sans-serif ; color: #222
+body
+	margin: 0 ; font-size: 1em ; line-height: 1.4
+a:focus
+	outline: thin dotted
+a:hover, a:active
+	outline: 0
+b, strong
+	font-weight: bold
+
+
+/*
+ * Styling
+ */
 body
 	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
 	min-width: 960px
@@ -14,57 +33,34 @@ body
 a
 	color: #00B7FF
 
-.float-left {
-	float: left;
-}
+header, footer
+	padding: 0 20px
+	background: #E0E0E0
 
-.float-right {
-	float: right;
-}
+header
+	overflow: hidden
+	h1
+		float: left
+	span
+		color: #00B7FF
+	#credentials
+		float: right
 
-.clear-left {
-	clear: left;
-}
+footer
+	p
+		text-align: center
 
-.clearfix:after {
-	content: "";
-	clear: both;
-	display: block;
-}
+#content
+	padding: 20px
 
-#header,
-#footer {
-	padding: 0 20px;
-	background: #F2F2F2;
-}
+.flash
+	display: inline-block
+	padding: 0 5px
 
-#footer p {
-	text-align: center;
-}
-
-.no {
-	font-size: .5em;
-	text-decoration: line-through;
-}
-
-#content {
-	padding: 20px;
-}
-
-.flash {
-	display: inline-block;
-	padding: 0 5px;
-}
-
-.warn {
-	color: #DF013A;
-	background: #F5A9A9;
-	border: 1px solid #DF013A;
-}
-
-.blue {
-	color: #00B7FF;
-}
+.warn
+	color: #DF013A
+	background: #F5A9A9
+	border: 1px solid #DF013A
 
 .grid
 	width: 75%

@@ -3,8 +3,10 @@ var express = require('express')
 	, connect = require('express/node_modules/connect')
 	, stylus = require('stylus')
 	, RedisStore = require('connect-redis')(express)
-	, parseCookie = connect.utils.parseCookie
+	, utils = connect.utils
+	,	cookieSecret = 'Connect 2. needs a secret!'
 	, sessionStore = new RedisStore()
+	,	sessionKey = 'JaSMEd.sid'
 	, fs = require('fs')
 	, users = require('./users')
 	, core = require('./core');
@@ -17,19 +19,20 @@ app.configure(function() {
 	app.set('port', 3000);
 	app.use(express.favicon());
 	app.use(express.logger('dev'));
-	app.use(express.static(__dirname + '/public'));
 	app.use(stylus.middleware({
-		  src: __dirname + '/views' //mettre ça ailleurs non ?
+		  src: __dirname + '/views'
 		, dest: __dirname + '/public'
 	}));
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
-	app.use(express.cookieParser('Connect 2. needs a secret!'));
+	app.use(express.cookieParser(cookieSecret));
 	app.use(express.session({
 		  secret: 'mama loves mambo'
 		, store: sessionStore
-		, key: 'express.sid'
+		, key: sessionKey
 	}));
+	// order matters: needs to be after stylus for it to recompile
+	app.use(express.static(__dirname + '/public')); 
 });
 
 app.configure('development', function(){
@@ -169,15 +172,19 @@ io.configure(function() {
 			callback('No cookie', false);
 
 		//data est ce qui sera exposé dans socket.handshake.session
-		var cookie = parseCookie(data.headers.cookie);
-		//data.sessionID = cookie['express.sid'];
-		data.sessionID = cookie['express.sid'].split('.')[0];
+		var cookie = utils.parseCookie(data.headers.cookie);
+		var sid = cookie[sessionKey].split('.')[0];
+		var signedSid = utils.sign(sid, cookieSecret);
+		
+		if (signedSid !== cookie[sessionKey])
+			callback('SID don\'t match', false);
+		
+		data.sessionID = sid;
 		data.sessionStore = sessionStore;
 
 		sessionStore.load(data.sessionID, function(err, session) {
-			if (err || !session) {
-				callback('Error', false);
-			}
+			if (err || !session)
+				callback('Error loading session', false);
 			
 			data.session = session;
 			callback(null, true);

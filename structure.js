@@ -68,7 +68,7 @@ jasmed.song = {
      */
     addTrack: function(name, layer) {
         if(!this.hasOwnProperty('tracks')) {
-            this.tracks = this.tracks;
+            this.tracks = [];
         }
         
         var newTrack = jasmed.track.extend({
@@ -130,22 +130,29 @@ jasmed.track = {
         
         var layer = start.layer,
             noteStart = start.start,
-            noteEnd = end.end;
+            noteEnd = end.end,
+            pgcd;
         if(start.layer != end.layer) {
             layer = jasmed.ppcm(start.layer, end.layer);
             noteStart = start.start*layer/start.layer;
             noteEnd = end.end*layer/end.layer;
         }
+        if((pgcd = jasmed.pgcd(layer, jasmed.pgcd(noteEnd, noteStart))) != 1) {
+            layer /= pgcd;
+            noteStart /= pgcd;
+            noteEnd /= pgcd;
+        }
+
         
         if(start.block == end.block) {
-            return startBlk.addNote(pitch, layer, noteStart, noteEnd);
+            return startBlk.addNote(pitch, -layer, noteStart, noteEnd);
+        } else {
+            var tmpRes = this.blocks[end.block].addNote(pitch, layer, 0, noteEnd, 0);
+            for(var i = end.block - 1 ; i > start.block ; i--) {
+                tmpRes = this.blocks[i].addNote(pitch, layer, 0, layer, -tmpRes.length);
+            }
+            return startBlk.addNote(pitch, layer, noteStart, layer, tmpRes.length);
         }
-        
-        var tmpRes = this.blocks[end.block].addNote(pitch, layer, 0, noteEnd, 0);
-        for(var i = end.block - 1 ; i > start.block ; i--) {
-            tmpRes = this.blocks[i].addNote(pitch, layer, 0, layer, -tmpRes.length);
-        }
-        return startBlk.addNote(pitch, layer, noteStart, layer, tmpRes.length);
     },
     
     /**
@@ -197,9 +204,11 @@ jasmed.block = {
      *           {number} length} The layer and length of the new note.
      */
     addNote: function(pitch, layer, start, end, length) {
-        var pgcd, i, ghost = length && length <= 0;
+        var pgcd, i, ghost = length !== undefined && length <= 0;
         if(!end) {
             end = start+1;
+        } else if(layer < 0) {
+            layer = -layer;
         } else if(length === undefined) {
             if((pgcd = jasmed.pgcd(layer, jasmed.pgcd(end, start))) != 1) {
                 layer /= pgcd;

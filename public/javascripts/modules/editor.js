@@ -3,7 +3,10 @@
 
 	// Dependencies
 
-	// Model: Layer
+	/*
+	 *	MODELS & COLLECTIONS
+	 */
+	// Layer
 	Editor.Layer = Backbone.Model.extend({
 
 		defaults : {
@@ -14,7 +17,7 @@
 		},
 
 		initialize : function() {
-			console.log('New Layer');
+			// console.log('New Layer');
 		},
 
 		toggleDisplay: function() {
@@ -23,13 +26,13 @@
 
 	});
 
-	// Collection: Layers
+	// Layers
 	Editor.Layers = Backbone.Collection.extend({
 
 		model: Editor.Layer,
 		
 		initialize : function() {
-			console.log('New Layers');
+			// console.log('New Layers');
 		},
 
 		displayed: function() {
@@ -38,57 +41,7 @@
 
 	});
 
-	// View: Layer
-	Editor.LayerView = Backbone.View.extend({
-
-		className: 'layer',
-
-		initialize: function() {
-			console.log('New Layer View');
-		},
-
-		render: function() {
-			var layer = this.model;
-			var layerTemplate = _.template($('#layer-template').html());
-			$(this.el)
-				.html(layerTemplate(layer.toJSON()))
-				.addClass('sub-'+layer.get('sub'))
-
-			console.log('Layer Displayed');
-			return this;
-		}
-	});
-
-	// View: Layers
-	Editor.LayersView = Backbone.View.extend({
-
-		el: '.layer-info',
-
-		initialize: function() {
-			console.log('New Layers View');
-
-			this.collection.on('add', this.newLayer, this);
-		},
-
-		events: {
-			"click .add-layer" : "addLayer"
-		},
-
-		newLayer: function(layer) {
-			var layerView = new Editor.LayerView({
-				model: layer
-			});
-			$('.b-'+this.model.get('order')).append(layerView.render().el);
-		},
-
-		addLayer: function(e) {
-			var layer = new Editor.Layer();
-			this.collection.add(layer);
-		}
-
-	});
-
-	// Model: Bloc
+	// Bloc
 	Editor.Bloc = Backbone.Model.extend({
 
 		defaults : function() {
@@ -98,9 +51,16 @@
 		},
 
 		initialize : function() {
-			console.log('New Bloc');
+			// console.log('New Bloc');
 			$('.add-bloc').before('<div class="bloc b-'+this.get("order")+'"></div>');
+			
 			this.layers = new Editor.Layers();
+			
+			/* DEBUG */
+			// console.log('Bloc ('+this.cid+') layers');
+			// console.log(this.layers);
+			/* DEBUG */
+
 			this.layersView = new Editor.LayersView({
 				collection: this.layers,
 				model: this
@@ -110,13 +70,13 @@
 
 	});
 
-	// Collection: Grid
+	// Grid
 	Editor.Grid = Backbone.Collection.extend({
 
 		model: Editor.Bloc,
 		
 		initialize : function() {
-			console.log('New Blocs');
+			// console.log('New Blocs');
 		},
 
 		nextOrder: function() {
@@ -126,13 +86,62 @@
 	});
 
 
-	// View: Bloc
+	/*
+	 *	VIEWS
+	 */
+	// Layer
+	Editor.LayerView = Backbone.View.extend({
+
+		className: 'layer',
+
+		initialize: function() {
+			// console.log('New Layer View');
+		},
+
+		render: function() {
+			var layer = this.model;
+			var layerTemplate = _.template($('#layer-template').html());
+
+			$(this.el)
+				.html(layerTemplate(layer.toJSON()))
+				.addClass('sub-'+layer.get('sub'))
+
+			return this;
+		}
+	});
+
+	// Layers
+	Editor.LayersView = Backbone.View.extend({
+
+		el: '.bloc',
+
+		initialize: function() {
+			// console.log('New Layers View');
+
+			this.collection.on('add', this.addLayer, this);
+		},
+
+		addLayer: function(layer) {
+			var layerView = new Editor.LayerView({
+				model: layer
+			});
+
+			$('.b-'+this.model.get('order')).prepend(layerView.render().el);
+		}
+
+	});
+
+	// Bloc
 	Editor.BlocView = Backbone.View.extend({
 
 		className: 'bloc-layer-info',
 
 		initialize: function() {
-			console.log('New Bloc View');
+			// console.log('New Bloc View');
+		},
+
+		events: {
+			"click .add-layer" : "newLayer"
 		},
 
 		render: function() {
@@ -145,34 +154,45 @@
 				}))
 				.addClass('bli-'+bloc.get('order'));
 
-			console.log('Bloc Displayed');
+			// console.log('Bloc Displayed');
 			return this;
+		},
+
+		newLayer: function(e) {
+			var layer = new Editor.Layer();
+			this.model.layers.add(layer);
+
+			/* DEBUG */
+			// console.log('LayersView collection: ');
+			// console.log(this.model.layers);
+			/* DEBUG */
 		}
+
 	});
 
-	// View: Grid
+	// Editor
 	Editor.EditorView = Backbone.View.extend({
 
 		el: '.editor',
 
 		initialize: function() {
-			console.log('New Editor View');
+			// console.log('New Editor View');
 
-			this.collection.on('add', this.newBloc, this);
+			this.collection.on('add', this.addBloc, this);
 		},
 
 		events: {
-			"click .add-bloc" : "addBloc"
+			"click .add-bloc" : "newBloc"
 		},
 
-		newBloc: function(bloc) {
+		addBloc: function(bloc) {
 			var blocView = new Editor.BlocView({
 				model: bloc
 			});
 			$(".layer-info").append(blocView.render().el);
 		},
 
-		addBloc: function(e) {
+		newBloc: function(e) {
 			var bloc = new Editor.Bloc();
 			this.collection.add(bloc);
 		}
@@ -180,15 +200,19 @@
 	});
 
 
-	// Router
+	/*
+	 *	ROUTER
+	 */
 	Editor.Router = Backbone.Router.extend({
 
 		initialize: function() {
-			console.log('Grid creation...');
+			// console.log('Grid creation...');
 			Editor.grid = new Editor.Grid();
 
-			console.log('GridView creation...');
-			Editor.editorView = new Editor.EditorView({ collection : Editor.grid });
+			// console.log('GridView creation...');
+			Editor.editorView = new Editor.EditorView({ 
+				collection : Editor.grid 
+			});
 
 			// Add 2 Blocs to begin
 			Editor.grid.add(new Editor.Bloc());

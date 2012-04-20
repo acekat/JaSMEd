@@ -25,7 +25,7 @@ var song = [
 ], i, j, k;
 
 
-var beat = struct.song.extend({
+var beat = struct.createSong({
     title: "Jack by beat",
     tempo: 500,
     blocks: 27
@@ -128,7 +128,7 @@ beatrack.addNote(song[1][2][1], {
 });
 
 
-var block = struct.song.extend();
+var block = struct.createSong();
 
 var black = block.addTrack("Jako", 4);
 

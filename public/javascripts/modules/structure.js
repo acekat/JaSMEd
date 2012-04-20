@@ -2,6 +2,10 @@
 
 var utils = jasmed.module('utils');
 
+struct.createSong = function(props) {
+    return utils.extend(struct.song, props);
+};
+
 /** @class */
 struct.song = {
     title: "Untitled",
@@ -20,7 +24,7 @@ struct.song = {
             this.tracks = [];
         }
         
-        var newTrack = _.extend(struct.track, {
+        var newTrack = utils.extend(struct.track, {
             name: name || "Track " + (this.tracks.length+1)
         });
         newTrack.addBlocks(this.blocks);
@@ -109,7 +113,7 @@ struct.track = {
     addBlocks: function(n, pos) {
         var i, nb = n||1, add = [];
         for(i = 0 ; i < nb ; i++) {
-            add.push(_.extend(struct.block));
+            add.push(utils.extend(struct.block));
         }
         if(pos) {
             add = add.concat(this.blocks.slice(pos));
@@ -135,6 +139,7 @@ struct.track = {
 struct.block = {
     lnFw: false,
     lnBw: false,
+    layers: {},
     
     /**
      * Add a note to the block.
@@ -165,16 +170,16 @@ struct.block = {
         var result = {layer: layer,
                       length: length};
         
-        if(!(layer in this)) {
+        if(!(layer in this.layers)) {
             this.initLayer(layer);
         }
         
-        this[layer][start].push(_.extend(struct.note, {
+        this.layers[layer][start].push(utils.extend(struct.note, {
             pitch: pitch,
             length: ghost ? -length : length
         }));
         for(i = start+1, length-- ; i < end ; i++, length--) {
-            this[layer][i].push(_.extend(struct.note, {
+            this.layers[layer][i].push(utils.extend(struct.note, {
                 pitch: pitch,
                 length: -length
             }));
@@ -187,9 +192,12 @@ struct.block = {
      * @param {number} layer
      */
     initLayer: function(layer) {
-        this[layer] = [];
+        if(!this.hasOwnProperty('layers')) {
+            this.layers = {};
+        }
+        this.layers[layer] = [];
         for(var i = 0 ; i < layer ; i++) {
-            this[layer][i] = [];
+            this.layers[layer][i] = [];
         }
     }
 };

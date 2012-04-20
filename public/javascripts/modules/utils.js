@@ -35,4 +35,8 @@ utils.ppcm = function(a, b) {
     return a*b/utils.pgcd(a, b);
 };
 
+utils.extend = function(parent, props) {
+    return _.extend(Object.create(parent), props);
+};
+
 })(jasmed.module('utils'));

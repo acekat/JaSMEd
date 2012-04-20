@@ -13,19 +13,34 @@ block scripts
 	script(src='/javascripts/client.js')
 
 	// Modules
-	script(src='/javascripts/modules/grid.js')
+	script(src='/javascripts/modules/editor.js')
 
 block content
-	section.grid
-		.grid-layer
+	section.editor
+		.layer-info-win
+			.layer-info
+		.piano-win
+			p piano
+		.grid-win
+			.grid
+				.bloc.add-bloc
+					p add
 
 
+// TEMPLATE
 block template
-	script#bloc-template(type="text/template")
-		<% _.each(pitches, function(pitch) { %>
-		<div class="pitch <%= pitch %>">
+	script#layer-template(type="text/template")
+		<% _.each(pitches, function(pitch, i) { %>
+		<div class="pitch <%= pitch %> p-<%= i+1 %>">
 		<% for (i=1; i<=sub; i++) { %>
 		<div class="note sn-<%= i %>"></div>
 		<% }; %>	
 		</div>
 		<% }); %>
+
+	script#layer-info-template(type="text/template")
+		<% _.each(layers, function(layer) { %>
+		button
+			<%= layer.get("sub") %>
+		<% }); %>
+		button.add-layer +

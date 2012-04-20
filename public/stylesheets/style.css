@@ -6,7 +6,6 @@ button,
 input,
 select,
 textarea {
-  font-family: sans-serif;
   color: #222;
 }
 body {
@@ -25,6 +24,13 @@ b,
 strong {
   font-weight: bold;
 }
+/*
+.clearfix:before, .clearfix:after
+	content: ""
+	display: table
+.clearfix:after
+	clear: both
+*/
 /*
  * Styling
  */
@@ -57,6 +63,7 @@ footer p {
   text-align: center;
 }
 #content {
+  overflow: hidden;
   padding: 20px;
 }
 .flash {
@@ -68,72 +75,108 @@ footer p {
   background: #f5a9a9;
   border: 1px solid #df013a;
 }
-.grid {
+section.editor {
   width: 75%;
-  height: 300px;
   margin: auto;
+}
+section.editor .layer-info-win {
+  margin-left: 40px;
+  background: #ddd;
+  overflow: hidden;
+}
+section.editor .layer-info {
+  display: table-cell;
+  white-space: nowrap;
+  width: 999px;
+}
+section.editor .bloc-layer-info {
+  display: inline-block;
+  width: 25%;
+  border-right: 1px solid #aaa;
+}
+section.editor .bloc-layer-info button.add-layer {
+  float: right;
+}
+section.editor .piano-win {
+  float: left;
+  width: 40px;
+  height: 300px;
+  background: #ddd;
+  overflow: hidden;
+}
+section.editor .grid-win {
+  height: 300px;
   background: #ddd;
   border: 1px solid;
   overflow: auto;
 }
-.grid-layer {
+section.editor .grid {
   display: table-cell;
   white-space: nowrap;
-  width: 9999px;
+  width: 999px;
 }
-.bar-container {
-  display: inline-table;
+section.editor .bloc {
+  display: inline-block;
+  vertical-align: top;
   width: 25%;
   border-right: 1px solid #aaa;
 }
-.pitch {
+section.editor .add-bloc {
+  width: 40px;
+  height: 100%;
+  background: #bbb;
+}
+section.editor .layer {
+  display: table;
+  width: 100%;
+}
+section.editor .pitch {
   display: table-row;
 }
-.note {
+section.editor .note {
   display: table-cell;
-  width: 1%;
   height: 25px;
   border-right: 1px dotted #bbb;
 }
-.pitch:nth-child(odd) {
+section.editor .pitch:nth-child(odd) {
   background: #ccc;
 }
-.pitch:nth-child(even) {
+section.editor .pitch:nth-child(even) {
   background: #ddd;
 }
-.login.thibaud {
+section.editor .login.thibaud {
   color: #44accf;
 }
-.login.jaimito {
+section.editor .login.jaimito {
   color: #ee3e64;
 }
-.login.acekat {
+section.editor .login.acekat {
   color: #b7d84b;
 }
-.login.esj {
+section.editor .login.esj {
   color: #8904b1;
 }
-.login.grizix {
+section.editor .login.grizix {
   color: #e2a741;
 }
-.login.berthou {
+section.editor .login.berthou {
   color: #000;
 }
-.note.on.login-thibaud {
+section.editor .note.on.login-thibaud {
   background: #44accf;
 }
-.note.on.login-jaimito {
+section.editor .note.on.login-jaimito {
   background: #ee3e64;
 }
-.note.on.login-acekat {
+section.editor .note.on.login-acekat {
   background: #b7d84b;
 }
-.note.on.login-esj {
+section.editor .note.on.login-esj {
   background: #8904b1;
 }
-.note.on.login-grizix {
+section.editor .note.on.login-grizix {
   background: #e2a741;
 }
-.note.on.login-berthou {
+section.editor .note.on.login-berthou {
   background: #000;
 }

@@ -1,60 +1,13 @@
-/** @namespace */
-var jasmed = jasmed || {};
+(function(struct) {
 
-/**
- * Return the divisors of a number.
- * @param {number} n
- * @returns {number[]}
- */
-jasmed.divisors = function(n) {
-    var i, max = Math.floor(Math.sqrt(n)), result = [];
-    for(i = 2 ; i <= max ; i++) {
-        if(!n%i) {
-            result.push(i, n/i);
-        }
-    }
-    return result; // sort ?
-};
+var utils = jasmed.module('utils');
 
-/**
- * Return the pgcd of two numbers.
- * @param {number} a
- * @param {number} b
- * @returns {number}
- */
-jasmed.pgcd = function(a, b) {
-    return b === 0 ? a : jasmed.pgcd(b, a%b);
-};
-
-/**
- * Return the ppcm of two numbers.
- * @param {number} a
- * @param {number} b
- * @returns {number}
- */
-jasmed.ppcm = function(a, b) {
-    return a*b/jasmed.pgcd(a, b);
-};
-
-/**
- * Make a copy of the caller adding new properties.
- * Function to use as a copy constructor in a class.
- * @param {Object} [props] The properties to add.
- * @returns {Object} The new object created.
- */
-jasmed.extend = function(props) {
-    var prop, obj;
-    obj = Object.create(this);
-    for(prop in props) {
-        if(props.hasOwnProperty(prop)) {
-            obj[prop] = props[prop];
-        }
-    }
-    return obj;
+struct.createSong = function(props) {
+    return utils.inherits(struct.song, props);
 };
 
 /** @class */
-jasmed.song = {
+struct.song = {
     title: "Untitled",
     tempo: 4000, // in miliseconds per block
     tracks: [],
@@ -71,7 +24,7 @@ jasmed.song = {
             this.tracks = [];
         }
         
-        var newTrack = jasmed.track.extend({
+        var newTrack = utils.inherits(struct.track, {
             name: name || "Track " + (this.tracks.length+1)
         });
         newTrack.addBlocks(this.blocks);
@@ -97,14 +50,11 @@ jasmed.song = {
             this.tracks[i].addBlocks(n, pos);
         }
         return (this.blocks += n || 1);
-    },
-    
-    /** @see jasmed.extend */
-    extend: jasmed.extend
+    }
 };
 
 /** @class */
-jasmed.track = {
+struct.track = {
     name: "New Track",
     instrument: "Piano",
     blocks: [],
@@ -119,7 +69,7 @@ jasmed.track = {
      *         {number} layer,
      *         {number} end} [end=start+1] Block, layer and index of the cell just after the note.
      * @returns {{number} layer,
-     *           {number} length} The layer and length of the new note.
+     *           {number} duration} The layer and duration of the new note.
      */
     addNote: function(pitch, start, end) {
         var startBlk = this.blocks[start.block];
@@ -133,11 +83,11 @@ jasmed.track = {
             noteEnd = end.end,
             pgcd;
         if(start.layer != end.layer) {
-            layer = jasmed.ppcm(start.layer, end.layer);
+            layer = utils.ppcm(start.layer, end.layer);
             noteStart = start.start*layer/start.layer;
             noteEnd = end.end*layer/end.layer;
         }
-        if((pgcd = jasmed.pgcd(layer, jasmed.pgcd(noteEnd, noteStart))) != 1) {
+        if((pgcd = utils.pgcd(layer, utils.pgcd(noteEnd, noteStart))) != 1) {
             layer /= pgcd;
             noteStart /= pgcd;
             noteEnd /= pgcd;
@@ -149,21 +99,21 @@ jasmed.track = {
         } else {
             var tmpRes = this.blocks[end.block].addNote(pitch, layer, 0, noteEnd, 0);
             for(var i = end.block - 1 ; i > start.block ; i--) {
-                tmpRes = this.blocks[i].addNote(pitch, layer, 0, layer, -tmpRes.length);
+                tmpRes = this.blocks[i].addNote(pitch, layer, 0, layer, -tmpRes.duration);
             }
-            return startBlk.addNote(pitch, layer, noteStart, layer, tmpRes.length);
+            return startBlk.addNote(pitch, layer, noteStart, layer, tmpRes.duration);
         }
     },
     
     /**
      * Add blocks to the track.
      * Should not be used.
-     * @see jasmed.song.addBlocks 
+     * @see struct.song.addBlocks 
      */
     addBlocks: function(n, pos) {
         var i, nb = n||1, add = [];
         for(i = 0 ; i < nb ; i++) {
-            add.push(jasmed.block.extend({}));
+            add.push(utils.inherits(struct.block));
         }
         if(pos) {
             add = add.concat(this.blocks.slice(pos));
@@ -182,16 +132,14 @@ jasmed.track = {
         for(i = 0 ; i < n ; i++) {
             this.blocks[i].initLayer(layer);
         }
-    },
-    
-    /** @see jasmed.extend */
-    extend: jasmed.extend
+    }
 };
 
 /** @class */
-jasmed.block = {
+struct.block = {
     lnFw: false,
     lnBw: false,
+    layers: {},
     
     /**
      * Add a note to the block.
@@ -199,41 +147,41 @@ jasmed.block = {
      * @param {number} layer The layer in which add the note.
      * @param {number} start Index of the cell where the note starts.
      * @param {number} [end=start+1] Index of the cell just after the en of the note.
-     * @param {number} [length] Should note be used.
+     * @param {number} [duration] Should note be used.
      * @returns {{number} layer,
-     *           {number} length} The layer and length of the new note.
+     *           {number} duration} The layer and duration of the new note.
      */
-    addNote: function(pitch, layer, start, end, length) {
-        var pgcd, i, ghost = length !== undefined && length <= 0;
+    addNote: function(pitch, layer, start, end, duration) {
+        var pgcd, i, ghost = duration !== undefined && duration <= 0;
         if(!end) {
             end = start+1;
         } else if(layer < 0) {
             layer = -layer;
-        } else if(length === undefined) {
-            if((pgcd = jasmed.pgcd(layer, jasmed.pgcd(end, start))) != 1) {
+        } else if(duration === undefined) {
+            if((pgcd = utils.pgcd(layer, utils.pgcd(end, start))) != 1) {
                 layer /= pgcd;
                 start /= pgcd;
                 end /= pgcd;
             }
         }
         
-        length = ghost ? -length : length||0;
-        length += end - start;
+        duration = ghost ? -duration : duration||0;
+        duration += end - start;
         var result = {layer: layer,
-                      length: length};
+                      duration: duration};
         
-        if(!(layer in this)) {
+        if(!(layer in this.layers)) {
             this.initLayer(layer);
         }
         
-        this[layer][start].push(jasmed.note.extend({
+        this.layers[layer][start].push(utils.inherits(struct.note, {
             pitch: pitch,
-            length: ghost ? -length : length
+            duration: ghost ? -duration : duration
         }));
-        for(i = start+1, length-- ; i < end ; i++, length--) {
-            this[layer][i].push(jasmed.note.extend({
+        for(i = start+1, duration-- ; i < end ; i++, duration--) {
+            this.layers[layer][i].push(utils.inherits(struct.note, {
                 pitch: pitch,
-                length: -length
+                duration: -duration
             }));
         }
         return result;
@@ -244,21 +192,20 @@ jasmed.block = {
      * @param {number} layer
      */
     initLayer: function(layer) {
-        this[layer] = [];
-        for(var i = 0 ; i < layer ; i++) {
-            this[layer][i] = [];
+        if(!this.hasOwnProperty('layers')) {
+            this.layers = {};
         }
-    },
-    
-    /** @see jasmed.extend */
-    extend: jasmed.extend
+        this.layers[layer] = [];
+        for(var i = 0 ; i < layer ; i++) {
+            this.layers[layer][i] = [];
+        }
+    }
 };
 
 /** @class */
-jasmed.note = {
+struct.note = {
     pitch: 0,
-    length: 1,
-    
-    /** @see jasmed.extend */
-    extend: jasmed.extend
+    duration: 1
 };
+
+})(jasmed.module('struct'));

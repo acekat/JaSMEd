@@ -1,3 +1,5 @@
+var struct = jasmed.module('struct');
+
 var song = [
     [
         [4, 60],
@@ -23,7 +25,7 @@ var song = [
 ], i, j, k;
 
 
-var beat = jasmed.song.extend({
+var beat = struct.createSong({
     title: "Jack by beat",
     tempo: 500,
     blocks: 27
@@ -126,7 +128,7 @@ beatrack.addNote(song[1][2][1], {
 });
 
 
-var block = jasmed.song.extend();
+var block = struct.createSong();
 
 var black = block.addTrack("Jako", 4);
 

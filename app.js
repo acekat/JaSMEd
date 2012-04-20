@@ -1,5 +1,4 @@
 var express = require('express')
-	, http = require('http')
 	, connect = require('express/node_modules/connect')
 	, stylus = require('stylus')
 	, RedisStore = require('connect-redis')(express)

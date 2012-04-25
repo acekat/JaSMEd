@@ -40,7 +40,7 @@ block template
 
 	script#layer-info-template(type="text/template")
 		<% _.each(layers, function(layer) { %>
-		button
+		button.edit-layer
 			<%= layer.get("sub") %>
 		<% }); %>
 		button.add-layer +

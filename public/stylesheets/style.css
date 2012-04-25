@@ -94,7 +94,7 @@ section.editor .bloc-layer-info {
   width: 25%;
   border-right: 1px solid #aaa;
 }
-section.editor .bloc-layer-info button.add-layer {
+section.editor .bloc-layer-info .add-layer {
   float: right;
 }
 section.editor .piano-win {
@@ -116,6 +116,7 @@ section.editor .grid {
   width: 999px;
 }
 section.editor .bloc {
+  position: relative;
   display: inline-block;
   vertical-align: top;
   width: 25%;
@@ -127,6 +128,7 @@ section.editor .add-bloc {
   background: #bbb;
 }
 section.editor .layer {
+  position: absolute;
   display: table;
   width: 100%;
 }

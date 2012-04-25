@@ -13,15 +13,14 @@
 			sub: 4,
 			pitches: ['do4', 'do#4', 're4', 're#4', 'mi4', 'fa4', 'fa#4', 'sol4', 'sol#4', 'la4', 'sib4', 'si4',
 						'do5', 'do#5', 're5', 're#5', 'mi5', 'fa5', 'fa#5', 'sol5', 'sol#5', 'la5', 'sib5', 'si5'],
-			displayed: true
+			editable: true
 		},
 
 		initialize : function() {
-			// console.log('New Layer');
 		},
 
-		toggleDisplay: function() {
-			displayed: !this.get("displayed");
+		toggleEdit: function() {			
+			this.set({ "editable" : !this.get("editable")});
 		}
 
 	});
@@ -32,11 +31,18 @@
 		model: Editor.Layer,
 		
 		initialize : function() {
-			// console.log('New Layers');
 		},
 
-		displayed: function() {
-			return this.filter(function(layer){ return layer.get('displayed'); });
+		editable: function() {
+			return this.find(function(layer) { 
+				return layer.get('editable'); 
+			});
+		},
+
+		getSub: function(sub) {
+			return this.find(function(layer) {
+				return (layer.get('sub') == sub);
+			})
 		}
 
 	});
@@ -51,22 +57,15 @@
 		},
 
 		initialize : function() {
-			// console.log('New Bloc');
 			$('.add-bloc').before('<div class="bloc b-'+this.get("order")+'"></div>');
 			
 			this.layers = new Editor.Layers();
-			
-			/* DEBUG */
-			// console.log('Bloc ('+this.cid+') layers');
-			// console.log(this.layers);
-			/* DEBUG */
-
 			this.layersView = new Editor.LayersView({
 				collection: this.layers,
 				model: this
 			});
-			this.layers.add(new Editor.Layer());
-		},
+			this.layers.add();
+		}
 
 	});
 
@@ -76,7 +75,6 @@
 		model: Editor.Bloc,
 		
 		initialize : function() {
-			// console.log('New Blocs');
 		},
 
 		nextOrder: function() {
@@ -95,15 +93,13 @@
 		className: 'layer',
 
 		initialize: function() {
-			// console.log('New Layer View');
+			this.layerTemplate = _.template($('#layer-template').html());
 		},
 
 		render: function() {
 			var layer = this.model;
-			var layerTemplate = _.template($('#layer-template').html());
-
 			$(this.el)
-				.html(layerTemplate(layer.toJSON()))
+				.html(this.layerTemplate(layer.toJSON()))
 				.addClass('sub-'+layer.get('sub'))
 
 			return this;
@@ -116,9 +112,8 @@
 		el: '.bloc',
 
 		initialize: function() {
-			// console.log('New Layers View');
-
 			this.collection.on('add', this.addLayer, this);
+			this.collection.on('change:editable', this.switchEdit, this);
 		},
 
 		addLayer: function(layer) {
@@ -126,7 +121,14 @@
 				model: layer
 			});
 
-			$('.b-'+this.model.get('order')).prepend(layerView.render().el);
+			$('.b-'+this.model.get('order')).append(layerView.render().el);
+		},
+
+		switchEdit: function(layer) {
+			if (layer.get('editable')) {
+				// TODO: find a cleaner way
+				$('.b-'+this.model.get('order')+' .sub-'+layer.get('sub')).appendTo('.b-'+this.model.get('order'));
+			};
 		}
 
 	});
@@ -137,35 +139,49 @@
 		className: 'bloc-layer-info',
 
 		initialize: function() {
-			// console.log('New Bloc View');
+			this.layerInfoTemplate = _.template($('#layer-info-template').html());
+
+			this.model.layers.on('all', this.actualize, this);
 		},
 
 		events: {
-			"click .add-layer" : "newLayer"
+			"click .add-layer" : "newLayer",
+			"click .edit-layer" : "editLayer"
 		},
 
 		render: function() {
 			var bloc = this.model;
-			var layerInfoTemplate = _.template($('#layer-info-template').html());
 			$(this.el)
-				.html(layerInfoTemplate({ 
-					layers: bloc.layers.models,
-					order: bloc.get("order")
+				.html(this.layerInfoTemplate({ 
+					layers: bloc.layers.models
 				}))
 				.addClass('bli-'+bloc.get('order'));
 
-			// console.log('Bloc Displayed');
 			return this;
 		},
 
-		newLayer: function(e) {
-			var layer = new Editor.Layer();
-			this.model.layers.add(layer);
+		actualize: function() {
+			$(this.el).html(this.layerInfoTemplate({ 
+				layers: this.model.layers.models
+			}));
+		},
 
-			/* DEBUG */
-			// console.log('LayersView collection: ');
-			// console.log(this.model.layers);
-			/* DEBUG */
+		newLayer: function(e) {			
+			this.model.layers.editable().toggleEdit();
+			this.model.layers.add({
+				sub: 2
+			});
+
+		},
+
+		editLayer: function(e) {
+			var layers = this.model.layers;
+			var sub = e.target.innerHTML;
+
+			if (layers.editable() !== layers.getSub(sub)) {
+				layers.editable().toggleEdit();
+				layers.getSub(sub).toggleEdit();
+			};
 		}
 
 	});
@@ -176,9 +192,7 @@
 		el: '.editor',
 
 		initialize: function() {
-			// console.log('New Editor View');
-
-			this.collection.on('add', this.addBloc, this);
+			this.collection.on('add', this.addBloc);
 		},
 
 		events: {
@@ -193,8 +207,7 @@
 		},
 
 		newBloc: function(e) {
-			var bloc = new Editor.Bloc();
-			this.collection.add(bloc);
+			this.collection.add();
 		}
 
 	});
@@ -206,17 +219,15 @@
 	Editor.Router = Backbone.Router.extend({
 
 		initialize: function() {
-			// console.log('Grid creation...');
 			Editor.grid = new Editor.Grid();
 
-			// console.log('GridView creation...');
 			Editor.editorView = new Editor.EditorView({ 
 				collection : Editor.grid 
 			});
 
 			// Add 2 Blocs to begin
-			Editor.grid.add(new Editor.Bloc());
-			Editor.grid.add(new Editor.Bloc());
+			Editor.grid.add();
+			Editor.grid.add();
 		}
 
 	});

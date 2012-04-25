@@ -94,8 +94,16 @@ section.editor .bloc-layer-info {
   width: 25%;
   border-right: 1px solid #aaa;
 }
-section.editor .bloc-layer-info .add-layer {
-  float: right;
+section.editor .layer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+section.editor .layer-list li {
+  float: left;
+}
+section.editor .add-layer {
+  width: 20px;
 }
 section.editor .piano-win {
   float: left;

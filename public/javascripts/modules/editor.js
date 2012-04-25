@@ -145,7 +145,7 @@
 		},
 
 		events: {
-			"click .add-layer" : "newLayer",
+			"keypress .add-layer" : "newLayerOnEnter",
 			"click .edit-layer" : "editLayer"
 		},
 
@@ -166,17 +166,33 @@
 			}));
 		},
 
-		newLayer: function(e) {			
-			this.model.layers.editable().toggleEdit();
-			this.model.layers.add({
-				sub: 2
-			});
+		newLayerOnEnter: function(e) {
+			var layers = this.model.layers;
+			var input = this.$('.add-layer');
+			var text = input.val();
+			var sub, layer;
 
+			if (!text || e.keyCode != 13) return;
+			if (!isNaN(text) && ((sub = parseInt(text)) == text)) {
+				// Layer already exist
+				if (layers.getSub(sub)) {
+					this.editLayer(sub);
+					input.val('');
+					return;
+				}
+
+				// Create new one
+				layers.editable().toggleEdit();
+				layers.add({
+					sub: sub
+				});
+			}
+			input.val('');
 		},
 
 		editLayer: function(e) {
 			var layers = this.model.layers;
-			var sub = e.target.innerHTML;
+			var sub = typeof(e)=='object' ? e.target.innerHTML : e;
 
 			if (layers.editable() !== layers.getSub(sub)) {
 				layers.editable().toggleEdit();
@@ -228,6 +244,10 @@
 			// Add 2 Blocs to begin
 			Editor.grid.add();
 			Editor.grid.add();
+
+			// for (var i = 0; i < 32; i++) {
+			// 	Editor.grid.add();
+			// };
 		}
 
 	});

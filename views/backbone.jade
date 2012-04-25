@@ -39,8 +39,12 @@ block template
 		<% }); %>
 
 	script#layer-info-template(type="text/template")
-		<% _.each(layers, function(layer) { %>
-		button.edit-layer
-			<%= layer.get("sub") %>
-		<% }); %>
-		button.add-layer +
+		ul.layer-list
+			<% _.each(layers, function(layer) { %>
+			li
+				button.edit-layer
+					<%= layer.get("sub") %>
+			<% }); %>
+			li
+				input.add-layer(type="text", placeholder=" +")
+		

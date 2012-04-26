@@ -24,14 +24,13 @@ b,
 strong {
   font-weight: bold;
 }
-.clearfix:before,
-.clearfix:after {
-  content: "";
-  display: table;
-}
-.clearfix:after {
-  clear: both;
-}
+/*
+.clearfix:before, .clearfix:after
+	content: ""
+	display: table
+.clearfix:after
+	clear: both
+*/
 /*
  * Styling
  */
@@ -79,13 +78,6 @@ footer p {
 section.editor {
   width: 75%;
   margin: auto;
-/*
-	.pitch:nth-child(odd)
-		background: #ccc
-
-	.pitch:nth-child(even)
-		background: #ddd
-	*/
 }
 section.editor .layer-info-win {
   margin-left: 40px;
@@ -102,16 +94,8 @@ section.editor .bloc-layer-info {
   width: 25%;
   border-right: 1px solid #aaa;
 }
-section.editor .layer-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-section.editor .layer-list li {
-  float: left;
-}
-section.editor .add-layer {
-  width: 20px;
+section.editor .bloc-layer-info button.add-layer {
+  float: right;
 }
 section.editor .piano-win {
   float: left;
@@ -127,22 +111,22 @@ section.editor .grid-win {
   overflow: auto;
 }
 section.editor .grid {
-  background: #ddd url("../images/grid-bg.png");
+  display: table-cell;
   white-space: nowrap;
+  width: 999px;
 }
 section.editor .bloc {
-  display: inline-block;
-  position: relative;
+  display: inline-table;
   vertical-align: top;
   width: 25%;
   border-right: 1px solid #aaa;
 }
 section.editor .add-bloc {
-  display: inline-block;
+  width: 40px;
   height: 100%;
+  background: #bbb;
 }
 section.editor .layer {
-  position: absolute;
   display: table;
   width: 100%;
 }
@@ -151,10 +135,14 @@ section.editor .pitch {
 }
 section.editor .note {
   display: table-cell;
-  height: 20px;
-}
-section.editor .layer:last-child .note {
+  height: 25px;
   border-right: 1px dotted #bbb;
+}
+section.editor .pitch:nth-child(odd) {
+  background: #ccc;
+}
+section.editor .pitch:nth-child(even) {
+  background: #ddd;
 }
 section.editor .login.thibaud {
   color: #44accf;

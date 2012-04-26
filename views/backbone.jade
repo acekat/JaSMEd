@@ -1,21 +1,27 @@
 extends layout
 
+block stylesheets
+	link(rel="stylesheet", href="/stylesheets/style.css")
+
 block scripts
 	script(src="/socket.io/socket.io.js")
 
 	// Vendor (order matters)
-	script(src='/javascripts/vendor/jquery-1.7.2.min.js')
-	script(src='/javascripts/vendor/underscore-min.js')
-	script(src='/javascripts/vendor/backbone-min.js')
+	script(src="/javascripts/vendor/jquery-1.7.2.min.js")
+	script(src="/javascripts/vendor/underscore-min.js")
+	script(src="/javascripts/vendor/backbone-min.js")
 
 	// Backbone App
-	script(src='/javascripts/jasmed.js')
-	script(src='/javascripts/client.js')
+	script(src="/javascripts/jasmed.js")
+	script(src="/javascripts/client.js")
 
 	// Modules
-	script(src='/javascripts/modules/editor.js')
+	script(src="/javascripts/modules/editor.js")
 
 block content
+	section.instrument
+	section.utils
+	section.player
 	section.editor
 		.layer-info-win
 			.layer-info
@@ -23,8 +29,7 @@ block content
 			p piano
 		.grid-win
 			.grid
-				.bloc.add-bloc
-					p add
+				button.add-bloc +
 
 
 // TEMPLATE
@@ -42,8 +47,7 @@ block template
 		ul.layer-list
 			<% _.each(layers, function(layer) { %>
 			li
-				button.edit-layer
-					<%= layer.get("sub") %>
+				button.edit-layer <%= layer.get("sub") %>
 			<% }); %>
 			li
 				input.add-layer(type="text", placeholder=" +")

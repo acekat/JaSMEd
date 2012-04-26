@@ -21,13 +21,11 @@ a:hover, a:active
 b, strong
 	font-weight: bold
 
-/*
 .clearfix:before, .clearfix:after
 	content: ""
 	display: table
 .clearfix:after
 	clear: both
-*/
 
 /*
  * Styling
@@ -113,21 +111,19 @@ section.editor
 		overflow: auto
 
 	.grid
-		display: table-cell
+		background: #ddd url("../images/grid-bg.png")
 		white-space: nowrap
-		width: 999px
 
 	.bloc
-		position: relative
 		display: inline-block
+		position: relative
 		vertical-align: top
 		width: 25%
 		border-right: 1px solid #aaa
 
 	.add-bloc
-		width: 40px
+		display: inline-block
 		height: 100%
-		background: #bbb
 
 	.layer
 		position: absolute
@@ -139,14 +135,18 @@ section.editor
 		
 	.note
 		display: table-cell
-		height: 25px
+		height: 20px
+
+	.layer:last-child .note
 		border-right: 1px dotted #bbb
 
+	/*
 	.pitch:nth-child(odd)
 		background: #ccc
 
 	.pitch:nth-child(even)
 		background: #ddd
+	*/
 
 	.login.thibaud
 		color: thibaud

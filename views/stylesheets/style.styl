@@ -56,35 +56,36 @@ footer
 		text-align: center
 
 #content
-	overflow: hidden
 	padding: 20px
 
-.flash
+section
 	display: inline-block
-	padding: 0 5px
+	vertical-align: top
+	background: #ddd
 
-.warn
-	color: #DF013A
-	background: #F5A9A9
-	border: 1px solid #DF013A
+.instrument
+	width: 15%
 
-section.editor
-	width: 75%
-	margin: auto
+.tools
+	width: 15%
+
+.editor
+	width: 70%
 	
 	.layer-info-win
 		margin-left: 40px
 		background: #ddd
+		border: 1px solid
 		overflow: hidden
 
 	.layer-info
 		display: table-cell
 		white-space: nowrap
-		width: 999px
 
 	.bloc-layer-info
 		display: inline-block
-		width: 25%
+		width: 200px
+		height: 100%
 		border-right: 1px solid #aaa
 
 	.layer-list
@@ -111,23 +112,24 @@ section.editor
 		overflow: auto
 
 	.grid
-		background: #ddd url("../images/grid-bg.png")
+		display: table-cell
 		white-space: nowrap
+		background: #ddd url("../images/grid-bg.png")
 
 	.bloc
 		display: inline-block
 		position: relative
 		vertical-align: top
-		width: 25%
+		width: 200px
 		border-right: 1px solid #aaa
 
 	.add-bloc
 		display: inline-block
-		height: 100%
 
 	.layer
 		position: absolute
 		display: table
+		table-layout: fixed
 		width: 100%
 		
 	.pitch
@@ -137,16 +139,10 @@ section.editor
 		display: table-cell
 		height: 20px
 
-	.layer:last-child .note
-		border-right: 1px dotted #bbb
-
-	/*
-	.pitch:nth-child(odd)
-		background: #ccc
-
-	.pitch:nth-child(even)
-		background: #ddd
-	*/
+	.layer:last-child
+		position: relative
+		.note:not(:last-child)
+			border-right: 1px dotted #bbb
 
 	.login.thibaud
 		color: thibaud
@@ -185,3 +181,13 @@ section.editor
 
 	.note.on.login-berthou
 		background: berthou
+
+
+.flash
+	display: inline-block
+	padding: 0 5px
+
+.warn
+	color: #DF013A
+	background: #F5A9A9
+	border: 1px solid #DF013A

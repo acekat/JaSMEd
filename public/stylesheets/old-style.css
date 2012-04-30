@@ -24,14 +24,13 @@ b,
 strong {
   font-weight: bold;
 }
-.clearfix:before,
-.clearfix:after {
-  content: "";
-  display: table;
-}
-.clearfix:after {
-  clear: both;
-}
+/*
+.clearfix:before, .clearfix:after
+	content: ""
+	display: table
+.clearfix:after
+	clear: both
+*/
 /*
  * Styling
  */
@@ -64,131 +63,8 @@ footer p {
   text-align: center;
 }
 #content {
+  overflow: hidden;
   padding: 20px;
-}
-section {
-  display: inline-block;
-  vertical-align: top;
-  background: #ddd;
-}
-.instrument {
-  width: 15%;
-}
-.tools {
-  width: 15%;
-}
-.editor {
-  width: 70%;
-}
-.editor .layer-info-win {
-  margin-left: 40px;
-  background: #ddd;
-  border: 1px solid;
-  overflow: hidden;
-}
-.editor .layer-info {
-  display: table-cell;
-  white-space: nowrap;
-}
-.editor .bloc-layer-info {
-  display: inline-block;
-  width: 200px;
-  height: 100%;
-  border-right: 1px solid #aaa;
-}
-.editor .layer-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.editor .layer-list li {
-  float: left;
-}
-.editor .add-layer {
-  width: 20px;
-}
-.editor .piano-win {
-  float: left;
-  width: 40px;
-  height: 300px;
-  background: #ddd;
-  overflow: hidden;
-}
-.editor .grid-win {
-  height: 300px;
-  background: #ddd;
-  border: 1px solid;
-  overflow: auto;
-}
-.editor .grid {
-  display: table-cell;
-  white-space: nowrap;
-  background: #ddd url("../images/grid-bg.png");
-}
-.editor .bloc {
-  display: inline-block;
-  position: relative;
-  vertical-align: top;
-  width: 200px;
-  border-right: 1px solid #aaa;
-}
-.editor .add-bloc {
-  display: inline-block;
-}
-.editor .layer {
-  position: absolute;
-  display: table;
-  table-layout: fixed;
-  width: 100%;
-}
-.editor .pitch {
-  display: table-row;
-}
-.editor .note {
-  display: table-cell;
-  height: 20px;
-}
-.editor .layer:last-child {
-  position: relative;
-}
-.editor .layer:last-child .note:not(:last-child) {
-  border-right: 1px dotted #bbb;
-}
-.editor .login.thibaud {
-  color: #44accf;
-}
-.editor .login.jaimito {
-  color: #ee3e64;
-}
-.editor .login.acekat {
-  color: #b7d84b;
-}
-.editor .login.esj {
-  color: #8904b1;
-}
-.editor .login.grizix {
-  color: #e2a741;
-}
-.editor .login.berthou {
-  color: #000;
-}
-.editor .note.on.login-thibaud {
-  background: #44accf;
-}
-.editor .note.on.login-jaimito {
-  background: #ee3e64;
-}
-.editor .note.on.login-acekat {
-  background: #b7d84b;
-}
-.editor .note.on.login-esj {
-  background: #8904b1;
-}
-.editor .note.on.login-grizix {
-  background: #e2a741;
-}
-.editor .note.on.login-berthou {
-  background: #000;
 }
 .flash {
   display: inline-block;
@@ -198,4 +74,109 @@ section {
   color: #df013a;
   background: #f5a9a9;
   border: 1px solid #df013a;
+}
+section.editor {
+  width: 75%;
+  margin: auto;
+}
+section.editor .layer-info-win {
+  margin-left: 40px;
+  background: #ddd;
+  overflow: hidden;
+}
+section.editor .layer-info {
+  display: table-cell;
+  white-space: nowrap;
+  width: 999px;
+}
+section.editor .bloc-layer-info {
+  display: inline-block;
+  width: 25%;
+  border-right: 1px solid #aaa;
+}
+section.editor .bloc-layer-info button.add-layer {
+  float: right;
+}
+section.editor .piano-win {
+  float: left;
+  width: 40px;
+  height: 300px;
+  background: #ddd;
+  overflow: hidden;
+}
+section.editor .grid-win {
+  height: 300px;
+  background: #ddd;
+  border: 1px solid;
+  overflow: auto;
+}
+section.editor .grid {
+  display: table-cell;
+  white-space: nowrap;
+  width: 999px;
+}
+section.editor .bloc {
+  display: inline-table;
+  vertical-align: top;
+  width: 25%;
+  border-right: 1px solid #aaa;
+}
+section.editor .add-bloc {
+  width: 40px;
+  height: 100%;
+  background: #bbb;
+}
+section.editor .layer {
+  display: table;
+  width: 100%;
+}
+section.editor .pitch {
+  display: table-row;
+}
+section.editor .note {
+  display: table-cell;
+  height: 25px;
+  border-right: 1px dotted #bbb;
+}
+section.editor .pitch:nth-child(odd) {
+  background: #ccc;
+}
+section.editor .pitch:nth-child(even) {
+  background: #ddd;
+}
+section.editor .login.thibaud {
+  color: #44accf;
+}
+section.editor .login.jaimito {
+  color: #ee3e64;
+}
+section.editor .login.acekat {
+  color: #b7d84b;
+}
+section.editor .login.esj {
+  color: #8904b1;
+}
+section.editor .login.grizix {
+  color: #e2a741;
+}
+section.editor .login.berthou {
+  color: #000;
+}
+section.editor .note.on.login-thibaud {
+  background: #44accf;
+}
+section.editor .note.on.login-jaimito {
+  background: #ee3e64;
+}
+section.editor .note.on.login-acekat {
+  background: #b7d84b;
+}
+section.editor .note.on.login-esj {
+  background: #8904b1;
+}
+section.editor .note.on.login-grizix {
+  background: #e2a741;
+}
+section.editor .note.on.login-berthou {
+  background: #000;
 }

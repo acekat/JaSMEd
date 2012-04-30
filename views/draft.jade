@@ -1,20 +1,28 @@
 extends layout
 
+block stylesheets
+	link(rel="stylesheet", href="/stylesheets/old-style.css")
+
 block scripts
 	include includes/scripts
 
 block content
-	section.grid
-		.grid-layer
-			each bar, i in seq
-				- var n = i + 2; 
-				unless (i % 2)
-					n = 4
-				.bar-container(class='bc-#{i+1} sub-#{n}')
-					each pitch, j in pitches
-						.pitch(class='#{pitch} p-#{j+1}')
-							each note, k in bar[j]
-								- var noteOn = '';
-								if (note)
-									noteOn = ' on ' + 'login-' + note.login;
-								.note(class='sn-#{k+1}' + noteOn)
+	section.editor
+		.layer-info-win
+			p info
+		.piano-win
+			p piano
+		.grid-win
+			.grid
+				each bar, i in seq
+					- var n = i + 2; 
+					unless (i % 2)
+						n = 4
+					.bloc(class='b-#{i+1} sub-#{n}')
+						each pitch, j in pitches
+							.pitch(class='#{pitch} p-#{j+1}')
+								each note, k in bar[j]
+									- var noteOn = '';
+									if (note)
+										noteOn = ' on ' + 'login-' + note.login;
+									.note(class='sn-#{k+1}' + noteOn)

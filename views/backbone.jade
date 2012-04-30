@@ -1,31 +1,58 @@
 extends layout
 
+block stylesheets
+	link(rel="stylesheet", href="/stylesheets/style.css")
+
 block scripts
 	script(src="/socket.io/socket.io.js")
 
 	// Vendor (order matters)
-	script(src='/javascripts/vendor/jquery-1.7.2.min.js')
-	script(src='/javascripts/vendor/underscore-min.js')
-	script(src='/javascripts/vendor/backbone-min.js')
+	script(src="/javascripts/vendor/jquery-1.7.2.min.js")
+	script(src="/javascripts/vendor/underscore-min.js")
+	script(src="/javascripts/vendor/backbone-min.js")
 
 	// Backbone App
-	script(src='/javascripts/jasmed.js')
-	script(src='/javascripts/client.js')
+	script(src="/javascripts/jasmed.js")
+	script(src="/javascripts/client.js")
 
 	// Modules
-	script(src='/javascripts/modules/grid.js')
+	script(src="/javascripts/modules/editor.js")
 
 block content
-	section.grid
-		.grid-layer
+	section.instrument
+			p instrument
+	section.tools
+		.utils
+			p utils
+		.player
+			p player
+	section.editor
+		.layer-info-win
+			.layer-info
+		.piano-win
+			p piano
+		.grid-win
+			.grid
+				button.add-bloc +
 
 
+// TEMPLATE
 block template
-	script#bloc-template(type="text/template")
-		<% _.each(pitches, function(pitch) { %>
-		<div class="pitch <%= pitch %>">
+	script#layer-template(type="text/template")
+		<% _.each(pitches, function(pitch, i) { %>
+		<div class="pitch <%= pitch %> p-<%= i+1 %>">
 		<% for (i=1; i<=sub; i++) { %>
 		<div class="note sn-<%= i %>"></div>
 		<% }; %>	
 		</div>
 		<% }); %>
+
+	script#layer-info-template(type="text/template")
+		ul.layer-list
+			<% _.each(layers, function(layer) { %>
+			li
+				button.edit-layer <%= layer.get("sub") %>
+			<% }); %>
+			li
+				input.add-layer(type="text", placeholder=" +")
+		

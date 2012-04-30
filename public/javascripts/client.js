@@ -76,7 +76,7 @@ $(function() {
 		var noteNum = el.attr('class').match('sn-[0-9]*')[0].split('-')[1];
 		var pitch = el.parent().attr('class').split(' ')[1];
 		var pNum = el.parent().attr('class').match('p-[0-9]*')[0].split('-')[1];
-		var bar = el.parent().parent().attr('class').match('bc-[0-9]*')[0].split('-')[1];
+		var bar = el.parent().parent().attr('class').match('b-[0-9]*')[0].split('-')[1];
 		
 		var note = {
 			bar: bar - 1,
@@ -95,7 +95,7 @@ $(function() {
 	
 	socket.on('toggleNote', function (note) {
 		//APP.toggleNote(note, note.login);
-		var selector = '.bc-' + (note.bar + 1) + ' > .p-' + (note.pitch + 1) + ' > .sn-' + (note.noteNum + 1);
+		var selector = '.b-' + (note.bar + 1) + ' > .p-' + (note.pitch + 1) + ' > .sn-' + (note.noteNum + 1);
 		
 		visualToggle($(selector), note.login);
 	});

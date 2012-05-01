@@ -15,8 +15,8 @@
 		 */
 		defaults : {
 			sub: 4,
-			pitches: ['do4', 'do#4', 're4', 're#4', 'mi4', 'fa4', 'fa#4', 'sol4', 'sol#4', 'la4', 'sib4', 'si4',
-						'do5', 'do#5', 're5', 're#5', 'mi5', 'fa5', 'fa#5', 'sol5', 'sol#5', 'la5', 'sib5', 'si5'],
+			pitches: ['do3', 'do#3', 're3', 're#3', 'mi3', 'fa3', 'fa#3', 'sol3', 'sol#3', 'la3', 'la#3', 'si3',
+						'do4', 'do#4', 're4', 're#4', 'mi4', 'fa4', 'fa#4', 'sol4', 'sol#4', 'la4', 'la#4', 'si4'],
 			editable: true
 		},
 
@@ -55,7 +55,7 @@
 		 */
 		editable: function() {
 			return this.find(function(layer) { 
-				return layer.get('editable'); 
+				return layer.get("editable"); 
 			});
 		},
 
@@ -66,7 +66,7 @@
 		 */
 		getSub: function(sub) {
 			return this.find(function(layer) {
-				return (layer.get('sub') == sub);
+				return (layer.get("sub") == sub);
 			})
 		}
 
@@ -92,7 +92,7 @@
 		/** @constructs */
 		initialize : function() {
 			// add new Bloc "anchor" to DOM
-			$('.add-bloc').before('<div class="bloc b-'+this.get("order")+'"></div>');
+			$(".add-bloc").before('<div class="bloc b-'+this.get("order")+'"></div>');
 			
 			// create new Layers and associated View
 			this.layers = new Editor.Layers();
@@ -129,7 +129,7 @@
 		 */
 		nextOrder: function() {
 			if (!this.length) return 1;
-			return this.last().get('order') + 1;
+			return this.last().get("order") + 1;
 		}
 	});
 
@@ -144,12 +144,12 @@
 		 *  Class attribute of the div associated to the View.
 		 *  @type {String}
 		 */
-		className: 'layer',
+		className: "layer",
 
 		/** @constructs */
 		initialize: function() {
 			// function that render Underscore templating
-			this.layerTemplate = _.template($('#layer-template').html());
+			this.layerTemplate = _.template($("#layer-template").html());
 		},
 
 		/**
@@ -160,7 +160,7 @@
 			var layer = this.model;
 			$(this.el)
 				.html(this.layerTemplate(layer.toJSON()))
-				.addClass('sub-'+layer.get('sub'))
+				.addClass('sub-'+layer.get("sub"))
 
 			return this;
 		}
@@ -176,13 +176,13 @@
 		 *  div associated to the View.
 		 *  @type {String}
 		 */
-		el: '.bloc',
+		el: ".bloc",
 
 		/** @constructs */
 		initialize: function() {
 			// Bound events
-			this.collection.on('add', this.addLayer, this);
-			this.collection.on('change:editable', this.switchEdit, this);
+			this.collection.on("add", this.addLayer, this);
+			this.collection.on("change:editable", this.switchEdit, this);
 		},
 
 		/**
@@ -196,7 +196,7 @@
 			});
 
 			// insert in the DOM the rendered View
-			$('.b-'+this.model.get('order')).append(layerView.render().el);
+			$('.b-'+this.model.get("order")).append(layerView.render().el);
 		},
 
 		/**
@@ -204,9 +204,9 @@
 		 *  @param  {Backbone.Model} layer Layer to edit
 		 */
 		switchEdit: function(layer) {
-			if (layer.get('editable')) {
+			if (layer.get("editable")) {
 				// TODO: find a cleaner way
-				$('.b-'+this.model.get('order')+' .sub-'+layer.get('sub')).appendTo('.b-'+this.model.get('order'));
+				$('.b-'+this.model.get("order")+' .sub-'+layer.get("sub")).appendTo('.b-'+this.model.get("order"));
 			};
 		}
 
@@ -222,15 +222,15 @@
 		 *  Class attribute of the div associated to the View.
 		 *  @type {String}
 		 */
-		className: 'bloc-layer-info',
+		className: "bloc-layer-info",
 
 		/** @constructs */
 		initialize: function() {
 			// function that render Underscore templating
-			this.layerInfoTemplate = _.template($('#layer-info-template').html());
+			this.layerInfoTemplate = _.template($("#layer-info-template").html());
 
 			// Bound events
-			this.model.layers.on('all', this.actualize, this);
+			this.model.layers.on("all", this.actualize, this);
 		},
 
 		/**
@@ -252,7 +252,7 @@
 				.html(this.layerInfoTemplate({ 
 					layers: bloc.layers.models
 				}))
-				.addClass('bli-'+bloc.get('order'));
+				.addClass('bli-'+bloc.get("order"));
 
 			return this;
 		},
@@ -272,7 +272,7 @@
 		 */
 		newLayerOnEnter: function(e) {
 			var layers = this.model.layers;
-			var input = this.$('.add-layer');
+			var input = this.$(".add-layer");
 			var text = input.val();
 			var sub, layer;
 
@@ -284,7 +284,7 @@
 				// Layer already exist
 				if (layers.getSub(sub)) {
 					this.editLayer(sub);
-					input.val('');
+					input.val("");
 					return;
 				}
 
@@ -294,7 +294,7 @@
 					sub: sub
 				});
 			}
-			input.val('');
+			input.val("");
 		},
 
 		/**
@@ -303,7 +303,7 @@
 		 */
 		editLayer: function(e) {
 			var layers = this.model.layers;
-			var sub = typeof(e)=='object' ? e.target.innerHTML : e;
+			var sub = typeof(e)=="object" ? e.target.innerHTML : e;
 
 			// if Layer to set isn't already editable
 			if (layers.editable() !== layers.getSub(sub)) {
@@ -324,12 +324,12 @@
 		 *  div associated to the View.
 		 *  @type {String}
 		 */
-		el: '.editor',
+		el: ".grid-win",
 
 		/** @constructs */
 		initialize: function() {
 			// Bound events
-			this.collection.on('add', this.addBloc);
+			this.collection.on("add", this.addBloc);
 		},
 
 		/**
@@ -337,7 +337,8 @@
 		 *  @type {Object}
 		 */
 		events: {
-			"click .add-bloc" : "newBloc"
+			"click .add-bloc" : "newBloc",
+			"scroll" : "syncScroll"
 		},
 
 		/**
@@ -359,6 +360,15 @@
 		 */
 		newBloc: function() {
 			this.collection.add();
+		},
+
+		/**
+		 *  Synchronize scrolling between the grid, piano and layer-info window
+		 *  @param  {object} e event object fired
+		 */
+		syncScroll: function(e) {
+			$(".piano-win").scrollTop(e.target.scrollTop);
+        	$(".layer-info-win").scrollLeft(e.target.scrollLeft);
 		}
 
 	});

@@ -3,15 +3,16 @@
 var utils = jasmed.module('utils');
 
 struct.createSong = function(props) {
-    return utils.inherits(struct.song, props);
+    return utils.inherits(struct.song, _.extend(props||{}, {tracks: [], pitchs: {}}));
 };
 
 /** @class */
 struct.song = {
     title: "Untitled",
-    tempo: 4000, // in miliseconds per block
+    tempo: 4, // in seconds per block
     tracks: [],
     blocks: 32,
+    pitchs: {},
     
     /**
      * Add a track to the song, initialized with {@link song#blocks} blocks with the specified layer.
@@ -20,12 +21,9 @@ struct.song = {
      * @returns {track} The new track added.
      */
     addTrack: function(name, layer) {
-        if(!this.hasOwnProperty('tracks')) {
-            this.tracks = [];
-        }
-        
         var newTrack = utils.inherits(struct.track, {
-            name: name || "Track " + (this.tracks.length+1)
+            name: name || "Track " + (this.tracks.length+1),
+            songPitchs: this.pitchs
         });
         newTrack.addBlocks(this.blocks);
         if(layer) {
@@ -58,6 +56,7 @@ struct.track = {
     name: "New Track",
     instrument: "Piano",
     blocks: [],
+    songPitchs: {},
     
     /**
      * Add a note to the track.
@@ -72,6 +71,8 @@ struct.track = {
      *           {number} duration} The layer and duration of the new note.
      */
     addNote: function(pitch, start, end) {
+        this.songPitchs[pitch]++ || (this.songPitchs[pitch] = 1);
+        
         var startBlk = this.blocks[start.block];
         
         if(!end) {

@@ -27,7 +27,7 @@ var song = [
 
 var beat = struct.createSong({
     title: "Jack by beat",
-    tempo: 500,
+    tempo: 0.5,
     blocks: 27
 });
 

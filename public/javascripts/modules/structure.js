@@ -9,7 +9,7 @@ struct.createSong = function(props) {
 /** @class */
 struct.song = {
     title: "Untitled",
-    tempo: 4000, // in miliseconds per block
+    tempo: 4, // in seconds per block
     tracks: [],
     blocks: 32,
     pitchs: {},

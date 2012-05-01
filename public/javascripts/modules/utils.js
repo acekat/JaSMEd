@@ -1,6 +1,15 @@
 (function(utils){
 
 /**
+ * Return the frequency associated with a MIDI pitch.
+ * @param {number} pitch
+ * @returns {number} The frequency in Hertz.
+ */
+utils.midiToHertz = function(pitch) {
+    return 440*Math.pow(2, (pitch-69)/12);
+};
+
+/**
  * Return the divisors of a number.
  * @param {number} n
  * @returns {number[]}

@@ -114,11 +114,17 @@ section {
   background: #ddd;
   overflow: hidden;
 }
+.editor .piano {
+  width: 40px;
+  height: 480px;
+  background: #ddd url("../images/grid-bg.png");
+}
 .editor .grid-win {
+  position: relative;
   height: 300px;
   background: #ddd;
   border: 1px solid;
-  overflow: auto;
+  overflow: hidden;
 }
 .editor .grid {
   display: table-cell;
@@ -148,10 +154,13 @@ section {
   display: table-cell;
   height: 20px;
 }
-.editor .layer:last-child {
+.editor .note.on {
+  background: #00b7ff;
+}
+.editor .layer.editable {
   position: relative;
 }
-.editor .layer:last-child .note:not(:last-child) {
+.editor .layer.editable .note:not(.editable) {
   border-right: 1px dotted #bbb;
 }
 .editor .login.thibaud {
@@ -198,4 +207,14 @@ section {
   color: #df013a;
   background: #f5a9a9;
   border: 1px solid #df013a;
+}
+div.jquery-drag-to-select {
+  background: #def;
+  display: none;
+  opacity: 0.3;
+  z-index: 10;
+  border: 1px solid #369;
+}
+div.jquery-drag-to-select.active {
+  display: block;
 }

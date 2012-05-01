@@ -4,7 +4,7 @@ block stylesheets
 	link(rel="stylesheet", href="/stylesheets/style.css")
 
 block scripts
-	script(src="/socket.io/socket.io.js")
+	//- script(src="/socket.io/socket.io.js")
 
 	// Vendor (order matters)
 	script(src="/javascripts/vendor/jquery-1.7.2.min.js")
@@ -14,13 +14,17 @@ block scripts
 
 	// Backbone App
 	script(src="/javascripts/jasmed.js")
-	script(src="/javascripts/client.js")
+	//- script(src="/javascripts/client.js")
 
 	// Modules
 	script(src="/javascripts/modules/utils.js")
 	script(src="/javascripts/modules/structure.js")
 	script(src="/javascripts/modules/editor.js")
 	script(src="/javascripts/modules/player.js")
+
+	// DRAG TO SELECT EXAMPLE
+	//- script(src="/javascripts/vendor/jquery.dragToSelect.js")
+
 
 block content
 	section.instrument
@@ -34,7 +38,7 @@ block content
 		.layer-info-win
 			.layer-info
 		.piano-win
-			p piano
+			.piano
 		.grid-win
 			.grid
 				button.add-bloc +
@@ -45,8 +49,10 @@ block template
 	script#layer-template(type="text/template")
 		<% _.each(pitches, function(pitch, i) { %>
 		<div class="pitch <%= pitch %> p-<%= i+1 %>">
-		<% for (i=1; i<=sub; i++) { %>
-		<div class="note sn-<%= i %>"></div>
+		<% for (n=1; n<=sub; n++) { %>
+		<% var noteId = bloc+"-"+sub+"-"+(i+1)+"-"+n; %>
+		<% var on = _.indexOf(noteOn, noteId) === -1 ? "" : "on"; %>
+		<div id="<%= noteId %>" class="note sn-<%= n %> <%= on %>"></div>
 		<% }; %>	
 		</div>
 		<% }); %>

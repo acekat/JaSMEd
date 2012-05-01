@@ -40,8 +40,16 @@ var jasmed = {
 // Treat this as the single entry point into the application.
 $(function() {
 
-	var Editor = jasmed.module("editor");
+	var editor = jasmed.module("editor");
 
-	new Editor.Router();
+	new editor.Router();
+
+	// DRAG TO SELECT EXAMPLE
+	// $(".grid").dragToSelect({
+	// 	selectedClass: "on",
+	// 	selectables: "div.note",
+	// 	selectOnMove: true,
+	// 	autoScroll: true,
+	// });
 
 });

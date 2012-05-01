@@ -105,11 +105,17 @@ section
 		background: #ddd
 		overflow: hidden
 
+	.piano
+		width: 40px
+		height: 480px
+		background: #ddd url("../images/grid-bg.png")
+
 	.grid-win
+		position: relative
 		height: 300px
 		background: #ddd
 		border: 1px solid
-		overflow: auto
+		overflow: hidden
 
 	.grid
 		display: table-cell
@@ -139,10 +145,15 @@ section
 		display: table-cell
 		height: 20px
 
-	.layer:last-child
+	.note.on
+		background: #00B7FF
+
+	.layer.editable
 		position: relative
-		.note:not(:last-child)
+		.note:not(.editable)
 			border-right: 1px dotted #bbb
+
+
 
 	.login.thibaud
 		color: thibaud
@@ -161,8 +172,6 @@ section
 
 	.login.berthou
 		color: berthou
-
-	//.note.on background: #00B7FF
 
 	.note.on.login-thibaud
 		background: thibaud
@@ -191,3 +200,20 @@ section
 	color: #DF013A
 	background: #F5A9A9
 	border: 1px solid #DF013A
+
+
+// DRAG TO SELECT EXAMPLE
+div.jquery-drag-to-select {
+	background: #def;
+
+	display: none;
+
+	opacity: .3;
+	z-index: 10;
+
+	border: 1px solid #369;
+}
+
+div.jquery-drag-to-select.active {
+	display: block;
+}

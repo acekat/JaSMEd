@@ -12,6 +12,10 @@ Instructions pour l'installer et le démarrer: [Redis Quick Start](http://redis.
 
 Grace à Redis, plus besoin de se ré-identifier au redémarrage du serveur.
 
+ps: si redis server est dans votre PATH, on peut démarrer le serveur redis avec la commande:
+
+	./bin/redis
+
 ### Exécutable
 
 Un dossier bin a été ajouté pour simplifier les choses, pour faire tourner JaSMEd exécuter la commande:

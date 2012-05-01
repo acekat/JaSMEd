@@ -12,7 +12,7 @@ var mediator = (function() {
 			var subscription = mediator.channels[channel][i];
 			subscription.callback.apply(subscription.context, args);
 		}
-		return this; //so can chain method calls ?
+		return this; //so can chain method calls
 	};
 
 	return {

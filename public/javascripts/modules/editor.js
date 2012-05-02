@@ -341,8 +341,9 @@ editor.LayerView = Backbone.View.extend({
 
 		// local toggle
 		// one note selected
-		if (id === editor.startNoteId)
+		if (id === editor.startNoteId) {
 			this.model.toggleNote(id);
+		}
 		// a range of notes
 		else
 			this.selectRange(startLeft, endLeft);

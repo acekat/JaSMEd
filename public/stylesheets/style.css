@@ -157,47 +157,47 @@ section {
 .editor .note.on {
   background: #00b7ff;
 }
+.editor .note.on.user-thibaud {
+  background: #44accf;
+}
+.editor .note.on.user-jaimito {
+  background: #ee3e64;
+}
+.editor .note.on.user-acekat {
+  background: #b7d84b;
+}
+.editor .note.on.user-esj {
+  background: #8904b1;
+}
+.editor .note.on.user-grizix {
+  background: #e2a741;
+}
+.editor .note.on.user-berthou {
+  background: #000;
+}
 .editor .layer.editable {
   position: relative;
 }
 .editor .layer.editable .note:not(.editable) {
   border-right: 1px dotted #bbb;
 }
-.editor .login.thibaud {
+.login.thibaud {
   color: #44accf;
 }
-.editor .login.jaimito {
+.login.jaimito {
   color: #ee3e64;
 }
-.editor .login.acekat {
+.login.acekat {
   color: #b7d84b;
 }
-.editor .login.esj {
+.login.esj {
   color: #8904b1;
 }
-.editor .login.grizix {
+.login.grizix {
   color: #e2a741;
 }
-.editor .login.berthou {
+.login.berthou {
   color: #000;
-}
-.editor .note.on.login-thibaud {
-  background: #44accf;
-}
-.editor .note.on.login-jaimito {
-  background: #ee3e64;
-}
-.editor .note.on.login-acekat {
-  background: #b7d84b;
-}
-.editor .note.on.login-esj {
-  background: #8904b1;
-}
-.editor .note.on.login-grizix {
-  background: #e2a741;
-}
-.editor .note.on.login-berthou {
-  background: #000;
 }
 .flash {
   display: inline-block;
@@ -207,14 +207,4 @@ section {
   color: #df013a;
   background: #f5a9a9;
   border: 1px solid #df013a;
-}
-div.jquery-drag-to-select {
-  background: #def;
-  display: none;
-  opacity: 0.3;
-  z-index: 10;
-  border: 1px solid #369;
-}
-div.jquery-drag-to-select.active {
-  display: block;
 }

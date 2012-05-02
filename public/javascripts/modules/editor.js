@@ -3,10 +3,19 @@
 
 // Dependencies
 
-// Global variables
-editor.startNote = {};
-editor.endNote = {};
-editor.pitch;
+
+// calls toggleNote upon reception of 'noteToggled' msg
+editor.subscribe('noteToggled', function(range) {
+	var pitch = range.pitch,
+		startNote = range.startNote,
+		endNote = range.endNote;
+
+	editor.pitch = range.pitch;
+});
+
+editor.subscribe('loginSync', function(login) {
+	editor.user = login;
+});
 
 /**
  *  Layer represent a single layer in a bloc.
@@ -45,11 +54,12 @@ editor.Layer = Backbone.Model.extend({
 		var noteOn = this.get("noteOn")
 		var index = _.indexOf(noteOn, noteId);
 
-		(index === -1) ?
-			  // turn note on
-			  noteOn.push(noteId)
-			  // turn note off
-			: noteOn.splice(index, 1);
+		if (index === -1) 
+			// turn note on
+			noteOn.push(noteId)
+		else
+			// turn note off
+			noteOn.splice(index, 1);
 
 		// trigger the change event on noteOn array with noteId argument
 		this.trigger("change:noteOn", noteId);
@@ -159,7 +169,6 @@ editor.Grid = Backbone.Collection.extend({
 	}
 });
 
-
 /**
  *  Associated View to Layer Model.
  *  @type {Backbone.View}
@@ -210,7 +219,17 @@ editor.LayerView = Backbone.View.extend({
 	 *  @param  {String} noteId ID of the selected note
 	 */
 	toggleNote: function(noteId) {
-		$("#"+noteId).toggleClass("on");
+		var el = $('#'+noteId);
+		var userClass = 'user-' + editor.user;
+		var curClass = el.attr("class").match("user-[^ ]*");
+				
+		if (curClass)
+			el.removeClass(curClass[0]);
+		
+		el.toggleClass("on");
+		
+		if (el.hasClass("on"))
+			el.addClass(userClass);
 	},
 
 	/**
@@ -232,6 +251,8 @@ editor.LayerView = Backbone.View.extend({
 		editor.pitch = idArray[2];
 
 		editor.editorView.startLeft = e.pageX - gridWinDim.left + gridWin[0].scrollLeft;
+
+		// editor.editorView.onSelection = true;
 
 		e.preventDefault();
 	},
@@ -265,7 +286,7 @@ editor.LayerView = Backbone.View.extend({
 			pitch = editor.pitch;
 		var currentLeft = e.pageX - gridWinDim.left + gridWin[0].scrollLeft;
 	
-		Selecting
+		// Selecting
 		if (editor.editorView.onSelection) {
 			var selectables	= gridWin.find(".bloc").children(".editable").children(".p-"+pitch).children();
 			// Optimized but can be buggy
@@ -306,11 +327,19 @@ editor.LayerView = Backbone.View.extend({
 		// 0: Bloc, 1: Layer, 2: Pitch, 3: Note
 		var idArray = id.split("-");
 		editor.endNote = {
-			"bloc":  idArray[0],
-			"layer":  idArray[1],
-			"note":  idArray[3],
+			bloc :  idArray[0],
+			layer :  idArray[1],
+			note :  idArray[3],
 		};
 
+		// send to communication
+		editor.publish('toggleNote', {
+			pitch : editor.pitch,
+			startNote : editor.startNote,
+			endNote : editor.endNote
+		});
+
+		// local toggle
 		// one note selected
 		if (id === editor.startNoteId)
 			this.model.toggleNote(id);
@@ -318,7 +347,9 @@ editor.LayerView = Backbone.View.extend({
 		else
 			this.selectRange(startLeft, endLeft);
 
-		// alert(editor.pitch+" : "+editor.startNote+" : "+editor.endNote);
+		// console.log(editor.pitch+" : "+JSON.stringify(editor.startNote)+" : "+JSON.stringify(editor.endNote));
+
+		// editor.editorView.onSelection = false;
 
 		e.preventDefault();
 	},
@@ -334,6 +365,7 @@ editor.LayerView = Backbone.View.extend({
 			gridWinDim = editor.editorView.gridWinDim,
 			pitch = editor.pitch;
 
+		var selectedNote = [];
 		var selectables	= gridWin.find(".bloc").children(".editable").children(".p-"+pitch).children();
 		// Optimized but can be buggy
 		// var selectables	= $(this.el).children(".p-"+pitch).children();
@@ -348,11 +380,24 @@ editor.LayerView = Backbone.View.extend({
 				|| ((end < start) && ((thisLeft+thisWidth < end) || (thisLeft > start))))
 				return;
 
-			// into the range => toggle
+			// already on => cancel selection
+			if ($(this).hasClass("on")) {
+				alert("C'est quoi les bails? Tu superposes les notes?\nT'es ouf ma gueule!");
+				selectedNote = [];
+				return false;
+			};
+
+			// into the range => select
 			if (((end > start) && (thisLeft < end) && (thisLeft+thisWidth > start))
 				|| ((end < start) && (thisLeft+thisWidth > end) && (thisLeft < start)))
-				model.toggleNote(thisId);
+				selectedNote.push(thisId);
 		});
+
+		// toggle selected
+		for (var i = 0; i<selectedNote.length; i++) {
+			console.log(model);
+			model.toggleNote(selectedNote[i]);
+		};
 	}
 
 
@@ -409,6 +454,8 @@ editor.LayersView = Backbone.View.extend({
 		// Bound events
 		this.collection.on("add", this.addLayer, this);
 		this.collection.on("change:editable", this.switchEdit, this);
+
+		// console.log(this.collection);
 	},
 
 	/**
@@ -579,6 +626,8 @@ editor.EditorView = Backbone.View.extend({
 		// Bound events
 		this.collection.on("add", this.addBloc);
 		this.gridWin.on("scroll", this.syncScroll);
+
+		// console.log(this.collection);
 	},
 
 	/**

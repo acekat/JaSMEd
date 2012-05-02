@@ -47,16 +47,14 @@ app.locals.use(function(req, res, done) {
 	done();
 });
 
-/**
- * inspired by Express 2.x req.flash()
-*/
+/** inspired by Express 2.x req.flash() */
 function flash(req, type, msg) {
 	if (req.session === undefined) throw Error('req.flashMessage() requires sessions');
 	var msgs = req.session.messages = req.session.messages || {};
 	
 	if (type && msg)
 		return (msgs[type] = msgs[type] || []).push(msg);
-	else if (type) {
+	else if (type) { //not used for the moment
 		var arr = msgs[type];
 		delete msgs[type];
 		return arr || [];
@@ -129,6 +127,7 @@ app.get('/logout', function(req, res) {
 });
 
 app.post('/login', function(req, res) {
+	//need to only allow 1 sessionID
 	users.authenticate(req.body.username, req.body.password, function(user) {
 		if (user) {
 			req.session.login = user.login;
@@ -165,7 +164,6 @@ var server = app.listen(app.settings.port);
  */
 var io = require('socket.io').listen(server);
 
-
 io.configure(function() {
 	io.set('log level', 1); //sinon il log beaucoup trop, ça me rend fou :)
 	io.set('authorization', function(data, callback) {
@@ -198,14 +196,13 @@ io.sockets.on('connection', function (socket) {
 
 	socket.emit('loginSync', session.login);
 
-	//need to only allow 1 sessionID
-
 	socket.on('add', function(data) {
 		session.newattr = data;
 		console.log(session.newattr + ' added to ' + session.login + '\'s session');
 		session.save();
 	});
 	
+	//do something
 	socket.on('saveAs', function(fileName) {
 		core.exportSeq(fileName, function(res) {
 			if (!res)
@@ -215,11 +212,11 @@ io.sockets.on('connection', function (socket) {
 		});
 	});
 
-	socket.on('toggleNote', function(note) {
-		console.log(session.login + ' toggled note');
-		core.toggleNote(note, session.login);
-		note.login = session.login;
-		socket.broadcast.emit('toggleNote', note);
+	socket.on('toggleNote', function(range) {
+		console.log(session.login + ' toggled note ' + range);
+		//core.toggleNote(note, session.login);
+		//note.login = session.login;
+		socket.broadcast.emit('noteToggled', range);
 	});
 });
 

@@ -13,10 +13,6 @@ editor.subscribe('noteToggled', function(range) {
 	editor.pitch = range.pitch;
 });
 
-editor.subscribe('loginSync', function(login) {
-	editor.user = login;
-});
-
 /**
  *  Layer represent a single layer in a bloc.
  *  @type {Backbone.Model}
@@ -220,7 +216,7 @@ editor.LayerView = Backbone.View.extend({
 	 */
 	toggleNote: function(noteId) {
 		var el = $('#'+noteId);
-		var userClass = 'user-' + editor.user;
+		var userClass = 'user-' + jasmed.user;
 		var curClass = el.attr("class").match("user-[^ ]*");
 				
 		if (curClass)

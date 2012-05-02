@@ -159,6 +159,12 @@ editor.Grid = Backbone.Collection.extend({
 	}
 });
 
+// calls toggleNote upon reception of 'noteToggled' msg
+editor.subscribe('noteToggled', function(id) {
+	console.log('editor received a good old noteToggled ' + id);
+	//var dispatcher = _.clone(Backbone.Events);
+	//dispatcher.trigger('noteToggled', id)
+});
 
 /**
  *  Associated View to Layer Model.
@@ -312,8 +318,11 @@ editor.LayerView = Backbone.View.extend({
 		};
 
 		// one note selected
-		if (id === editor.startNoteId)
+		if (id === editor.startNoteId) {
 			this.model.toggleNote(id);
+			editor.publish('toggleNote', id);
+			console.log('in view, published a toggleNote ' + id);
+		}
 		// a range of notes
 		else
 			this.selectRange(startLeft, endLeft);

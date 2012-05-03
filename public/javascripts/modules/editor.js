@@ -10,7 +10,7 @@ editor.subscribe('noteToggled', function(range) {
 		startNote = range.startNote,
 		endNote = range.endNote;
 
-	editor.pitch = range.pitch;
+	// editor.pitch = range.pitch;
 });
 
 editor.subscribe('loginSync', function(login) {
@@ -27,22 +27,26 @@ editor.Layer = Backbone.Model.extend({
 	 *  Default values of a Layer variables.
 	 *  @type {Object}
 	 */
-	defaults : {
-		sub: 4,
-		pitches: ['do3', 'do#3', 're3', 're#3', 'mi3', 'fa3', 'fa#3', 'sol3', 'sol#3', 'la3', 'la#3', 'si3',
-					'do4', 'do#4', 're4', 're#4', 'mi4', 'fa4', 'fa#4', 'sol4', 'sol#4', 'la4', 'la#4', 'si4'],
-		noteOn: [],
-		editable: true
+	defaults : function() {
+		return {
+			sub: 4,
+			pitches: ['do3', 'do#3', 're3', 're#3', 'mi3', 'fa3', 'fa#3', 'sol3', 'sol#3', 'la3', 'la#3', 'si3',
+						'do4', 'do#4', 're4', 're#4', 'mi4', 'fa4', 'fa#4', 'sol4', 'sol#4', 'la4', 'la#4', 'si4'],
+			noteOn: [],
+			editable: true
+		}
 	},
 
 	/** @constructs */
 	initialize : function() {
+		console.log(this.get("bloc")+":"+this.get("sub"));
+		console.log(this.toJSON());
 	},
 
 	/**
 	 *  Toggle <tt>editable</tt> variable
 	 */
-	toggleEdit: function() {			
+	toggleEdit: function() {
 		this.set({ "editable" : !this.get("editable")});
 	},
 
@@ -51,7 +55,7 @@ editor.Layer = Backbone.Model.extend({
 	 *  @param  {String} noteId HTML id of the case to turn on/off
 	 */
 	toggleNote: function(noteId) {
-		var noteOn = this.get("noteOn")
+		var noteOn = this.get("noteOn");
 		var index = _.indexOf(noteOn, noteId);
 
 		if (index === -1) 
@@ -60,6 +64,11 @@ editor.Layer = Backbone.Model.extend({
 		else
 			// turn note off
 			noteOn.splice(index, 1);
+
+		console.log(this);
+		for (var i = 0; i<noteOn.length; i++) {
+			console.log(noteOn[i]);
+		};
 
 		// trigger the change event on noteOn array with noteId argument
 		this.trigger("change:noteOn", noteId);
@@ -396,7 +405,7 @@ editor.LayerView = Backbone.View.extend({
 
 		// toggle selected
 		for (var i = 0; i<selectedNote.length; i++) {
-			console.log(model);
+			// TO-DO: select correct bloc and layer
 			model.toggleNote(selectedNote[i]);
 		};
 	}

@@ -4,7 +4,9 @@ block stylesheets
 	link(rel="stylesheet", href="/stylesheets/old-style.css")
 
 block scripts
-	include includes/scripts
+	script(src="/socket.io/socket.io.js")
+	script(src="/javascripts/vendor/jquery-1.7.2.min.js")
+	script(src="/javascripts/client.js")
 
 block content
 	section.editor

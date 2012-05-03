@@ -7,19 +7,24 @@ block content
 	include includes/flash
 
 	if (session.login)
-		p welcome #{session.login}!
-	p so far there isn't much here but you'll love it soon! promise!
-	p try out our first 
-		a(href='/draft') draft
-	p or check out one of the saved sequences:
+		p Welcome #{session.login}!
+
+	p
+		| You can follow 
+		a(href='/app') here
+		|  the application development.
+	br
+	p 
+		a(href='/draft') Here
+		|  will be an old draft.
+	p And there some saved sequences:
 		ul
 			each file in files
 				li
 					a(href='/store/#{file}') #{file} 
-	p check out your 
+	p 
+		| You can also check out your 
 		a(href='/session') session
-	p
-		| here is a 
-		a(href='/backbone') backbone
-		|  structure
+		|.
+	
 

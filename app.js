@@ -153,8 +153,8 @@ app.get('/store/:name', requireLogin, function(req, res) {
 	});
 });
 
-app.get('/backbone', requireLogin, function(req, res) {
-	res.render('backbone');
+app.get('/app', requireLogin, function(req, res) {
+	res.render('app');
 });
 
 var server = app.listen(app.settings.port);

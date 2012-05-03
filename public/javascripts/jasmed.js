@@ -41,7 +41,9 @@ var jasmed = {
 $(function() {
 
 	var editor = jasmed.module("editor");
+	var utils = jasmed.module("utils");
 
 	new editor.Router();
+	new utils.Router();
 
 });

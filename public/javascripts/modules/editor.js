@@ -1,8 +1,6 @@
 // Module reference argument, assigned at the bottom
 (function(editor) {
 
-// Dependencies
-
 /**
  *  SUBSCRIBES
  */
@@ -33,7 +31,10 @@ editor.subscribe("toggleSelection", function(range) {
  *  Add new Bloc
  */
 editor.subscribe("newBloc", function() {
-	editor.editorView.collection.add();
+	var width = editor.editorView.collection.last().get("width");
+	editor.editorView.collection.add({
+		width: width
+	});
 });
 
 
@@ -69,7 +70,7 @@ editor.Layer = Backbone.Model.extend({
 	 *  Toggle <tt>editable</tt> variable
 	 */
 	toggleEdit: function() {
-		this.set({ "editable" : !this.get("editable")});
+		this.set({"editable" : !this.get("editable")});
 	},
 
 	/**
@@ -144,6 +145,7 @@ editor.Bloc = Backbone.Model.extend({
 	 */
 	defaults : function() {
 		return {
+			width: 200,
 			order: editor.grid.nextOrder()
 		}
 	},
@@ -151,7 +153,7 @@ editor.Bloc = Backbone.Model.extend({
 	/** @constructs */
 	initialize : function() {
 		// add new Bloc "anchor" to DOM
-		$(".add-bloc").before('<div class="bloc b-'+this.get("order")+'"></div>');
+		$('<div class="bloc b-'+this.get("order")+'" style="width: '+this.get("width")+'px;"></div>').appendTo(".grid");
 		
 		// create new Layers and associated View
 		this.layers = new editor.Layers();
@@ -164,6 +166,20 @@ editor.Bloc = Backbone.Model.extend({
 		this.layers.add({
 			bloc: this.get("order")
 		});
+	},
+
+	/**
+	 *  Set the new width
+	 *  @param  {boolean} zoom true: increase width, false: descrease width
+	 */
+	resize: function(zoom) {
+		var width = this.get("width");
+		var factor = 50;
+
+		if (zoom)
+			this.set({"width" : width+factor});
+		else
+			this.set({"width" : width-factor});
 	}
 
 });
@@ -509,6 +525,7 @@ editor.BlocView = Backbone.View.extend({
 		editor.editorView.gridWinDim.top = editor.editorView.gridWin.offset().top;
 
 		// Bound events
+		this.model.on("change:width", this.resize, this);
 		this.model.layers.on("change add", this.actualize, this);
 	},
 
@@ -531,16 +548,29 @@ editor.BlocView = Backbone.View.extend({
 			.html(this.layerInfoTemplate({ 
 				layers: bloc.layers.models
 			}))
-			.addClass('bli-'+bloc.get("order"));
+			.addClass('bli-'+bloc.get("order"))
+			.css({"width" : bloc.get("width")+'px'});
 
 		return this;
+	},
+
+	/**
+	 *  Set the new width of the Bloc
+	 *  @param  {number} width new width in pixel
+	 */
+	resize: function(bloc) {
+		var order = this.model.get("order"),
+			width = this.model.get("width");
+
+		$(".b-"+order).css({"width" : width+'px'});
+		$(this.el).css({"width" : width+'px'});
 	},
 
 	/**
 	 *  Actualize the View
 	 */
 	actualize: function() {
-		$(this.el).html(this.layerInfoTemplate({ 
+		$(this.el).html(this.layerInfoTemplate({
 			layers: this.model.layers.models
 		}));
 
@@ -632,7 +662,7 @@ editor.EditorView = Backbone.View.extend({
 	 *  @type {Object}
 	 */
 	events: {
-		"click .add-bloc" : "newBloc"
+		// "click .add-bloc" : "newBloc"
 	},
 
 	/**
@@ -653,7 +683,10 @@ editor.EditorView = Backbone.View.extend({
 	 *  Add a new Bloc to the Grid collection.
 	 */
 	newBloc: function() {
-		this.collection.add();
+		var width = this.collection.last().get("width");
+		this.collection.add({
+			width: width
+		});
 
 		// send to communication
 		editor.publish("newBlocToServer");
@@ -666,6 +699,22 @@ editor.EditorView = Backbone.View.extend({
 	syncScroll: function(e) {
 		$(".piano-win").scrollTop(e.target.scrollTop);
     	$(".layer-info-win").scrollLeft(e.target.scrollLeft);
+	},
+
+	/**
+	 *  Zoom in ou out in the Grid
+	 *  @param  {boolean} zoom true: zoom in, false: zoom out
+	 */
+	zoom: function(zoom) {
+		_.map(this.collection.models, function(bloc) {
+			if (!zoom && (bloc.get("width") <= 100)) 
+				return false;
+			
+			bloc.resize(zoom);
+		});
+
+		// correct gridWinDim.top
+		this.gridWinDim.top = this.gridWin.offset().top;
 	}
 
 });

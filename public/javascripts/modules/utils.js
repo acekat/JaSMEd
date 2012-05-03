@@ -1,6 +1,12 @@
 (function(utils){
 
 /**
+ * DEPENDENCIES 
+ */
+var editor = jasmed.module("editor");
+
+
+/**
  * Return the frequency associated with a MIDI pitch.
  * @param {number} pitch
  * @returns {number} The frequency in Hertz.
@@ -47,5 +53,59 @@ utils.ppcm = function(a, b) {
 utils.inherits = function(parent, props) {
     return _.extend(Object.create(parent), props);
 };
+
+
+/**
+ *  Associated View to utils Module.
+ *  @type {Backbone.View}
+ */
+utils.UtilsView = Backbone.View.extend({
+
+	/**
+	 *  div associated to the View.
+	 *  @type {String}
+	 */
+	el: ".utils",
+
+	/** @constructs */
+	initialize: function() {
+	},
+
+	/**
+	 *  Delegated events: uses jQuery's delegate function to provide declarative callbacks for DOM events. 
+	 *  @type {Object}
+	 */
+	events: {
+		"click .add-bloc" : "newBloc",
+		"click .zoom-in" : "zoomIn",
+		"click .zoom-out" : "zoomOut"
+	},
+
+	newBloc: function() {
+		editor.editorView.newBloc();
+	},
+
+	zoomIn: function() {
+		editor.editorView.zoom(true);
+	},
+
+	zoomOut: function() {
+		editor.editorView.zoom(false);
+	}
+
+});
+
+/**
+ *  Only module Route to initialize the module.
+ *  @type {Backbone.Router}
+ */
+utils.Router = Backbone.Router.extend({
+
+	/** @constructs */
+	initialize: function() {
+		utils.utilsView = new utils.UtilsView();
+	}
+
+});
 
 })(jasmed.module('utils'));

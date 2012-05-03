@@ -1,4 +1,3 @@
 #!/usr/bin/env sh
 
-#redis-server /Users/thibaud/JaSMEd/bin/redis.conf
 redis-server ./bin/redis.conf

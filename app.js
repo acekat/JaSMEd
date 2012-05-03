@@ -212,11 +212,9 @@ io.sockets.on('connection', function (socket) {
 		});
 	});
 
-	socket.on('toggleNote', function(range) {
-		console.log(session.login + ' toggled note ' + range);
-		//core.toggleNote(note, session.login);
-		//note.login = session.login;
-		socket.broadcast.emit('noteToggled', range);
+	socket.on('toggleSelection', function(range) {
+		console.log(range.user + ' toggled selection.');
+		socket.broadcast.emit('toggleSelection', range);
 	});
 });
 

@@ -1,4 +1,5 @@
 (function(communicator) {
+
 	var socket = io.connect('http://localhost/');
 
 	socket.on('connect', function(data) {
@@ -6,7 +7,7 @@
 	});
 	
 	socket.on('error', function(reason) {
-	  console.error('Unable to connect Socket.IO', reason);
+		console.error('Unable to connect Socket.IO', reason);
 	});
 	
 	socket.on('loginSync', function(login) {
@@ -14,29 +15,17 @@
 		jasmed.user = login;
 	});
 	
-	socket.on('noteToggled', function (range) {
-		console.log(jasmed.user + ' just received a noteToggled: ' + range);
-		communicator.publish('noteToggled', range);
+	socket.on('toggleSelection', function(range) {
+		console.log(jasmed.user + ' received a toggleSelection from ' + range.user);
+		communicator.publish('toggleSelection', range);
 	});
 	
-	// calls toggleNote upon reception of 'noteToggled' msg
-	//editor.subscribe('noteToggled', editor.LayerView.toggleNote);
-	
-	function toggleNote(range) {
-		console.log(jasmed.user + ' about to emit toggleNote: ' + range);
-		socket.emit('toggleNote', range);
-	}
-	
-	/*
-	function selectRange(start, end) {
-		console.log(user + ' about to emit selectRange: ' + start + ' | ' + end);
-		socket.emit('selectRange', {
-			start: start,
-			end: end
-		})
-	}
-	*/
 
-	communicator.subscribe('toggleNote', toggleNote);
-	//communicator.subscribe('selectRange', toggleNote(start, end));
+	function sendSelection(range) {
+		console.log(jasmed.user + ' emit toggleSelection');
+		socket.emit('toggleSelection', range);
+	};
+
+	communicator.subscribe('selectionToServer', sendSelection);
+
 })(jasmed.module('communicator'));

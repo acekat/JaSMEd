@@ -3,9 +3,15 @@
 
 // Dependencies
 
+/**
+ *  SUBSCRIBES
+ */
 
-// calls toggleNote upon reception of 'noteToggled' msg
-editor.subscribe('toggleSelection', function(range) {
+/**
+ *  Toggle selection received
+ *  @param  {object} range object with the selection variables
+ */
+editor.subscribe("toggleSelection", function(range) {
 	var gridWin = editor.editorView.gridWin,
 		gridWinDim = editor.editorView.gridWinDim;
 
@@ -22,6 +28,18 @@ editor.subscribe('toggleSelection', function(range) {
 
 	editor.grid.selectRange(pitch, startLeft, endLeft, user);
 });
+
+/**
+ *  Add new Bloc
+ */
+editor.subscribe("newBloc", function() {
+	editor.editorView.collection.add();
+});
+
+
+/**
+ *  MODELS & COLLECTIONS
+ */
 
 /**
  *  Layer represent a single layer in a bloc.
@@ -231,6 +249,11 @@ editor.Grid = Backbone.Collection.extend({
 		};
 	}
 });
+
+
+/**
+ *  VIEWS
+ */
 
 /**
  *  Associated View to Layer Model.
@@ -631,6 +654,9 @@ editor.EditorView = Backbone.View.extend({
 	 */
 	newBloc: function() {
 		this.collection.add();
+
+		// send to communication
+		editor.publish("newBlocToServer");
 	},
 
 	/**
@@ -644,6 +670,10 @@ editor.EditorView = Backbone.View.extend({
 
 });
 
+
+/**
+ *  ROUTER
+ */
 
 /**
  *  Only module Route to initialize the module.

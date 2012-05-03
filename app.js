@@ -216,6 +216,10 @@ io.sockets.on('connection', function (socket) {
 		console.log(range.user + ' toggled selection.');
 		socket.broadcast.emit('toggleSelection', range);
 	});
+
+	socket.on('newBloc', function() {
+		socket.broadcast.emit('newBloc');
+	});
 });
 
 console.log("Express server listening on port %d in %s mode", app.settings.port, app.settings.env);

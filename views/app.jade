@@ -1,0 +1,48 @@
+extends layout
+
+block stylesheets
+	link(rel="stylesheet", href="/stylesheets/style.css")
+
+block scripts
+	include includes/scripts
+
+block content
+	section.instrument
+			p instrument
+	section.tools
+		.utils
+			button.add-bloc add bloc
+			button.zoom-in zoom in
+			button.zoom-out zoom out
+		.player
+			p player
+	section.editor
+		.layer-info-win
+			.layer-info
+		.piano-win
+			.piano
+		.grid-win
+			.grid
+
+// TEMPLATE
+block template
+	script#layer-template(type="text/template")
+		<% _.each(pitches, function(pitch, i) { %>
+		<div class="pitch <%= pitch %> p-<%= i+1 %>">
+		<% for (n=1; n<=sub; n++) { %>
+		<% var noteId = bloc+"-"+sub+"-"+(i+1)+"-"+n; %>
+		<% var on = _.indexOf(noteOn, noteId) === -1 ? "" : "on"; %>
+		<div id="<%= noteId %>" class="note sn-<%= n %> <%= on %>"></div>
+		<% }; %>	
+		</div>
+		<% }); %>
+
+	script#layer-info-template(type="text/template")
+		ul.layer-list
+			<% _.each(layers, function(layer) { %>
+			li
+				button.edit-layer <%= layer.get("sub") %>
+			<% }); %>
+			li
+				input.add-layer(type="text", placeholder=" +")
+		

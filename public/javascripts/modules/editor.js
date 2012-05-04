@@ -152,8 +152,12 @@ editor.Bloc = Backbone.Model.extend({
 
 	/** @constructs */
 	initialize : function() {
+		// use a width of reference to prevent unlimited widening of a bloc
+		this.refWidth = this.get("width");
+
 		// add new Bloc "anchor" to DOM
-		$('<div class="bloc b-'+this.get("order")+'" style="width: '+this.get("width")+'px;"></div>').appendTo(".grid");
+		// $('<div class="bloc b-'+this.get("order")+'" style="width: '+this.get("width")+'px;"></div>').appendTo(".grid");
+		$('<div class="bloc b-'+this.get("order")+'"></div>').appendTo(".grid");
 		
 		// create new Layers and associated View
 		this.layers = new editor.Layers();
@@ -169,17 +173,25 @@ editor.Bloc = Backbone.Model.extend({
 	},
 
 	/**
-	 *  Set the new width
+	 *  Set the new width.
 	 *  @param  {boolean} zoom true: increase width, false: descrease width
+	 *  @param  {number} [factor=50] added/subtracted number of pixels when zoom in/out 
 	 */
 	resize: function(zoom) {
-		var width = this.get("width");
-		var factor = 50;
+		var width = this.refWidth;
+		var sub = this.layers.editable().get("sub");
+		var factor = !_.isUndefined(arguments[1]) ? arguments[1] : 50;
+		var newWidth;
 
-		if (zoom)
-			this.set({"width" : width+factor});
-		else
-			this.set({"width" : width-factor});
+		if (zoom) {
+			newWidth = Math.ceil((width+factor)/sub) * sub;
+			this.refWidth += factor;
+		} else {
+			newWidth = Math.ceil((width-factor)/sub) * sub;
+			this.refWidth -= factor;
+		}
+
+		this.set({"width" : newWidth});
 	}
 
 });
@@ -485,6 +497,9 @@ editor.LayersView = Backbone.View.extend({
 
 		// insert in the DOM the rendered View
 		$('.b-'+this.model.get("order")).append(layerView.render().el);
+
+		// adapt bloc width according to subdivisions of the layer
+		this.model.resize(true, 0);
 	},
 
 	/**
@@ -498,7 +513,10 @@ editor.LayersView = Backbone.View.extend({
 
 		if (layer.get("editable")) {
 			// TODO: find a cleaner way
-			$(blocOrder+' .sub-'+layer.get("sub")).appendTo(blocOrder).addClass("editable");
+			$(blocOrder+' .sub-'+layer.get("sub")).addClass("editable").appendTo(blocOrder);
+
+			// adapt bloc width according to subdivisions of the layer
+			this.model.resize(true, 0);
 		};
 	}
 
@@ -548,8 +566,8 @@ editor.BlocView = Backbone.View.extend({
 			.html(this.layerInfoTemplate({ 
 				layers: bloc.layers.models
 			}))
-			.addClass('bli-'+bloc.get("order"))
-			.css({"width" : bloc.get("width")+'px'});
+			.addClass('bli-'+bloc.get("order"));
+			// .css({"width" : bloc.get("width")+'px'});
 
 		return this;
 	},

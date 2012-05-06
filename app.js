@@ -2,12 +2,13 @@ var express = require('express')
 	, connect = require('express/node_modules/connect')
 	, stylus = require('stylus')
 	, RedisStore = require('connect-redis')(express)
-	, utils = connect.utils
+	, connectUtils = connect.utils
 	,	cookieSecret = 'Connect 2. needs a secret!'
 	, sessionStore = new RedisStore()
 	,	sessionKey = 'JaSMEd.sid'
 	, fs = require('fs')
 	, auth = require('./modules/authentification')
+	, utils = require('./modules/utils')
 	, core = require('./core');
 
 var app = express();
@@ -43,26 +44,9 @@ app.configure('development', function(){
  */
 app.locals.use(function(req, res, done) {
 	res.locals.session = req.session;
-	res.locals.flashMessages = flash(req);
+	res.locals.flashMessages = utils.flash(req);
 	done();
 });
-
-/** inspired by Express 2.x req.flash() */
-function flash(req, type, msg) {
-	if (req.session === undefined) throw Error('req.flashMessage() requires sessions');
-	var msgs = req.session.messages = req.session.messages || {};
-	
-	if (type && msg)
-		return (msgs[type] = msgs[type] || []).push(msg);
-	else if (type) {
-		var arr = msgs[type];
-		delete msgs[type];
-		return arr || [];
-	} else {
-		req.session.messages = {};
-		return msgs;
-	}
-};
 
 /** 
  * Middleware for limited access 
@@ -73,7 +57,7 @@ function requireLogin(req, res, next) {
 		next();
 	} else {
 		// Otherwise, we redirect him to login form
-		flash(req, 'warn', 'login needz yo!!');
+		utils.flash(req, 'warn', 'login needz yo!!');
 		req.session.redir = req.path;
 		res.redirect('/login');
 	}
@@ -138,7 +122,7 @@ app.post('/login', function(req, res) {
 			delete req.session.redir;
 			res.redirect(redir);
 		} else {
-			flash(req, 'warn', 'tough luck, login failed brother');
+			utils.flash(req, 'warn', 'tough luck, login failed brother');
 			res.redirect('/login');
 		}
 	});
@@ -174,9 +158,9 @@ io.configure(function() {
 			callback('No cookie', false);
 
 		//data est ce qui sera exposé dans socket.handshake.session
-		var cookie = utils.parseCookie(data.headers.cookie);
+		var cookie = connectUtils.parseCookie(data.headers.cookie);
 		var sid = cookie[sessionKey].split('.')[0];
-		var signedSid = utils.sign(sid, cookieSecret);
+		var signedSid = connectUtils.sign(sid, cookieSecret);
 		
 		if (signedSid !== cookie[sessionKey])
 			callback('SID don\'t match', false);

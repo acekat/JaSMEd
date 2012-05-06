@@ -1,43 +1,17 @@
 var express = require('express')
-	, connect = require('express/node_modules/connect')
-	, stylus = require('stylus')
-	, RedisStore = require('connect-redis')(express)
-	, connectUtils = connect.utils
-	,	cookieSecret = 'Connect 2. needs a secret!'
-	, sessionStore = new RedisStore()
-	,	sessionKey = 'JaSMEd.sid'
+	, http = require('http')
 	, fs = require('fs')
 	, auth = require('./modules/authentification')
 	, utils = require('./modules/utils')
-	, core = require('./core');
+	, core = require('./core')
+	, sessionStore;
 
 var app = express();
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
 
-app.configure(function() {
-	app.set('views', __dirname + '/views');
-	app.set('view engine', 'jade');
-	app.set('port', 3000);
-	app.use(express.favicon());
-	app.use(express.logger('dev'));
-	app.use(stylus.middleware({
-		  src: __dirname + '/views'
-		, dest: __dirname + '/public'
-	}));
-	app.use(express.bodyParser());
-	app.use(express.methodOverride());
-	app.use(express.cookieParser(cookieSecret));
-	app.use(express.session({
-		  secret: 'mama loves mambo'
-		, store: sessionStore
-		, key: sessionKey
-	}));
-	// order matters: needs to be after stylus for it to recompile
-	app.use(express.static(__dirname + '/public')); 
-});
-
-app.configure('development', function(){
-	app.use(express.errorHandler());
-});
+// config
+require('./config')(app, express, io, sessionStore);
 
 /** 
  * expose locals to view before rendering
@@ -144,40 +118,9 @@ app.get('/app', requireLogin, function(req, res) {
 	res.render('app');
 });
 
-var server = app.listen(app.settings.port);
-
 /**
  * socket.io
  */
-var io = require('socket.io').listen(server);
-
-io.configure(function() {
-	io.set('log level', 1); //sinon il log beaucoup trop, ça me rend fou :)
-	io.set('authorization', function(data, callback) {
-		if (!data.headers.cookie)
-			callback('No cookie', false);
-
-		//data est ce qui sera exposé dans socket.handshake.session
-		var cookie = connectUtils.parseCookie(data.headers.cookie);
-		var sid = cookie[sessionKey].split('.')[0];
-		var signedSid = connectUtils.sign(sid, cookieSecret);
-		
-		if (signedSid !== cookie[sessionKey])
-			callback('SID don\'t match', false);
-		
-		data.sessionID = sid;
-		data.sessionStore = sessionStore;
-
-		sessionStore.load(data.sessionID, function(err, session) {
-			if (err || !session)
-				callback('Error loading session', false);
-			
-			data.session = session;
-			callback(null, true);
-		});
-	});
-});
-
 io.sockets.on('connection', function (socket) {
 	var session = socket.handshake.session;
 
@@ -203,4 +146,9 @@ io.sockets.on('connection', function (socket) {
 	});
 });
 
+/**
+ * start listening!
+ */
+
+server.listen(app.settings.port);
 console.log("Express server listening on port %d in %s mode", app.settings.port, app.settings.env);

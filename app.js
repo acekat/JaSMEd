@@ -7,7 +7,7 @@ var express = require('express')
 	, sessionStore = new RedisStore()
 	,	sessionKey = 'JaSMEd.sid'
 	, fs = require('fs')
-	, users = require('./users')
+	, auth = require('./modules/authentification')
 	, core = require('./core');
 
 var app = express();
@@ -54,7 +54,7 @@ function flash(req, type, msg) {
 	
 	if (type && msg)
 		return (msgs[type] = msgs[type] || []).push(msg);
-	else if (type) { //not used for the moment
+	else if (type) {
 		var arr = msgs[type];
 		delete msgs[type];
 		return arr || [];
@@ -122,13 +122,16 @@ app.get('/login', function(req, res) {
 });
 
 app.get('/logout', function(req, res) {
-	req.session.regenerate();
+	req.session.regenerate(function(err) {
+		if (err)
+			console.log('error regenerating session: ' + err);
+	 });
 	res.redirect('/');
 });
 
 app.post('/login', function(req, res) {
 	//need to only allow 1 sessionID
-	users.authenticate(req.body.username, req.body.password, function(user) {
+	auth.authenticate(req.body.username, req.body.password, function(user) {
 		if (user) {
 			req.session.login = user.login;
 			var redir = req.session.redir || '/';
@@ -195,12 +198,6 @@ io.sockets.on('connection', function (socket) {
 	var session = socket.handshake.session;
 
 	socket.emit('loginSync', session.login);
-
-	socket.on('add', function(data) {
-		session.newattr = data;
-		console.log(session.newattr + ' added to ' + session.login + '\'s session');
-		session.save();
-	});
 	
 	//do something
 	socket.on('saveAs', function(fileName) {
@@ -213,7 +210,7 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('toggleSelection', function(range) {
-		console.log(range.user + ' toggled selection.');
+		console.log(range.user + ' toggled selection.'); //msg a ameliorer
 		socket.broadcast.emit('toggleSelection', range);
 	});
 

@@ -27,6 +27,45 @@ editor.subscribe("toggleSelection", function(range) {
 	editor.grid.selectRange(pitch, startLeft, endLeft, user);
 });
 
+// blatant copy of capsule.js :)
+editor.xport = function(opt) {
+	var result = {},
+		settings = _({
+			recurse: true
+		}).extend(opt || {});
+
+	function process(targetObj, source) {
+		targetObj.attrs = source.toJSON();
+		_.each(source, function (value, key) {
+			if (settings.recurse) {
+				if (key !== 'collection' && source[key] instanceof Backbone.Collection) {
+					targetObj.collections = targetObj.collections || {};
+					targetObj.collections[key] = {};
+					targetObj.collections[key].models = [];
+					targetObj.collections[key].id = source[key].id || null;
+					_.each(source[key].models, function (value, index) {
+						process(targetObj.collections[key].models[index] = {}, value);
+					});
+				} else if (key !== 'parent' && source[key] instanceof Backbone.Model) {
+					targetObj.models = targetObj.models || {};
+					process(targetObj.models[key] = {}, value);
+				}
+			}
+		});
+	}
+	
+	process(result, editor.grid);
+	return result;
+};
+
+//a remplacer par un petit bouton save qqpart...
+editor.subscribe('export', function(name) {
+	editor.publish('saveAs', {
+		name: name,
+		data: editor.xport()
+	})
+});
+
 /**
  *  Add new Bloc
  */
@@ -763,7 +802,7 @@ editor.Router = Backbone.Router.extend({
 		// for (var i = 0; i < 32; i++) {
 		// 	editor.grid.add();
 		// };
-	}
+	},
 
 });
 

@@ -26,7 +26,7 @@
 	
 
 	function sendSelection(range) {
-		console.log(jasmed.user + ' emit toggleSelection');
+		console.log(jasmed.user + ' about to emit toggleSelection');
 		socket.emit('toggleSelection', range);
 	};
 
@@ -36,5 +36,11 @@
 
 	communicator.subscribe('selectionToServer', sendSelection);
 	communicator.subscribe('newBlocToServer', sendnewBloc);
-
+	
+	//
+	communicator.subscribe('saveAs', function(seq) {
+		console.log(jasmed.user + ' about to emit saveAs : ' + seq.name);
+		console.log(JSON.stringify(seq.data));
+		socket.emit('saveAs', seq);
+	});
 })(jasmed.module('communicator'));

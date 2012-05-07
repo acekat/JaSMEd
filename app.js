@@ -3,6 +3,7 @@ var express = require('express')
 	, fs = require('fs')
 	, auth = require('./modules/authentification')
 	, utils = require('./modules/utils')
+	,	store = require('./modules/store')
 	, core = require('./core')
 	, sessionStore;
 
@@ -41,6 +42,10 @@ function requireLogin(req, res, next) {
  * Routes
  */
 app.get('/', function(req, res) {
+	store.list(function(fileList) {
+		res.render('index', { files: fileList });
+	});
+	/*
 	fs.readdir('./store', function(err, files) {
 		if (err) {
 			console.err('problem reading directory');
@@ -49,6 +54,7 @@ app.get('/', function(req, res) {
 
 		res.render('index', { files: files });
 	})
+	*/
 });
 
 app.get('/draft', requireLogin, function(req, res) {
@@ -126,14 +132,21 @@ io.sockets.on('connection', function (socket) {
 
 	socket.emit('loginSync', session.login);
 	
-	//do something
-	socket.on('saveAs', function(fileName) {
+	socket.on('saveAs', function(seq) {
+		store.exportSeq(seq.name, seq.data, function(res) {
+			if (!res)
+				console.log(session.login + ' error trying to save sequencer');
+			else
+				console.log(session.login + ' saved current sequencer as ' + seq.name);
+		});
+		/*
 		core.exportSeq(fileName, function(res) {
 			if (!res)
 				console.log(session.login + ' error trying to save sequencer');
 			else
 				console.log(session.login + ' saved current sequencer as ' + fileName);
 		});
+		*/
 	});
 
 	socket.on('toggleSelection', function(range) {
@@ -149,6 +162,5 @@ io.sockets.on('connection', function (socket) {
 /**
  * start listening!
  */
-
 server.listen(app.settings.port);
 console.log("Express server listening on port %d in %s mode", app.settings.port, app.settings.env);

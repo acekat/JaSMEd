@@ -46,40 +46,8 @@ app.get('/', function(req, res) {
 	});
 });
 
-app.get('/draft', requireLogin, function(req, res) {
-	core.init(function(seq) {
-		if (!req)
-			return;
-		
-		res.render('draft', {
-				seq: seq
-			,	pitches: core.pitches
-		});
-	});
-});
-
-app.get('/session', requireLogin, function(req, res) {
-	if (req.session.views)
-		++req.session.views;
-	else
-		req.session.views = 1;
-
-	res.render('session', {
-			title: 'session!'
-		,	sessionID: req.sessionID
-	});
-});
-
 app.get('/login', function(req, res) {
 	res.render('login', { title: 'LOGIN!!!'	});
-});
-
-app.get('/logout', function(req, res) {
-	req.session.regenerate(function(err) {
-		if (err)
-			console.log('error regenerating session: ' + err);
-	 });
-	res.redirect('/');
 });
 
 app.post('/login', function(req, res) {
@@ -97,13 +65,33 @@ app.post('/login', function(req, res) {
 	});
 });
 
-app.get('/store/:name', requireLogin, function(req, res) {
-	req.session.seqName = req.params.name;
-	res.render('app');
+app.get('/logout', function(req, res) {
+	req.session.regenerate(function(err) {
+		if (err)
+			console.log('error regenerating session: ' + err);
+	 });
+	res.redirect('/');
+});
+
+app.get('/session', requireLogin, function(req, res) {
+	if (req.session.views)
+		++req.session.views;
+	else
+		req.session.views = 1;
+
+	res.render('session', {
+			title: 'session!'
+		,	sessionID: req.sessionID
+	});
 });
 
 app.get('/app', requireLogin, function(req, res) {
 	delete req.session.seqName;
+	res.render('app');
+});
+
+app.get('/store/:name', requireLogin, function(req, res) {
+	req.session.seqName = req.params.name;
 	res.render('app');
 });
 

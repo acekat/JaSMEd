@@ -81,7 +81,7 @@ section {
   width: 70%;
 }
 .editor .layer-info-win {
-  margin-left: 40px;
+  margin-left: 42px;
   background: #ddd;
   border: 1px solid;
   overflow: hidden;
@@ -112,12 +112,23 @@ section {
   width: 40px;
   height: 300px;
   background: #ddd;
+  border: 1px solid;
   overflow: hidden;
 }
 .editor .piano {
   width: 40px;
   height: 480px;
-  background: #ddd url("../images/grid-bg.png");
+}
+.editor .piano-key {
+  width: 100%;
+  height: 20px;
+  border-bottom: 1px solid #aaa;
+}
+.editor .piano-key.white {
+  background: #fff;
+}
+.editor .piano-key.black {
+  background: #000;
 }
 .editor .grid-win {
   position: relative;
@@ -153,6 +164,7 @@ section {
 .editor .note {
   display: table-cell;
   height: 20px;
+  border-bottom: 1px solid #aaa;
 }
 .editor .note.on {
   background: #00b7ff;

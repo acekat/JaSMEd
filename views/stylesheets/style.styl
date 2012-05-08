@@ -69,11 +69,17 @@ section
 .tools
 	width: 15%
 
+// editor variables
+note-height = 20px
+pitch-style()
+	height: note-height
+	border-bottom: 1px solid #aaa
+
 .editor
 	width: 70%
 	
 	.layer-info-win
-		margin-left: 40px
+		margin-left: 42px
 		background: #ddd
 		border: 1px solid
 		overflow: hidden
@@ -103,12 +109,23 @@ section
 		width: 40px
 		height: 300px
 		background: #ddd
+		border: 1px solid
 		overflow: hidden
 
 	.piano
 		width: 40px
 		height: 480px
-		background: #ddd url("../images/grid-bg.png")
+
+	.piano-key
+		width: 100%
+		height: note-height
+		border-bottom: 1px solid #aaa
+		
+	.piano-key.white
+		background: #fff
+
+	.piano-key.black
+		background: #000
 
 	.grid-win
 		position: relative
@@ -143,7 +160,8 @@ section
 		
 	.note
 		display: table-cell
-		height: 20px
+		height: note-height
+		border-bottom: 1px solid #aaa
 
 	.note.on
 		background: #00B7FF

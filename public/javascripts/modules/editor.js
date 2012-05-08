@@ -731,6 +731,12 @@ var EditorView = Backbone.View.extend({
 
 	/** @constructs */
 	initialize: function() {
+		// display piano
+		_.each(pitches, function(pitch, index) {
+			var color = /.+#./.test(pitch) ? "black" : "white";
+			$(".piano").append('<div class="piano-key '+pitch+' '+color+' pk-'+index+'"></div>');
+		});
+
 		// Bound events
 		this.collection.on("add", this.addBloc);
 		this.collection.gridWin.on("scroll", this.syncScroll);

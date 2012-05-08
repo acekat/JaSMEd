@@ -43,7 +43,11 @@ editor.subscribe('export', function(name) {
 /**
  *  CONFIGURATION
  */
-var defaultSub = 4;
+var scrollMargin = 15;
+var defaultBlocWidth = 200;
+var minBlocWidth = 100;
+var resizeFactor = 50;
+var defaultLayerSub = 4;
 var pitches = ['do3', 'do#3', 're3', 're#3', 'mi3', 'fa3', 'fa#3', 'sol3', 'sol#3', 'la3', 'la#3', 'si3',
 					'do4', 'do#4', 're4', 're#4', 'mi4', 'fa4', 'fa#4', 'sol4', 'sol#4', 'la4', 'la#4', 'si4'];
 var user,
@@ -109,7 +113,7 @@ var Layer = Backbone.Model.extend({
 	 */
 	defaults : function() {
 		return {
-			sub: defaultSub,
+			sub: defaultLayerSub,
 			noteOn: {},
 			editable: true
 		}
@@ -198,7 +202,7 @@ var Bloc = Backbone.Model.extend({
 	 */
 	defaults : function() {
 		return {
-			width: 200,
+			width: defaultBlocWidth,
 			order: editor.grid.nextOrder()
 		}
 	},
@@ -232,7 +236,7 @@ var Bloc = Backbone.Model.extend({
 	resize: function(zoom) {
 		var width = this.refWidth;
 		var sub = this.layers.editable().get("sub");
-		var factor = !_.isUndefined(arguments[1]) ? arguments[1] : 50;
+		var factor = !_.isUndefined(arguments[1]) ? arguments[1] : resizeFactor;
 		var newWidth;
 
 		if (zoom) {
@@ -446,7 +450,6 @@ var LayerView = Backbone.View.extend({
 	movingNote: function(e) {
 		var gridWin = editor.grid.gridWin,
 			gridWinDim = editor.grid.gridWinDim;
-		var scrollMargin = 15;
 
 		// Scrolling
 		// down
@@ -785,7 +788,7 @@ var EditorView = Backbone.View.extend({
 	 */
 	zoom: function(zoom) {
 		_.map(this.collection.models, function(bloc) {
-			if (!zoom && (bloc.get("width") <= 100)) 
+			if (!zoom && (bloc.get("width") <= minBlocWidth)) 
 				return false;
 			
 			bloc.resize(zoom);

@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-function openSequencer(fileName, callback) {
+function importSequencer(fileName, callback) {
 	var pathName = 'store/' + fileName;
 	
 	console.log('about to open ' +  pathName);
@@ -10,6 +10,8 @@ function openSequencer(fileName, callback) {
 			callback(null);
 			return;
 		}
+		
+		var sequencer = JSON.parse(data);
 		
 		callback(sequencer);
 	});
@@ -42,5 +44,6 @@ function list(callback) {
 
 module.exports = {
 	list: list,
-	exportSeq: exportSequencer
+	exportSeq: exportSequencer,
+	importSeq: importSequencer
 }

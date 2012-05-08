@@ -10,20 +10,16 @@ block content
 		p Welcome #{session.login}!
 
 	p
-		| You can follow 
-		a(href='/app') here
-		|  the application development.
-	br
-	p 
-		a(href='/draft') Here
-		|  will be an old draft.
-	p And there some saved sequences:
+		a(href='/app') THIS
+		|  is what all the fuss is about.
+
+	p some saved sequences: (warning: it don't work!! (yet))
 		ul
 			each file in files
 				li
 					a(href='/store/#{file}') #{file} 
 	p 
-		| You can also check out your 
+		| you can also check out your 
 		a(href='/session') session
 		|.
 	

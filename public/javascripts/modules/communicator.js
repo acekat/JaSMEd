@@ -24,9 +24,13 @@
 		communicator.publish('newBloc');
 	});
 	
+	socket.on('initResponse', function(seq) {
+		communicator.publish('initResponse', seq);
+	})
+	
 
 	function sendSelection(range) {
-		console.log(jasmed.user + ' about to emit toggleSelection');
+		console.log(jasmed.user + ' emits toggleSelection');
 		socket.emit('toggleSelection', range);
 	};
 
@@ -39,8 +43,13 @@
 	
 	//
 	communicator.subscribe('saveAs', function(seq) {
-		console.log(jasmed.user + ' about to emit saveAs : ' + seq.name);
+		console.log(jasmed.user + ' emits saveAs : ' + seq.name);
 		console.log(JSON.stringify(seq.data));
 		socket.emit('saveAs', seq);
+	});
+	
+	communicator.subscribe('init', function() {
+		console.log(jasmed.user + ' emits init');
+		socket.emit('init');
 	});
 })(jasmed.module('communicator'));

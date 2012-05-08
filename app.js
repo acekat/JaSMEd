@@ -4,7 +4,6 @@ var express = require('express')
 	, auth = require('./modules/authentification')
 	, utils = require('./modules/utils')
 	,	store = require('./modules/store')
-	, core = require('./core')
 	, sessionStore;
 
 var app = express();
@@ -45,16 +44,6 @@ app.get('/', function(req, res) {
 	store.list(function(fileList) {
 		res.render('index', { files: fileList });
 	});
-	/*
-	fs.readdir('./store', function(err, files) {
-		if (err) {
-			console.err('problem reading directory');
-			return;
-		}
-
-		res.render('index', { files: files });
-	})
-	*/
 });
 
 app.get('/draft', requireLogin, function(req, res) {
@@ -109,18 +98,12 @@ app.post('/login', function(req, res) {
 });
 
 app.get('/store/:name', requireLogin, function(req, res) {
-	core.openSeq(req.params.name, function(seq) {
-		if (!seq)
-			return;
-		
-		res.render('draft', {
-				seq: seq
-			,	pitches: core.pitches
-		});
-	});
+	req.session.seqName = req.params.name;
+	res.render('app');
 });
 
 app.get('/app', requireLogin, function(req, res) {
+	delete req.session.seqName;
 	res.render('app');
 });
 
@@ -132,6 +115,25 @@ io.sockets.on('connection', function (socket) {
 
 	socket.emit('loginSync', session.login);
 	
+	socket.on('init', function() {
+		if (!session.seqName) {
+			socket.emit('initResponse');
+			return;
+		}
+		
+		console.log(session.login + ' about to open ' + session.seqName);
+		store.importSeq(session.seqName, function(data) {
+			if (!data)
+				console.log('error reading file'); //must do something about that
+			
+			console.log('about to emit back: ' + session.seqName + ' + ' + JSON.stringify(data));
+			socket.emit('initResponse', {
+				name: session.seqName,
+				data: data
+			});
+		});
+	})
+	
 	socket.on('saveAs', function(seq) {
 		store.exportSeq(seq.name, seq.data, function(res) {
 			if (!res)
@@ -139,14 +141,6 @@ io.sockets.on('connection', function (socket) {
 			else
 				console.log(session.login + ' saved current sequencer as ' + seq.name);
 		});
-		/*
-		core.exportSeq(fileName, function(res) {
-			if (!res)
-				console.log(session.login + ' error trying to save sequencer');
-			else
-				console.log(session.login + ' saved current sequencer as ' + fileName);
-		});
-		*/
 	});
 
 	socket.on('toggleSelection', function(range) {

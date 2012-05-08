@@ -59,7 +59,7 @@ utils.inherits = function(parent, props) {
  *  Associated View to utils Module.
  *  @type {Backbone.View}
  */
-utils.UtilsView = Backbone.View.extend({
+var UtilsView = Backbone.View.extend({
 
 	/**
 	 *  div associated to the View.
@@ -96,16 +96,10 @@ utils.UtilsView = Backbone.View.extend({
 });
 
 /**
- *  Only module Route to initialize the module.
- *  @type {Backbone.Router}
+ *  Module initialization method
  */
-utils.Router = Backbone.Router.extend({
-
-	/** @constructs */
-	initialize: function() {
-		utils.utilsView = new utils.UtilsView();
-	}
-
-});
+utils.initialize = function() {
+	utils.utilsView = new UtilsView();
+};
 
 })(jasmed.module('utils'));

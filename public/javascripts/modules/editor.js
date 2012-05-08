@@ -1,32 +1,6 @@
 // Module reference argument, assigned at the bottom
 (function(editor) {
 
-/**
- *  SUBSCRIBES
- */
-
-/**
- *  Toggle selection received
- *  @param  {object} range object with the selection variables
- */
-editor.subscribe("toggleSelection", function(range) {
-	var gridWin = editor.editorView.gridWin,
-		gridWinDim = editor.editorView.gridWinDim;
-
-	var pitch = range.pitch,
-		startNote = range.startNote,
-		endNote = range.endNote,
-		user = range.user;
-
-	var startNoteId = startNote.bloc+'-'+startNote.layer+'-'+pitch+'-'+startNote.note,
-		endNoteId = endNote.bloc+'-'+endNote.layer+'-'+pitch+'-'+endNote.note;
-
-	var startLeft = $('#'+startNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft,
-		endLeft = $('#'+endNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
-
-	editor.grid.selectRange(pitch, startLeft, endLeft, user);
-});
-
 // blatant copy of capsule.js :)
 editor.xport = function(opt) {
 	var result = {},
@@ -67,11 +41,53 @@ editor.subscribe('export', function(name) {
 });
 
 /**
+ *  CONFIGURATION
+ */
+var defaultSub = 4;
+var pitches = ['do3', 'do#3', 're3', 're#3', 'mi3', 'fa3', 'fa#3', 'sol3', 'sol#3', 'la3', 'la#3', 'si3',
+					'do4', 'do#4', 're4', 're#4', 'mi4', 'fa4', 'fa#4', 'sol4', 'sol#4', 'la4', 'la#4', 'si4'];
+var user,
+	pitch,
+	startNote,
+	startNoteId,
+	startLeft,
+	endNote,
+	endNoteId,
+	endLeft;
+
+
+/**
+ *  SUBSCRIBES
+ */
+
+/**
+ *  Toggle selection received
+ *  @param  {object} range object with the selection variables
+ */
+editor.subscribe("toggleSelection", function(range) {
+	var gridWin = editor.grid.gridWin,
+		gridWinDim = editor.grid.gridWinDim;
+
+	var pitch = range.pitch,
+		startNote = range.startNote,
+		endNote = range.endNote,
+		user = range.user;
+
+	var startNoteId = startNote.bloc+'-'+startNote.layer+'-'+pitch+'-'+startNote.note,
+		endNoteId = endNote.bloc+'-'+endNote.layer+'-'+pitch+'-'+endNote.note;
+
+	var startLeft = $('#'+startNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft,
+		endLeft = $('#'+endNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
+
+	editor.grid.selectRange(pitch, startLeft, endLeft, user);
+});
+
+/**
  *  Add new Bloc
  */
 editor.subscribe("newBloc", function() {
-	var width = editor.editorView.collection.last().get("width");
-	editor.editorView.collection.add({
+	var width = editor.grid.last().refWidth;
+	editor.grid.add({
 		width: width
 	});
 });
@@ -85,7 +101,7 @@ editor.subscribe("newBloc", function() {
  *  Layer represent a single layer in a bloc.
  *  @type {Backbone.Model}
  */
-editor.Layer = Backbone.Model.extend({
+var Layer = Backbone.Model.extend({
 
 	/**
 	 *  Default values of a Layer variables.
@@ -93,9 +109,7 @@ editor.Layer = Backbone.Model.extend({
 	 */
 	defaults : function() {
 		return {
-			sub: 4,
-			pitches: ['do3', 'do#3', 're3', 're#3', 'mi3', 'fa3', 'fa#3', 'sol3', 'sol#3', 'la3', 'la#3', 'si3',
-						'do4', 'do#4', 're4', 're#4', 'mi4', 'fa4', 'fa#4', 'sol4', 'sol#4', 'la4', 'la#4', 'si4'],
+			sub: defaultSub,
 			noteOn: {},
 			editable: true
 		}
@@ -136,13 +150,13 @@ editor.Layer = Backbone.Model.extend({
  *  Collection of Layer.
  *  @type {Backbone.Collection}
  */
-editor.Layers = Backbone.Collection.extend({
+var Layers = Backbone.Collection.extend({
 
 	/**
 	 *  Associated model.
 	 *  @type {Backbone.Model}
 	 */
-	model: editor.Layer,
+	model: Layer,
 	
 	/** @constructs */
 	initialize : function() {
@@ -176,7 +190,7 @@ editor.Layers = Backbone.Collection.extend({
  *  Bloc is an element of the Grid.
  *  @type {Backbone.Model}
  */
-editor.Bloc = Backbone.Model.extend({
+var Bloc = Backbone.Model.extend({
 
 	/**
 	 *  Default values of a Bloc variables.
@@ -198,11 +212,11 @@ editor.Bloc = Backbone.Model.extend({
 		$('<div class="bloc b-'+this.get("order")+'" style="width: '+this.refWidth+'px;"></div>').appendTo(".grid");
 		
 		// create new Layers and associated View
-		this.layers = new editor.Layers();
-		this.layersView = new editor.LayersView({
+		this.layers = new Layers();
+		this.layersView = new LayersView({
 			collection: this.layers,
-			model: this
 		});
+		this.layersView.bloc = this;
 
 		// add a first new Layer
 		this.layers.add({
@@ -238,16 +252,26 @@ editor.Bloc = Backbone.Model.extend({
  *  Collection of Bloc.
  *  @type {Backbone.Collection}
  */
-editor.Grid = Backbone.Collection.extend({
+var Grid = Backbone.Collection.extend({
 
 	/**
 	 *  Associated model.
 	 *  @type {Backbone.Model}
 	 */
-	model: editor.Bloc,
+	model: Bloc,
 	
 	/** @constructs */
 	initialize : function() {
+		// useful variables for notes selection
+		this.gridWin = $(".grid-win");
+		this.gridWinDim = {
+			left: this.gridWin.offset().left, 
+			top: this.gridWin.offset().top, 
+			width: this.gridWin.width(), 
+			height: this.gridWin.height()
+		};
+		this.startLeft = 0;
+		this.endLeft = 0;
 	},
 
 	/**
@@ -258,7 +282,7 @@ editor.Grid = Backbone.Collection.extend({
 	getBloc: function(order) {
 		return this.find(function(bloc) {
 			return bloc.get("order") == order;
-		})
+		});
 	},
 
 	/**
@@ -276,8 +300,8 @@ editor.Grid = Backbone.Collection.extend({
 	 *  @param  {number} end   left position of mouseup event
 	 */
 	selectRange: function(pitch, start, end, user) {
-		var gridWin = editor.editorView.gridWin,
-			gridWinDim = editor.editorView.gridWinDim;
+		var gridWin = this.gridWin,
+			gridWinDim = this.gridWinDim;
 
 		var selectedNote = [];
 		var selectables	= gridWin.find(".bloc").children(".editable").children(".p-"+pitch).children();
@@ -325,7 +349,7 @@ editor.Grid = Backbone.Collection.extend({
  *  Associated View to Layer Model.
  *  @type {Backbone.View}
  */
-editor.LayerView = Backbone.View.extend({
+var LayerView = Backbone.View.extend({
 
 	/**
 	 *  Class attribute of the div associated to the View.
@@ -359,7 +383,12 @@ editor.LayerView = Backbone.View.extend({
 	render: function() {
 		var layer = this.model;
 		$(this.el)
-			.html(this.layerTemplate(layer.toJSON()))
+			.html(this.layerTemplate({
+				bloc: layer.get("bloc"),
+				sub: layer.get("sub"),
+				noteOn: layer.get("noteOn"),
+				pitches: pitches
+			}))
 			.addClass('sub-'+layer.get("sub"))
 			.addClass("editable");
 
@@ -389,20 +418,20 @@ editor.LayerView = Backbone.View.extend({
 	 *  @param  {object} e event object fired
 	 */
 	startingNote: function(e) {
-		var gridWin = editor.editorView.gridWin,
-			gridWinDim = editor.editorView.gridWinDim;
-		var id = editor.startNoteId = e.target.id;
+		var gridWin = editor.grid.gridWin,
+			gridWinDim = editor.grid.gridWinDim;
+		var id = startNoteId = e.target.id;
 
 		// 0: Bloc, 1: Layer, 2: Pitch, 3: Note
 		var idArray = id.split("-");
-		editor.startNote = {
+		startNote = {
 			"bloc":  idArray[0],
 			"layer":  idArray[1],
 			"note":  idArray[3],
 		};
-		editor.pitch = idArray[2];
+		pitch = idArray[2];
 
-		editor.editorView.startLeft = e.pageX - gridWinDim.left + gridWin[0].scrollLeft;
+		startLeft = e.pageX - gridWinDim.left + gridWin[0].scrollLeft;
 
 		/* MULTI DRAG REALTIME SELECTION BUT NOT FOLLOWING MOUSE REVERSE OR TOGGLING NOTE */
 		// editor.editorView.onSelection = true;
@@ -415,8 +444,8 @@ editor.LayerView = Backbone.View.extend({
 	 *  @param  {object} e event object fired
 	 */
 	movingNote: function(e) {
-		var gridWin = editor.editorView.gridWin,
-			gridWinDim = editor.editorView.gridWinDim;
+		var gridWin = editor.grid.gridWin,
+			gridWinDim = editor.grid.gridWinDim;
 		var scrollMargin = 15;
 
 		// Scrolling
@@ -471,15 +500,15 @@ editor.LayerView = Backbone.View.extend({
 	 *  @param  {object} e event object fired
 	 */
 	endingNote: function(e) {
-		var gridWin = editor.editorView.gridWin,
-			gridWinDim = editor.editorView.gridWinDim,
-			startLeft = editor.editorView.startLeft;
-		var id = editor.endNoteId = e.target.id;
-		var endLeft = editor.editorView.endLeft = e.pageX - gridWinDim.left + gridWin[0].scrollLeft;
+		var gridWin = editor.grid.gridWin,
+			gridWinDim = editor.grid.gridWinDim;
+		var id = endNoteId = e.target.id,
+			user = jasmed.user;
+		endLeft = e.pageX - gridWinDim.left + gridWin[0].scrollLeft;
 
 		// 0: Bloc, 1: Layer, 2: Pitch, 3: Note
 		var idArray = id.split("-");
-		editor.endNote = {
+		endNote = {
 			bloc :  idArray[0],
 			layer :  idArray[1],
 			note :  idArray[3],
@@ -487,14 +516,14 @@ editor.LayerView = Backbone.View.extend({
 
 		// send to communication
 		editor.publish('selectionToServer', {
-			pitch : editor.pitch,
-			startNote : editor.startNote,
-			endNote : editor.endNote,
-			user: jasmed.user
+			pitch : pitch,
+			startNote : startNote,
+			endNote : endNote,
+			user: user
 		});
 
 		// toggle notes
-		editor.grid.selectRange(editor.pitch, startLeft, endLeft, jasmed.user);
+		editor.grid.selectRange(pitch, startLeft, endLeft, user);
 
 		/* MULTI DRAG REALTIME SELECTION BUT NOT FOLLOWING MOUSE REVERSE OR TOGGLING NOTE */
 		// editor.editorView.onSelection = false;
@@ -508,7 +537,7 @@ editor.LayerView = Backbone.View.extend({
  *  Associated View to Layers Collection.
  *  @type {Backbone.view}
  */
-editor.LayersView = Backbone.View.extend({
+var LayersView = Backbone.View.extend({
 
 	/**
 	 *  div associated to the View.
@@ -529,12 +558,12 @@ editor.LayersView = Backbone.View.extend({
 	 */
 	addLayer: function(layer) {
 		// create a View for the Layer
-		var layerView = new editor.LayerView({
+		var layerView = new LayerView({
 			model: layer
 		});
 
 		// insert in the DOM the rendered View
-		$('.b-'+this.model.get("order")).append(layerView.render().el);
+		$('.b-'+this.bloc.get("order")).append(layerView.render().el);
 	},
 
 	/**
@@ -542,7 +571,7 @@ editor.LayersView = Backbone.View.extend({
 	 *  @param  {Backbone.Model} layer Layer to edit
 	 */
 	switchEdit: function(layer) {
-		var blocOrder = '.b-'+this.model.get("order");
+		var blocOrder = '.b-'+this.bloc.get("order");
 
 		$(blocOrder+' .editable').removeClass("editable");
 
@@ -558,7 +587,7 @@ editor.LayersView = Backbone.View.extend({
  *  Associated View to Bloc Model
  *  @type {Backbone.View}
  */
-editor.BlocView = Backbone.View.extend({
+var BlocView = Backbone.View.extend({
 
 	/**
 	 *  Class attribute of the div associated to the View.
@@ -568,11 +597,13 @@ editor.BlocView = Backbone.View.extend({
 
 	/** @constructs */
 	initialize: function() {
+		this.grid = this.model.collection;
+
 		// function that render Underscore templating
 		this.layerInfoTemplate = _.template($("#layer-info-template").html());
 
 		// correct gridWinDim.top
-		editor.editorView.gridWinDim.top = editor.editorView.gridWin.offset().top;
+		this.grid.gridWinDim.top = this.grid.gridWin.offset().top;
 
 		// Bound events
 		this.model.on("change:width", this.resize, this);
@@ -625,7 +656,7 @@ editor.BlocView = Backbone.View.extend({
 		}));
 
 		// correct gridWinDim.top
-		editor.editorView.gridWinDim.top = editor.editorView.gridWin.offset().top;
+		this.grid.gridWinDim.top = this.grid.gridWin.offset().top;
 	},
 
 	/**
@@ -687,7 +718,7 @@ editor.BlocView = Backbone.View.extend({
  *  Associated View to editor Module (Grid Collection).
  *  @type {Backbone.View}
  */
-editor.EditorView = Backbone.View.extend({
+var EditorView = Backbone.View.extend({
 
 	/**
 	 *  div associated to the View.
@@ -697,20 +728,9 @@ editor.EditorView = Backbone.View.extend({
 
 	/** @constructs */
 	initialize: function() {
-		// useful variables for notes selection
-		this.gridWin = $(".grid-win");
-		this.gridWinDim = {
-			left: this.gridWin.offset().left, 
-			top: this.gridWin.offset().top, 
-			width: this.gridWin.width(), 
-			height: this.gridWin.height()
-		};
-		this.startLeft = 0;
-		this.endLeft = 0;
-
 		// Bound events
 		this.collection.on("add", this.addBloc);
-		this.gridWin.on("scroll", this.syncScroll);
+		this.collection.gridWin.on("scroll", this.syncScroll);
 	},
 
 	/**
@@ -726,7 +746,7 @@ editor.EditorView = Backbone.View.extend({
 	 */
 	addBloc: function(bloc) {
 		// create a View for the Bloc
-		var blocView = new editor.BlocView({
+		var blocView = new BlocView({
 			model: bloc
 		});
 
@@ -772,39 +792,33 @@ editor.EditorView = Backbone.View.extend({
 		});
 
 		// correct gridWinDim.top
-		this.gridWinDim.top = this.gridWin.offset().top;
+		this.collection.gridWinDim.top = this.collection.gridWin.offset().top;
 	}
 
 });
 
 
 /**
- *  ROUTER
+ *  INITIALIZATION
  */
 
 /**
- *  Only module Route to initialize the module.
- *  @type {Backbone.Router}
+ *  Module initialization method
  */
-editor.Router = Backbone.Router.extend({
+editor.initialize = function() {
+	editor.grid = new Grid();
 
-	/** @constructs */
-	initialize: function() {
-		editor.grid = new editor.Grid();
+	editor.editorView = new EditorView({ 
+		collection : editor.grid 
+	});
 
-		editor.editorView = new editor.EditorView({ 
-			collection : editor.grid 
-		});
+	// Add 2 Blocs to begin
+	editor.grid.add();
+	editor.grid.add();
 
-		// Add 2 Blocs to begin
-		editor.grid.add();
-		editor.grid.add();
-
-		// for (var i = 0; i < 32; i++) {
-		// 	editor.grid.add();
-		// };
-	},
-
-});
+	// for (var i = 0; i < 32; i++) {
+	// 	editor.grid.add();
+	// };
+};
 
 })(jasmed.module("editor"));

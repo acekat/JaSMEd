@@ -166,7 +166,7 @@ editor.Layers = Backbone.Collection.extend({
 	getSub: function(sub) {
 		return this.find(function(layer) {
 			return layer.get("sub") == sub;
-		})
+		});
 	}
 
 });
@@ -195,8 +195,7 @@ editor.Bloc = Backbone.Model.extend({
 		this.refWidth = this.get("width");
 
 		// add new Bloc "anchor" to DOM
-		// $('<div class="bloc b-'+this.get("order")+'" style="width: '+this.get("width")+'px;"></div>').appendTo(".grid");
-		$('<div class="bloc b-'+this.get("order")+'"></div>').appendTo(".grid");
+		$('<div class="bloc b-'+this.get("order")+'" style="width: '+this.refWidth+'px;"></div>').appendTo(".grid");
 		
 		// create new Layers and associated View
 		this.layers = new editor.Layers();
@@ -536,9 +535,6 @@ editor.LayersView = Backbone.View.extend({
 
 		// insert in the DOM the rendered View
 		$('.b-'+this.model.get("order")).append(layerView.render().el);
-
-		// adapt bloc width according to subdivisions of the layer
-		this.model.resize(true, 0);
 	},
 
 	/**
@@ -553,9 +549,6 @@ editor.LayersView = Backbone.View.extend({
 		if (layer.get("editable")) {
 			// TODO: find a cleaner way
 			$(blocOrder+' .sub-'+layer.get("sub")).addClass("editable").appendTo(blocOrder);
-
-			// adapt bloc width according to subdivisions of the layer
-			this.model.resize(true, 0);
 		};
 	}
 
@@ -605,8 +598,8 @@ editor.BlocView = Backbone.View.extend({
 			.html(this.layerInfoTemplate({ 
 				layers: bloc.layers.models
 			}))
-			.addClass('bli-'+bloc.get("order"));
-			// .css({"width" : bloc.get("width")+'px'});
+			.addClass('bli-'+bloc.get("order"))
+			.css({"width" : bloc.refWidth+'px'});
 
 		return this;
 	},
@@ -665,6 +658,9 @@ editor.BlocView = Backbone.View.extend({
 			});
 		}
 		input.val("");
+
+		// adapt bloc width according to subdivisions of the layer
+		this.model.resize(true, 0);
 	},
 
 	/**
@@ -680,6 +676,9 @@ editor.BlocView = Backbone.View.extend({
 			layers.editable().toggleEdit();
 			layers.getSub(sub).toggleEdit();
 		};
+
+		// adapt bloc width according to subdivisions of the layer
+		this.model.resize(true, 0);
 	}
 
 });
@@ -719,7 +718,6 @@ editor.EditorView = Backbone.View.extend({
 	 *  @type {Object}
 	 */
 	events: {
-		// "click .add-bloc" : "newBloc"
 	},
 
 	/**
@@ -734,13 +732,16 @@ editor.EditorView = Backbone.View.extend({
 
 		// insert in the DOM the rendered View
 		$(".layer-info").append(blocView.render().el);
+
+		// adapt bloc width according to subdivisions of the layer
+		blocView.model.resize(true, 0);
 	},
 
 	/**
 	 *  Add a new Bloc to the Grid collection.
 	 */
 	newBloc: function() {
-		var width = this.collection.last().get("width");
+		var width = this.collection.last().refWidth;
 		this.collection.add({
 			width: width
 		});

@@ -47,10 +47,14 @@ player.init = function(song) {
     pause = false;
     device = audioLib.AudioDevice(audioCallback, channelCount, bufferSize, sampleRate);
 };
+    
+player.play = function(song) {
+    
+};
 
 player.stop = function() {
     pause = true;
-    device = null;
+    device.kill();
     compress = null;
     osc = null;
 };
@@ -90,7 +94,7 @@ function audioCallback(buffer, channelCount) {
                 } else {
                     fade = 1;
                 }
-                
+              
                 generator.generate();
                 sample += generator.getMix()*fade;
                 compBy++;

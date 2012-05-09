@@ -40,6 +40,7 @@ editor.subscribe('export', function(name) {
 	})
 });
 
+
 /**
  *  CONFIGURATION
  */
@@ -48,16 +49,8 @@ var defaultBlocWidth = 200;
 var minBlocWidth = 100;
 var resizeFactor = 50;
 var defaultLayerSub = 4;
-var pitches = ['do3', 'do#3', 're3', 're#3', 'mi3', 'fa3', 'fa#3', 'sol3', 'sol#3', 'la3', 'la#3', 'si3',
-					'do4', 'do#4', 're4', 're#4', 'mi4', 'fa4', 'fa#4', 'sol4', 'sol#4', 'la4', 'la#4', 'si4'];
-var user,
-	pitch,
-	startNote,
-	startNoteId,
-	startLeft,
-	endNote,
-	endNoteId,
-	endLeft;
+var nbOctave = 7;
+var pitches = ['B', 'A#', 'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C'];
 
 
 /**
@@ -77,8 +70,8 @@ editor.subscribe("toggleSelection", function(range) {
 		endNote = range.endNote,
 		user = range.user;
 
-	var startNoteId = startNote.bloc+'-'+startNote.layer+'-'+pitch+'-'+startNote.note,
-		endNoteId = endNote.bloc+'-'+endNote.layer+'-'+pitch+'-'+endNote.note;
+	var startNoteId = startNote.block+'-'+startNote.layer+'-'+pitch+'-'+startNote.note,
+		endNoteId = endNote.block+'-'+endNote.layer+'-'+pitch+'-'+endNote.note;
 
 	var startLeft = $('#'+startNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft,
 		endLeft = $('#'+endNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
@@ -113,6 +106,7 @@ var Layer = Backbone.Model.extend({
 	 */
 	defaults : function() {
 		return {
+			bloc: null,
 			sub: defaultLayerSub,
 			noteOn: {},
 			editable: true
@@ -144,8 +138,12 @@ var Layer = Backbone.Model.extend({
 			// turn off
 			delete noteOn[noteId];
 		
+		console.log(noteOn);
+
 		// trigger the change event on noteOn array with noteId and user arguments
-		this.trigger("change:noteOn", noteId, user);		
+		var retNoteOn = {};
+		retNoteOn[noteId] = user;
+		this.trigger("change:noteOn", retNoteOn);		
 	}
 
 });
@@ -344,10 +342,31 @@ var Grid = Backbone.Collection.extend({
 	}
 });
 
+/**
+ *  Editor is the root Model that contains a Grid collection.
+ *  @type {Backbone.Model}
+ */
+var Editor = Backbone.Model.extend({
+
+	initialize: function() {
+		editor.grid = new Grid();
+	}
+
+});
+
 
 /**
  *  VIEWS
  */
+
+var user,
+	pitch,
+	startNote,
+	startNoteId,
+	startLeft,
+	endNote,
+	endNoteId,
+	endLeft;
 
 /**
  *  Associated View to Layer Model.
@@ -378,6 +397,7 @@ var LayerView = Backbone.View.extend({
 
 		// Bound events
 		this.model.on("change:noteOn", this.toggleNote);
+		this.model.on("change:sub", this.actualize, this);
 	},
 
 	/**
@@ -388,6 +408,7 @@ var LayerView = Backbone.View.extend({
 		var layer = this.model;
 		$(this.el)
 			.html(this.layerTemplate({
+				octave: nbOctave,
 				bloc: layer.get("bloc"),
 				sub: layer.get("sub"),
 				noteOn: layer.get("noteOn"),
@@ -400,21 +421,40 @@ var LayerView = Backbone.View.extend({
 	},
 
 	/**
+	 *  Actualize the View
+	 */
+	actualize: function(layer) {
+		$(this.el).html(this.layerTemplate({
+			octave: nbOctave,
+			bloc: layer.get("bloc"),
+			sub: layer.get("sub"),
+			noteOn: layer.get("noteOn"),
+			pitches: pitches
+		}));
+
+		// TO-DO: need to resize Block width?
+	},
+
+	/**
 	 *  Toogle the "on" class on the selected note div.
 	 *  @param  {String} noteId ID of the selected note
 	 */
-	toggleNote: function(noteId, user) {
-		var el = $('#'+noteId);
-		var userClass = 'user-'+user;
-		var curClass = el.attr("class").match("user-[^ ]*");
-				
-		if (curClass)
-			el.removeClass(curClass[0]);
-		
-		el.toggleClass("on");
-		
-		if (el.hasClass("on"))
-			el.addClass(userClass);
+	toggleNote: function(noteOn) {
+		console.log(noteOn);
+		// TO-DO: test if it's a layer model or a noteOn object
+		_.each(noteOn, function(user, noteId) {
+			var el = $('#'+noteId);
+			var userClass = 'user-'+user;
+			var curClass = el.attr("class").match("user-[^ ]*");
+					
+			if (curClass)
+				el.removeClass(curClass[0]);
+			
+			el.toggleClass("on");
+			
+			if (el.hasClass("on"))
+				el.addClass(userClass);
+		});
 	},
 
 	/**
@@ -429,9 +469,9 @@ var LayerView = Backbone.View.extend({
 		// 0: Bloc, 1: Layer, 2: Pitch, 3: Note
 		var idArray = id.split("-");
 		startNote = {
-			"bloc":  idArray[0],
-			"layer":  idArray[1],
-			"note":  idArray[3],
+			block : idArray[0],
+			layer : idArray[1],
+			note : idArray[3],
 		};
 		pitch = idArray[2];
 
@@ -512,7 +552,7 @@ var LayerView = Backbone.View.extend({
 		// 0: Bloc, 1: Layer, 2: Pitch, 3: Note
 		var idArray = id.split("-");
 		endNote = {
-			bloc :  idArray[0],
+			block :  idArray[0],
 			layer :  idArray[1],
 			note :  idArray[3],
 		};
@@ -732,10 +772,12 @@ var EditorView = Backbone.View.extend({
 	/** @constructs */
 	initialize: function() {
 		// display piano
-		_.each(pitches, function(pitch, index) {
-			var color = /.+#./.test(pitch) ? "black" : "white";
-			$(".piano").append('<div class="piano-key '+pitch+' '+color+' pk-'+index+'"></div>');
-		});
+		for (var o = nbOctave; o > 0; o--) {
+			_.each(pitches, function(pitch, i) {
+				var color = /.#/.test(pitch) ? "black" : "white";
+				$(".piano").append('<div class="piano-key '+pitch+o+' '+color+' pk-'+((12*(o+1))+(pitches.length-(i+1)))+'"></div>');
+			});
+		};
 
 		// Bound events
 		this.collection.on("add", this.addBloc);

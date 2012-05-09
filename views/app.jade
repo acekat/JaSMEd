@@ -27,15 +27,19 @@ block content
 // TEMPLATE
 block template
 	script#layer-template(type="text/template")
+		<% for (var o=octave; o>0; o--) { %>
 		<% _.each(pitches, function(pitch, i) { %>
-		<div class="pitch <%= pitch %> p-<%= i+1 %>">
-		<% for (n=1; n<=sub; n++) { %>
-		<% var noteId = bloc+"-"+sub+"-"+(i+1)+"-"+n; %>
-		<% var on = _.indexOf(noteOn, noteId) === -1 ? "" : "on"; %>
-		<div id="<%= noteId %>" class="note sn-<%= n %> <%= on %>"></div>
+		<% var midiPitch = ((12*(o+1))+(pitches.length-(i+1))); %>
+		<div class="pitch <%= pitch %><%= o %> p-<%= midiPitch %>">
+		<% for (var n=1; n<=sub; n++) { %>
+		<% var noteId = bloc+"-"+sub+"-"+midiPitch+"-"+n; %>
+		<% var on = _.indexOf(noteOn, noteId) === -1 ? "" : " on"; %>
+		<div id="<%= noteId %>" class="note sn-<%= n %><%= on %>"></div>
 		<% }; %>	
 		</div>
 		<% }); %>
+		<% }; %>
+
 
 	script#layer-info-template(type="text/template")
 		ul.layer-list

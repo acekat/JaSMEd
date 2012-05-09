@@ -774,8 +774,9 @@ var EditorView = Backbone.View.extend({
 		// display piano
 		for (var o = nbOctave; o > 0; o--) {
 			_.each(pitches, function(pitch, i) {
-				var color = /.#/.test(pitch) ? "black" : "white";
-				$(".piano").append('<div class="piano-key '+pitch+o+' '+color+' pk-'+((12*(o+1))+(pitches.length-(i+1)))+'"></div>');
+				var color = /^.#$/.test(pitch) ? "black" : "white";
+				var content = /^C$/.test(pitch) ? pitch+o : "";
+				$(".piano").append('<div class="piano-key '+pitch+o+' '+color+' pk-'+((12*(o+1))+(pitches.length-(i+1)))+'"><span>'+content+'</span></div>');
 			});
 		};
 

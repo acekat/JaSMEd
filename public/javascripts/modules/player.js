@@ -44,12 +44,12 @@ player.init = function(song) {
     blocknum = -1;
     layers = {};
     loadBlock();
-    pause = false;
+    pause = true;
     device = audioLib.AudioDevice(audioCallback, channelCount, bufferSize, sampleRate);
 };
     
 player.play = function(song) {
-    
+    pause = false;
 };
 
 player.stop = function() {
@@ -60,7 +60,7 @@ player.stop = function() {
 };
 
 player.pause = function() {
-    pause = !pause;
+    pause = true;
 };
 
 function audioCallback(buffer, channelCount) {
@@ -167,5 +167,55 @@ function loadBlock() {console.log("loadBlock ", blocknum+1);
     }
     return true;
 }
+
+/**
+ *  Associated View to utils Module.
+ *  @type {Backbone.View}
+ */
+var PlayersView = Backbone.View.extend({
+
+	/**
+	 *  div associated to the View.
+	 *  @type {String}
+	 */
+	el: '.player',
+
+	/** @constructs */
+	initialize: function() {
+	},
+
+	/**
+	 *  Delegated events: uses jQuery's delegate function to provide declarative callbacks for DOM events. 
+	 *  @type {Object}
+	 */
+	events: {
+		'click .play' : 'play',
+		'click .pause' : 'pause',
+		'click .stop' : 'stop'
+	},
+
+	play: function() {
+		console.log('clicked on play');
+		player.publish('play');
+	},
+
+	pause: function() {
+		console.log('clicked on pause');
+		player.publish('pause');
+	},
+
+	stop: function() {
+		console.log('clicked on play');
+		player.publish('stop');
+	}
+
+});
+
+/**
+ *  Module initialization method
+ */
+utils.initialize = function() {
+	player.view = new PlayersView();
+};
 
 })(jasmed.module('player'));

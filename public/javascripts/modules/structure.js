@@ -209,4 +209,27 @@ var note = {
     duration: 1
 };
 
+
+var curSong, curTrack;
+
+struct.initialize = function() {
+    struct.publish('init');
+};
+
+struct.subscribe('initResponse', function(song) {
+    curSong = song || struct.createSong();
+    curTrack =  curSong.addTrack();
+});
+
+struct.subscribe('newBlock', function() {
+    curSong.addBlocks();
+    struct.publish('newBlockResponse');
+});
+
+struct.subscribe('toggleSelection', function(selection) {
+    var result = curTrack.addNote(selection.pitch, selection.startNote, selection.endNote);
+    selection.startNote.layer = selection.endNote.layer = result.layer;
+    struct.publish('toggleSelectionResponse', selection)
+});
+
 })(jasmed.module('struct'));

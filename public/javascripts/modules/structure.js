@@ -3,11 +3,11 @@
 var utils = jasmed.module('utils');
 
 struct.createSong = function(props) {
-    return utils.inherits(struct.song, _.extend(props||{}, {tracks: [], pitchs: {}}));
+    return utils.inherits(song, _.extend(props||{}, {tracks: [], pitchs: {}}));
 };
 
 /** @class */
-struct.song = {
+var song = {
     title: "Untitled",
     tempo: 4, // in seconds per block
     tracks: [],
@@ -21,7 +21,7 @@ struct.song = {
      * @returns {track} The new track added.
      */
     addTrack: function(name, layer) {
-        var newTrack = utils.inherits(struct.track, {
+        var newTrack = utils.inherits(track, {
             name: name || "Track " + (this.tracks.length+1),
             songPitchs: this.pitchs
         });
@@ -52,7 +52,7 @@ struct.song = {
 };
 
 /** @class */
-struct.track = {
+var track = {
     name: "New Track",
     instrument: "Piano",
     blocks: [],
@@ -109,12 +109,12 @@ struct.track = {
     /**
      * Add blocks to the track.
      * Should not be used.
-     * @see struct.song.addBlocks 
+     * @see song.addBlocks 
      */
     addBlocks: function(n, pos) {
         var i, nb = n||1, add = [];
         for(i = 0 ; i < nb ; i++) {
-            add.push(utils.inherits(struct.block));
+            add.push(utils.inherits(block));
         }
         if(pos) {
             add = add.concat(this.blocks.slice(pos));
@@ -137,7 +137,7 @@ struct.track = {
 };
 
 /** @class */
-struct.block = {
+var block = {
     lnFw: false,
     lnBw: false,
     layers: {},
@@ -175,12 +175,12 @@ struct.block = {
             this.initLayer(layer);
         }
         
-        this.layers[layer][start].push(utils.inherits(struct.note, {
+        this.layers[layer][start].push(utils.inherits(note, {
             pitch: pitch,
             duration: ghost ? -duration : duration
         }));
         for(i = start+1, duration-- ; i < end ; i++, duration--) {
-            this.layers[layer][i].push(utils.inherits(struct.note, {
+            this.layers[layer][i].push(utils.inherits(note, {
                 pitch: pitch,
                 duration: -duration
             }));
@@ -204,7 +204,7 @@ struct.block = {
 };
 
 /** @class */
-struct.note = {
+var note = {
     pitch: 0,
     duration: 1
 };

@@ -1,11 +1,4 @@
 (function(utils) {
-
-/**
- * DEPENDENCIES 
- */
-var editor = jasmed.module("editor");
-
-
 /**
  * Return the frequency associated with a MIDI pitch.
  * @param {number} pitch
@@ -86,11 +79,11 @@ var UtilsView = Backbone.View.extend({
 	},
 
 	zoomIn: function() {
-		editor.editorView.zoom(true);
+		utils.publish('zoom', true);
 	},
 
 	zoomOut: function() {
-		editor.editorView.zoom(false);
+		utils.publish('zoom', false);
 	}
 
 });

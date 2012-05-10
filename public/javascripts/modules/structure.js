@@ -227,6 +227,8 @@ struct.subscribe('newBlock', function() {
 });
 
 struct.subscribe('toggleSelection', function(selection) {
+    selection.startNote.start = selection.startNote.note;
+    selection.endNote.end = selection.endNote.note;
     var result = curTrack.addNote(selection.pitch, selection.startNote, selection.endNote);
     selection.startNote.layer = selection.endNote.layer = result.layer;
     struct.publish('toggleSelectionResponse', selection)

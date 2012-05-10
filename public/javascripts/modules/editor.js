@@ -50,22 +50,22 @@ var Layer = Backbone.Model.extend({
 	/**
 	 *  Add/Remove <tt>noteId</tt> to/from the <tt>noteOn</tt> array.
 	 *  @param  {String} noteId HTML id of the case to turn on/off
+	 *  @param  {String} user login of user that toggled the note
+	 *  @param  {String} className HTML classes of the toggled note
 	 */
-	toggleNote: function(noteId, user) {
+	toggleNote: function(noteId, user, className) {
 		var noteOn = this.get("noteOn");
 
 		if (!_.has(noteOn, noteId))
 			// turn on
-			noteOn[noteId] = user;
+			noteOn[noteId] = [user, className];
 		else
 			// turn off
 			delete noteOn[noteId];
 		
-		console.log(noteOn);
-
 		// trigger the change event on noteOn array with noteId and user arguments
 		var retNoteOn = {};
-		retNoteOn[noteId] = user;
+		retNoteOn[noteId] = [user, className];
 		this.trigger("change:noteOn", retNoteOn);		
 	}
 
@@ -220,47 +220,41 @@ var Grid = Backbone.Collection.extend({
 	},
 
 	/**
-	 *  Toggle note in the range delimited by the arguments, on the same pitch as start note.
-	 *  @param  {number} start left position of mousedown event
-	 *  @param  {number} end   left position of mouseup event
+	 *  Toggle note in the selection.
+	 *  @param  {object} selection object representing the selection
 	 */
-	selectRange: function(pitch, start, end, user) {
+	selectRange: function(selection) {
 		var gridWin = this.gridWin,
 			gridWinDim = this.gridWinDim;
+		var pitch = selection.pitch,
+			startNote = selection.startNote,
+			endNote = selection.endNote,
+			user = selection.user;
+		var sub = startNote.layer;
 
-		var selectedNote = [];
-		var selectables	= gridWin.find(".bloc").children(".editable").children(".p-"+pitch).children();
-
-		selectables.each(function () {
-			var thisLeft = $(this).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
-			var thisWidth = $(this).width();
-			var thisId = $(this).attr("id");
-
-			// out of range => leave alone
-			if (((end >= start) && ((thisLeft > end) || (thisLeft+thisWidth < start)))
-				|| ((end <= start) && ((thisLeft+thisWidth < end) || (thisLeft > start))))
-				return;
-
-			// already on => cancel selection
-			if ($(this).hasClass("on")) {
-				alert("Pas de superposition de notes!");
-				selectedNote = [];
-				return false;
+		for (var blocOrder = startNote.block; blocOrder <= endNote.block; blocOrder++) {
+			var layers = this.getBloc(blocOrder).layers;
+			
+			// create layer if it doesn't exist
+			if (!layers.getSub(sub)) {
+				layers.add({
+					bloc: blocOrder,
+					sub: sub,
+					editable: false
+				});
 			};
 
-			// into the range => select
-			if (((end >= start) && (thisLeft <= end) && (thisLeft+thisWidth > start))
-				|| ((end <= start) && (thisLeft+thisWidth > end) && (thisLeft <= start)))
-				selectedNote.push(thisId);
-		});
+			var firstNote = (blocOrder == startNote.block) ? startNote.note : 1;
+			var lastNote = (blocOrder == endNote.block) ? endNote.note : sub;
 
-		// toggle selected
-		for (var i = 0; i<selectedNote.length; i++) {
-			var id = selectedNote[i];			
-			var order = id.split("-")[0],
-				sub = id.split("-")[1];
-			
-			this.getBloc(order).layers.getSub(sub).toggleNote(id, user);
+			for (var note = firstNote; note <= lastNote; note++) {
+				var id = blocOrder+'-'+sub+'-'+pitch+'-'+note;
+
+				var className = 'bind-'+startNote.block+'-'+sub+'-'+pitch+'-'+startNote.note;
+				className += ((note == endNote.note) && (blocOrder == endNote.block)) ? " bind-end" : "";
+
+				layers.getSub(sub).toggleNote(id, user, className);
+			};
 		};
 	}
 });
@@ -287,9 +281,11 @@ var user,
 	startNote,
 	startNoteId,
 	startLeft,
+	startWidth,
 	endNote,
 	endNoteId,
-	endLeft;
+	endLeft,
+	endWidth;
 
 /**
  *  Associated View to Layer Model.
@@ -337,8 +333,11 @@ var LayerView = Backbone.View.extend({
 				noteOn: layer.get("noteOn"),
 				pitches: pitches
 			}))
-			.addClass('sub-'+layer.get("sub"))
-			.addClass("editable");
+			.addClass('sub-'+layer.get("sub"));
+
+		if (layer.get("editable")) {
+			$(this.el).addClass("editable");
+		};
 
 		return this;
 	},
@@ -363,11 +362,11 @@ var LayerView = Backbone.View.extend({
 	 *  @param  {String} noteId ID of the selected note
 	 */
 	toggleNote: function(noteOn) {
-		console.log(noteOn);
 		// TO-DO: test if it's a layer model or a noteOn object
-		_.each(noteOn, function(user, noteId) {
+
+		_.each(noteOn, function(value, noteId) {
 			var el = $('#'+noteId);
-			var userClass = 'user-'+user;
+			var noteClass = 'user-'+value[0]+' '+value[1];
 			var curClass = el.attr("class").match("user-[^ ]*");
 					
 			if (curClass)
@@ -376,7 +375,7 @@ var LayerView = Backbone.View.extend({
 			el.toggleClass("on");
 			
 			if (el.hasClass("on"))
-				el.addClass(userClass);
+				el.addClass(noteClass);
 		});
 	},
 
@@ -387,7 +386,7 @@ var LayerView = Backbone.View.extend({
 	startingNote: function(e) {
 		var gridWin = editor.grid.gridWin,
 			gridWinDim = editor.grid.gridWinDim;
-		var id = startNoteId = e.target.id;
+		var id = e.target.id;
 
 		// 0: Bloc, 1: Layer, 2: Pitch, 3: Note
 		var idArray = id.split("-");
@@ -397,8 +396,9 @@ var LayerView = Backbone.View.extend({
 			note : idArray[3],
 		};
 		pitch = idArray[2];
-
-		startLeft = e.pageX - gridWinDim.left + gridWin[0].scrollLeft;
+		startNoteId = idArray[0]+'-'+idArray[1]+'-'+pitch+'-'+idArray[3];
+		startLeft = $('#'+startNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
+		startWidth = $('#'+startNoteId).width();
 
 		/* MULTI DRAG REALTIME SELECTION BUT NOT FOLLOWING MOUSE REVERSE OR TOGGLING NOTE */
 		// editor.editorView.onSelection = true;
@@ -468,9 +468,8 @@ var LayerView = Backbone.View.extend({
 	endingNote: function(e) {
 		var gridWin = editor.grid.gridWin,
 			gridWinDim = editor.grid.gridWinDim;
-		var id = endNoteId = e.target.id,
-			user = jasmed.user;
-		endLeft = e.pageX - gridWinDim.left + gridWin[0].scrollLeft;
+		var id = e.target.id;
+		user = jasmed.user;
 
 		// 0: Bloc, 1: Layer, 2: Pitch, 3: Note
 		var idArray = id.split("-");
@@ -479,17 +478,45 @@ var LayerView = Backbone.View.extend({
 			layer :  idArray[1],
 			note :  idArray[3],
 		};
+		endNoteId = idArray[0]+'-'+idArray[1]+'-'+pitch+'-'+idArray[3];
+		endLeft = $('#'+endNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
+		endWidth = $('#'+endNoteId).width();
 
-		// send to communication
-		editor.publish('toggleSelection', {
-			pitch : pitch,
-			startNote : startNote,
-			endNote : endNote,
-			user: user
+		// TO-DO: test if endLeft > startLeft or endLeft < startLeft and swap in case
+
+		var selectable = true;
+		var alreadyOn = gridWin.find(".layer").children('.p-'+pitch).children(".on");
+		alreadyOn.each(function () {
+			var thisLeft = $(this).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
+			var thisWidth = $(this).width();
+			var thisId = $(this).attr("id");
+
+			// in the selection range => cancel selection
+			if (((endLeft >= startLeft) && (thisLeft < endLeft+endWidth) && (thisLeft+thisWidth > startLeft))
+					|| ((endLeft <= startLeft) && (thisLeft+thisWidth > endLeft) && (thisLeft < startLeft+startWidth))) {
+				alert("Pas de superposition de notes!");
+				selectable = false;
+				return false;
+			};
 		});
 
-		// toggle notes
-		editor.grid.selectRange(pitch, startLeft, endLeft, user);
+		// send to communication
+		if (selectable) {
+			editor.publish('toggleSelection', {
+				pitch : pitch,
+				startNote : startNote,
+				endNote : endNote,
+				user: user
+			});
+			
+			// Testing in local
+			// editor.grid.selectRange({
+			// 	pitch : pitch,
+			// 	startNote : startNote,
+			// 	endNote : endNote,
+			// 	user: user
+			// });
+		};
 
 		/* MULTI DRAG REALTIME SELECTION BUT NOT FOLLOWING MOUSE REVERSE OR TOGGLING NOTE */
 		// editor.editorView.onSelection = false;
@@ -529,7 +556,10 @@ var LayersView = Backbone.View.extend({
 		});
 
 		// insert in the DOM the rendered View
-		$('.b-'+this.bloc.get("order")).append(layerView.render().el);
+		if (layer.get("editable"))
+			$('.b-'+this.bloc.get("order")).append(layerView.render().el);
+		else
+			$('.b-'+this.bloc.get("order")).prepend(layerView.render().el);
 	},
 
 	/**
@@ -803,21 +833,7 @@ editor.initialize = function() {
  *  @param  {object} selection object with the selection variables
  */
 editor.subscribe("toggleSelectionRes", function(selection) {
-	var gridWin = editor.grid.gridWin,
-		gridWinDim = editor.grid.gridWinDim;
-
-	var pitch = range.pitch,
-		startNote = range.startNote,
-		endNote = range.endNote,
-		user = range.user;
-
-	var startNoteId = startNote.block+'-'+startNote.layer+'-'+pitch+'-'+startNote.note,
-		endNoteId = endNote.block+'-'+endNote.layer+'-'+pitch+'-'+endNote.note;
-
-	var startLeft = $('#'+startNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft,
-		endLeft = $('#'+endNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
-
-	editor.grid.selectRange(pitch, startLeft, endLeft, user);
+	editor.grid.selectRange(selection);
 });
 
 /**

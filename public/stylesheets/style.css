@@ -262,6 +262,9 @@ footer p {
 .editor .layer.editable .note:not(.editable) {
   border-right: 1px dotted #747474;
 }
+.editor .layer.editable .note.on:not(.bind-end) {
+  border-right: none;
+}
 .login.thibaud {
   color: #44accf;
 }

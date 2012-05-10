@@ -109,7 +109,7 @@ function audioCallback(buffer, channelCount) {
     }
 }
 
-function loadLayer(n) {console.log("loadLayer ", n, layers[n].count)
+function loadLayer(n) {
     var layer = layers[n],
         exlength = layer.notes.length;
     
@@ -140,7 +140,7 @@ function loadLayer(n) {console.log("loadLayer ", n, layers[n].count)
     layer.notes.splice(0,exlength);
 }
 
-function loadBlock() {console.log("loadBlock ", blocknum+1);
+function loadBlock() {
     if(++blocknum == blocks) {
         return false;
     }
@@ -205,7 +205,7 @@ var PlayersView = Backbone.View.extend({
 	},
 
 	stop: function() {
-		console.log('clicked on play');
+		console.log('clicked on stop');
 		player.publish('stop');
 	}
 

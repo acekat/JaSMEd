@@ -2,6 +2,10 @@
 
 	var socket = io.connect('http://localhost/');
 
+	/**
+	 *  ON => PUBLISH
+	 */
+
 	socket.on('connect', function(data) {
 		console.log('socket.io connection established');
 	});
@@ -15,41 +19,49 @@
 		jasmed.user = login;
 	});
 	
-	socket.on('toggleSelection', function(range) {
-		console.log(jasmed.user + ' received a toggleSelection from ' + range.user);
-		communicator.publish('toggleSelection', range);
+	socket.on('toggleSelectionBroad', function(selection) {
+		console.log(jasmed.user + ' received a toggleSelectionBroad from ' + selection.user);
+		communicator.publish('toggleSelectionBroad', selection);
 	});
 	
-	socket.on('newBloc', function() {
-		communicator.publish('newBloc');
+	socket.on('newBlockBroad', function() {
+		console.log('newBlockBroad received from server');
+		communicator.publish('newBlockBroad');
 	});
 	
-	socket.on('initResponse', function(seq) {
-		communicator.publish('initResponse', seq);
+	socket.on('initializationRes', function(seq) {
+		console.log('initializationRes received from server');
+		communicator.publish('initializationRes', seq);
 	})
 	
 
-	function sendSelection(range) {
-		console.log(jasmed.user + ' emits toggleSelection');
-		socket.emit('toggleSelection', range);
+	/**
+	 *  SUBSCRIBE => EMIT
+	 */
+
+	function toggleSelectionRes(selection) {
+		console.log(jasmed.user + ' emits toggleSelectionRes');
+		socket.emit('toggleSelectionRes', selection);
 	};
 
-	function sendnewBloc() {
-		socket.emit('newBloc');
+	function newBlockRes() {
+		console.log(jasmed.user + ' emits newBlockRes');
+		socket.emit('newBlockRes');
 	};
 
-	communicator.subscribe('selectionToServer', sendSelection);
-	communicator.subscribe('newBlocToServer', sendnewBloc);
+	communicator.subscribe('toggleSelectionRes', toggleSelectionRes);
 	
-	//
+	communicator.subscribe('newBlockRes', newBlockRes);
+	
 	communicator.subscribe('saveAs', function(seq) {
 		console.log(jasmed.user + ' emits saveAs : ' + seq.name);
 		console.log(JSON.stringify(seq.data));
 		socket.emit('saveAs', seq);
 	});
 	
-	communicator.subscribe('init', function() {
-		console.log(jasmed.user + ' emits init');
-		socket.emit('init');
+	communicator.subscribe('initialization', function() {
+		console.log(jasmed.user + ' emits initialization');
+		socket.emit('initialization');
 	});
+
 })(jasmed.module('communicator'));

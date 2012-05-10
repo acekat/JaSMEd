@@ -85,7 +85,7 @@ footer p {
 }
 .editor .layer-info-win {
   margin-left: 40px;
-  background: #8c8c8c;
+  background: #acacac;
   border: 1px solid;
   overflow: hidden;
 }
@@ -114,7 +114,7 @@ footer p {
   float: left;
   width: 40px;
   height: 300px;
-  background: #8c8c8c;
+  background: #acacac;
   border: 1px solid;
   overflow: hidden;
 }
@@ -202,7 +202,7 @@ footer p {
 .editor .grid-win {
   position: relative;
   height: 300px;
-  background: #8c8c8c;
+  background: #acacac;
   border: 1px solid;
   overflow: hidden;
 }

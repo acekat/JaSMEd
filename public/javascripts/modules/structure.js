@@ -212,24 +212,33 @@ var note = {
 
 var curSong, curTrack;
 
+
 struct.initialize = function() {
-    struct.publish('init');
+    struct.publish('initialization');
 };
 
-struct.subscribe('initResponse', function(song) {
+struct.subscribe('initializationRes', function(song) {
     curSong = song || struct.createSong();
     curTrack =  curSong.addTrack();
 });
 
 struct.subscribe('newBlock', function() {
     curSong.addBlocks();
-    struct.publish('newBlockResponse');
+    struct.publish('newBlockRes');
+});
+
+struct.subscribe('newBlockBroad', function() {
+    curSong.addBlocks();
 });
 
 struct.subscribe('toggleSelection', function(selection) {
     var result = curTrack.addNote(selection.pitch, selection.startNote, selection.endNote);
     selection.startNote.layer = selection.endNote.layer = result.layer;
-    struct.publish('toggleSelectionResponse', selection)
+    struct.publish('toggleSelectionRes', selection);
+});
+
+struct.subscribe('toggleSelectionBroad', function(selection) {
+    curTrack.addNote(selection.pitch, selection.startNote, selection.endNote);
 });
 
 })(jasmed.module('struct'));

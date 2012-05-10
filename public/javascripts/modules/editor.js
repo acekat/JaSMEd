@@ -1,46 +1,6 @@
 // Module reference argument, assigned at the bottom
 (function(editor) {
 
-// blatant copy of capsule.js :)
-editor.xport = function(opt) {
-	var result = {},
-		settings = _({
-			recurse: true
-		}).extend(opt || {});
-
-	function process(targetObj, source) {
-		targetObj.attrs = source.toJSON();
-		_.each(source, function (value, key) {
-			if (settings.recurse) {
-				if (key !== 'collection' && source[key] instanceof Backbone.Collection) {
-					targetObj.collections = targetObj.collections || {};
-					targetObj.collections[key] = {};
-					targetObj.collections[key].models = [];
-					targetObj.collections[key].id = source[key].id || null;
-					_.each(source[key].models, function (value, index) {
-						process(targetObj.collections[key].models[index] = {}, value);
-					});
-				} else if (key !== 'parent' && source[key] instanceof Backbone.Model) {
-					targetObj.models = targetObj.models || {};
-					process(targetObj.models[key] = {}, value);
-				}
-			}
-		});
-	}
-	
-	process(result, editor.grid);
-	return result;
-};
-
-//a remplacer par un petit bouton save qqpart...
-editor.subscribe('export', function(name) {
-	editor.publish('saveAs', {
-		name: name,
-		data: editor.xport()
-	})
-});
-
-
 /**
  *  CONFIGURATION
  */
@@ -51,43 +11,6 @@ var resizeFactor = 50;
 var defaultLayerSub = 4;
 var nbOctave = 7;
 var pitches = ['B', 'A#', 'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C'];
-
-
-/**
- *  SUBSCRIBES
- */
-
-/**
- *  Toggle selection received
- *  @param  {object} range object with the selection variables
- */
-editor.subscribe("toggleSelection", function(range) {
-	var gridWin = editor.grid.gridWin,
-		gridWinDim = editor.grid.gridWinDim;
-
-	var pitch = range.pitch,
-		startNote = range.startNote,
-		endNote = range.endNote,
-		user = range.user;
-
-	var startNoteId = startNote.block+'-'+startNote.layer+'-'+pitch+'-'+startNote.note,
-		endNoteId = endNote.block+'-'+endNote.layer+'-'+pitch+'-'+endNote.note;
-
-	var startLeft = $('#'+startNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft,
-		endLeft = $('#'+endNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
-
-	editor.grid.selectRange(pitch, startLeft, endLeft, user);
-});
-
-/**
- *  Add new Bloc
- */
-editor.subscribe("newBloc", function() {
-	var width = editor.grid.last().refWidth;
-	editor.grid.add({
-		width: width
-	});
-});
 
 
 /**
@@ -558,7 +481,7 @@ var LayerView = Backbone.View.extend({
 		};
 
 		// send to communication
-		editor.publish('selectionToServer', {
+		editor.publish('toggleSelection', {
 			pitch : pitch,
 			startNote : startNote,
 			endNote : endNote,
@@ -817,9 +740,6 @@ var EditorView = Backbone.View.extend({
 		this.collection.add({
 			width: width
 		});
-
-		// send to communication
-		editor.publish("newBlocToServer");
 	},
 
 	/**
@@ -872,5 +792,59 @@ editor.initialize = function() {
 	// 	editor.grid.add();
 	// };
 };
+
+
+/**
+ *  SUBSCRIBES
+ */
+
+/**
+ *  Toggle selection received
+ *  @param  {object} range object with the selection variables
+ */
+editor.subscribe("toggleSelectionRes", function(selection) {
+	var gridWin = editor.grid.gridWin,
+		gridWinDim = editor.grid.gridWinDim;
+
+	var pitch = range.pitch,
+		startNote = range.startNote,
+		endNote = range.endNote,
+		user = range.user;
+
+	var startNoteId = startNote.block+'-'+startNote.layer+'-'+pitch+'-'+startNote.note,
+		endNoteId = endNote.block+'-'+endNote.layer+'-'+pitch+'-'+endNote.note;
+
+	var startLeft = $('#'+startNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft,
+		endLeft = $('#'+endNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
+
+	editor.grid.selectRange(pitch, startLeft, endLeft, user);
+});
+editor.subscribe("toggleSelectionBroad", function(selection) {
+	var gridWin = editor.grid.gridWin,
+		gridWinDim = editor.grid.gridWinDim;
+
+	var pitch = range.pitch,
+		startNote = range.startNote,
+		endNote = range.endNote,
+		user = range.user;
+
+	var startNoteId = startNote.block+'-'+startNote.layer+'-'+pitch+'-'+startNote.note,
+		endNoteId = endNote.block+'-'+endNote.layer+'-'+pitch+'-'+endNote.note;
+
+	var startLeft = $('#'+startNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft,
+		endLeft = $('#'+endNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
+
+	editor.grid.selectRange(pitch, startLeft, endLeft, user);
+});
+
+/**
+ *  Add new Bloc
+ */
+editor.subscribe("newBlockRes", function() {
+	editor.editorView.newBloc();
+});
+editor.subscribe("newBlockBroad", function() {
+	editor.editorView.newBloc();
+});
 
 })(jasmed.module("editor"));

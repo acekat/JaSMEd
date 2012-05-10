@@ -1,4 +1,5 @@
 var mediator = (function() {
+
 	var subscribe = function(channel, fn) {
 		if (!mediator.channels[channel]) mediator.channels[channel] = [];
 		mediator.channels[channel].push({ context: this, callback: fn });
@@ -24,6 +25,7 @@ var mediator = (function() {
 			obj.publish = publish;
 		}
 	};
+
 })();
 
 var jasmed = {
@@ -40,10 +42,9 @@ var jasmed = {
 // Single entry point into the application.
 $(function() {
 
-	var editor = jasmed.module("editor");
-	var utils = jasmed.module("utils");
-
-	editor.initialize();
-	utils.initialize();
+	jasmed.module("struct").initialize();
+	jasmed.module("editor").initialize();
+	// WHY .initialize() doesn't work for me?
+	jasmed.module("utils").initialization();
 
 });

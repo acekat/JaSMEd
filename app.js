@@ -103,9 +103,9 @@ io.sockets.on('connection', function (socket) {
 
 	socket.emit('loginSync', session.login);
 	
-	socket.on('init', function() {
+	socket.on('initialization', function() {
 		if (!session.seqName) {
-			socket.emit('initResponse');
+			socket.emit('initializationRes');
 			return;
 		}
 		
@@ -115,7 +115,7 @@ io.sockets.on('connection', function (socket) {
 				console.log('error reading file'); //must do something about that
 			
 			console.log('about to emit back: ' + session.seqName + ' + ' + JSON.stringify(data));
-			socket.emit('initResponse', {
+			socket.emit('initializationRes', {
 				name: session.seqName,
 				data: data
 			});
@@ -131,13 +131,14 @@ io.sockets.on('connection', function (socket) {
 		});
 	});
 
-	socket.on('toggleSelection', function(range) {
-		console.log(range.user + ' toggled selection.'); //msg a ameliorer
-		socket.broadcast.emit('toggleSelection', range);
+	socket.on('toggleSelectionRes', function(selection) {
+		console.log(selection.user + ' toggled a selection.'); //msg a ameliorer
+		socket.broadcast.emit('toggleSelectionBroad', selection);
 	});
 
-	socket.on('newBloc', function() {
-		socket.broadcast.emit('newBloc');
+	socket.on('newBlockRes', function() {
+		console.log("newBlockRes broadcasted.");
+		socket.broadcast.emit('newBlockBroad');
 	});
 });
 

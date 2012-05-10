@@ -103,7 +103,7 @@ io.sockets.on('connection', function (socket) {
 
 	socket.emit('loginSync', session.login);
 	
-	socket.on('initialization', function() {
+	socket.on('initializationServer', function() {
 		if (!session.seqName) {
 			socket.emit('initializationRes');
 			return;
@@ -131,13 +131,13 @@ io.sockets.on('connection', function (socket) {
 		});
 	});
 
-	socket.on('toggleSelectionRes', function(selection) {
+	socket.on('toggleSelectionServer', function(selection) {
 		console.log(selection.user + ' toggled a selection.'); //msg a ameliorer
 		socket.broadcast.emit('toggleSelectionBroad', selection);
 	});
 
-	socket.on('newBlockRes', function() {
-		console.log("newBlockRes broadcasted.");
+	socket.on('newBlockServer', function() {
+		console.log("newBlockBroad broadcasted.");
 		socket.broadcast.emit('newBlockBroad');
 	});
 });

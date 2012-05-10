@@ -800,26 +800,9 @@ editor.initialize = function() {
 
 /**
  *  Toggle selection received
- *  @param  {object} range object with the selection variables
+ *  @param  {object} selection object with the selection variables
  */
 editor.subscribe("toggleSelectionRes", function(selection) {
-	var gridWin = editor.grid.gridWin,
-		gridWinDim = editor.grid.gridWinDim;
-
-	var pitch = range.pitch,
-		startNote = range.startNote,
-		endNote = range.endNote,
-		user = range.user;
-
-	var startNoteId = startNote.block+'-'+startNote.layer+'-'+pitch+'-'+startNote.note,
-		endNoteId = endNote.block+'-'+endNote.layer+'-'+pitch+'-'+endNote.note;
-
-	var startLeft = $('#'+startNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft,
-		endLeft = $('#'+endNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
-
-	editor.grid.selectRange(pitch, startLeft, endLeft, user);
-});
-editor.subscribe("toggleSelectionBroad", function(selection) {
 	var gridWin = editor.grid.gridWin,
 		gridWinDim = editor.grid.gridWinDim;
 
@@ -841,9 +824,6 @@ editor.subscribe("toggleSelectionBroad", function(selection) {
  *  Add new Bloc
  */
 editor.subscribe("newBlockRes", function() {
-	editor.editorView.newBloc();
-});
-editor.subscribe("newBlockBroad", function() {
 	editor.editorView.newBloc();
 });
 

@@ -121,7 +121,7 @@ var Block = Backbone.Model.extend({
 	defaults : function() {
 		return {
 			width : defaultBlockWidth,
-			order : editor.grid.nextOrder()
+			order : editor.editorModel.grid.nextOrder()
 		}
 	},
 
@@ -250,22 +250,6 @@ var Grid = Backbone.Collection.extend({
  *  @type {Backbone.Model}
  */
 // var Editor = Backbone.Model.extend({
-
-// 	initialize : function() {
-// 		this.grid = new Grid();
-
-// 		this.editorView = new EditorView({ 
-// 			collection : this.grid 
-// 		});
-
-// 		// Add 2 Blocks to begin
-// 		this.grid.add();
-// 		this.grid.add();
-
-// 		// for (var i = 0; i < 32; i++) {
-// 		// 	this.grid.add();
-// 		// };
-// 	}
 
 // });
 
@@ -475,13 +459,14 @@ var LayerView = Backbone.View.extend({
 		endLeft = $('#'+endCellId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
 		endWidth = $('#'+endCellId).width();
 
-		// TO-DO: test if endLeft > startLeft or endLeft < startLeft and swap in case
+		// swap end and start if not in the right order
 		if (endLeft < startLeft) {
 			var tmp1 = endLeft; endLeft = startLeft; startLeft = tmp1;
 			var tmp2 = endWidth; endWidth = startWidth; startWidth = tmp2;
 			var tmp3 = endCell; endCell = startCell; startCell = tmp3;
 		};
 
+		// check if selectection hover already on cells
 		var selectable = true;
 		var alreadyOn = gridWin.find(".layer").children('.p-'+pitch).children(".on");
 		alreadyOn.each(function () {
@@ -784,7 +769,7 @@ var EditorView = Backbone.View.extend({
 	 */
 	syncScroll: function(e) {
 		$(".piano-win").scrollTop(e.target.scrollTop);
-    	$(".layer-info-win").scrollLeft(e.target.scrollLeft);
+		$(".layer-info-win").scrollLeft(e.target.scrollLeft);
 	},
 
 	/**
@@ -815,18 +800,19 @@ var EditorView = Backbone.View.extend({
  */
 editor.initialize = function() {
 
-	editor.grid = new Grid();
+	editor.editorModel = new Backbone.Model.extend();
+	editor.editorModel.grid = new Grid();
 
-	editor.editorView = new EditorView({ 
-		collection : editor.grid 
+	editor.editorModel.editorView = new EditorView({ 
+		collection : editor.editorModel.grid 
 	});
 
 	// Add 2 Blocks to begin
-	editor.grid.add();
-	editor.grid.add();
+	editor.editorModel.grid.add();
+	editor.editorModel.grid.add();
 
 	// for (var i = 0; i < 32; i++) {
-	// 	editor.grid.add();
+	// 	editor.editorModel.grid.add();
 	// };
 
 };
@@ -841,14 +827,14 @@ editor.initialize = function() {
  *  @param  {object} selection object with the selection variables
  */
 editor.subscribe("toggleSelectionRes", function(selection) {
-	editor.grid.selectRange(selection);
+	editor.editorModel.grid.selectRange(selection);
 });
 
 /**
  *  Add new Block
  */
 editor.subscribe("newBlockRes", function() {
-	editor.editorView.newBlock();
+	editor.editorModel.editorView.newBlock();
 });
 
 })(jasmed.module("editor"));

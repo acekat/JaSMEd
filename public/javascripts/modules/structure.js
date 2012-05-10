@@ -87,7 +87,7 @@ var track = {
             noteStart = start.start*layer/start.layer;
             noteEnd = end.end*layer/end.layer;
         }
-        // ERROR SHOULD COME FROM HERE!!!!
+        
         if((pgcd = utils.pgcd(layer, utils.pgcd(noteEnd, noteStart))) != 1) {
             layer /= pgcd;
             noteStart /= pgcd;
@@ -232,8 +232,13 @@ struct.subscribe('newBlockBroad', function() {
 });
 
 struct.subscribe('toggleSelection', function(selection) {
-    selection.startNote.start = selection.startNote.note;
-    selection.endNote.end = selection.endNote.note;
+    selection.startNote.start = parseInt(selection.startNote.note, 10);
+    selection.endNote.end = parseInt(selection.endNote.note, 10);
+    selection.pitch = parseInt(selection.pitch, 10);
+    selection.startNote.block = parseInt(selection.startNote.block, 10);
+    selection.endNote.block = parseInt(selection.endNote.block, 10);
+    selection.startNote.layer = parseInt(selection.startNote.layer, 10);
+    selection.endNote.layer = parseInt(selection.endNote.layer, 10);
     var result = curTrack.addNote(selection.pitch, selection.startNote, selection.endNote);
     selection.startNote.layer = selection.endNote.layer = result.layer;
     struct.publish('toggleSelectionRes', selection);

@@ -11,7 +11,7 @@ block content
 			p instrument
 	.module.tools
 		.utils
-			button.add-bloc add bloc
+			button.add-block add block
 			button.zoom-in zoom in
 			button.zoom-out zoom out
 		.player
@@ -35,9 +35,9 @@ block template
 		<% var midiPitch = ((12*(o+1))+(pitches.length-(i+1))); %>
 		<div class="pitch <%= pitch %><%= o %> p-<%= midiPitch %>">
 		<% for (var n=1; n<=sub; n++) { %>
-		<% var noteId = bloc+"-"+sub+"-"+midiPitch+"-"+n; %>
-		<% var on = _.indexOf(noteOn, noteId) === -1 ? "" : " on"; %>
-		<div id="<%= noteId %>" class="note sn-<%= n %><%= on %>"></div>
+		<% var cellId = block+"-"+sub+"-"+midiPitch+"-"+n; %>
+		<% var on = _.indexOf(cellOn, cellId) === -1 ? "" : " on"; %>
+		<div id="<%= cellId %>" class="cell sc-<%= n %><%= on %>"></div>
 		<% }; %>	
 		</div>
 		<% }); %>

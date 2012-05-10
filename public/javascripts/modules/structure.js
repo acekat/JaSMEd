@@ -232,21 +232,16 @@ struct.subscribe('newBlockBroad', function() {
 });
 
 struct.subscribe('toggleSelection', function(selection) {
-    selection.startNote.start = parseInt(selection.startNote.note, 10);
-    selection.endNote.end = parseInt(selection.endNote.note, 10);
-    selection.pitch = parseInt(selection.pitch, 10);
-    selection.startNote.block = parseInt(selection.startNote.block, 10);
-    selection.endNote.block = parseInt(selection.endNote.block, 10);
-    selection.startNote.layer = parseInt(selection.startNote.layer, 10);
-    selection.endNote.layer = parseInt(selection.endNote.layer, 10);
-    var result = curTrack.addNote(selection.pitch, selection.startNote, selection.endNote);
-    selection.startNote.layer = selection.endNote.layer = result.layer;
+    selection.startCell.start = selection.startCell.cell;
+    selection.endCell.end = selection.endCell.cell;
+    var result = curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
+    selection.startCell.layer = selection.endCell.layer = result.layer;
     struct.publish('toggleSelectionRes', selection);
     struct.publish('toggleSelectionServer', selection);
 });
 
 struct.subscribe('toggleSelectionBroad', function(selection) {
-    curTrack.addNote(selection.pitch, selection.startNote, selection.endNote);
+    curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
 });
 
 })(jasmed.module('struct'));

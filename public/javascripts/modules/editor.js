@@ -1,14 +1,13 @@
-// Module reference argument, assigned at the bottom
 (function(editor) {
 
 /**
  *  CONFIGURATION
  */
 var scrollMargin = 15;
-var defaultBlocWidth = 200;
-var minBlocWidth = 100;
+var defaultBlockWidth = 200;
+var minBlockWidth = 100;
 var resizeFactor = 50;
-var defaultLayerSub = 4;
+var defaultSub = 4;
 var nbOctave = 7;
 var pitches = ['B', 'A#', 'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C'];
 
@@ -18,21 +17,20 @@ var pitches = ['B', 'A#', 'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C'];
  */
 
 /**
- *  Layer represent a single layer in a bloc.
+ *  Instance of a layer in a block.
  *  @type {Backbone.Model}
  */
 var Layer = Backbone.Model.extend({
 
 	/**
-	 *  Default values of a Layer variables.
-	 *  @type {Object}
+	 *  Default values of a Layer attributes.
 	 */
 	defaults : function() {
 		return {
-			bloc: null,
-			sub: defaultLayerSub,
-			noteOn: {},
-			editable: true
+			block : null,
+			sub : defaultSub,
+			cellOn : {},
+			editable : true
 		}
 	},
 
@@ -41,32 +39,32 @@ var Layer = Backbone.Model.extend({
 	},
 
 	/**
-	 *  Toggle <tt>editable</tt> variable
+	 *  Toggle editable variable.
 	 */
-	toggleEdit: function() {
+	toggleEdit : function() {
 		this.set({"editable" : !this.get("editable")});
 	},
 
 	/**
-	 *  Add/Remove <tt>noteId</tt> to/from the <tt>noteOn</tt> array.
-	 *  @param  {String} noteId HTML id of the case to turn on/off
-	 *  @param  {String} user login of user that toggled the note
-	 *  @param  {String} className HTML classes of the toggled note
+	 *  Add/Remove cellId to/from the cellOn array.
+	 *  @param  {String} cellId 	HTML id of the cell to turn on/off
+	 *  @param  {String} user 		login of user that toggled the cell
+	 *  @param  {String} className 	HTML classes of the toggled cell
 	 */
-	toggleNote: function(noteId, user, className) {
-		var noteOn = this.get("noteOn");
+	toggleCell : function(cellId, user, className) {
+		var cellOn = this.get("cellOn");
 
-		if (!_.has(noteOn, noteId))
+		if (!_.has(cellOn, cellId))
 			// turn on
-			noteOn[noteId] = [user, className];
+			cellOn[cellId] = [user, className];
 		else
 			// turn off
-			delete noteOn[noteId];
+			delete cellOn[cellId];
 		
-		// trigger the change event on noteOn array with noteId and user arguments
-		var retNoteOn = {};
-		retNoteOn[noteId] = [user, className];
-		this.trigger("change:noteOn", retNoteOn);		
+		// trigger the change event on cellOn object with cellOn object argument
+		var retCellOn = {};
+		retCellOn[cellId] = [user, className];
+		this.trigger("change:cellOn", retCellOn);		
 	}
 
 });
@@ -81,7 +79,7 @@ var Layers = Backbone.Collection.extend({
 	 *  Associated model.
 	 *  @type {Backbone.Model}
 	 */
-	model: Layer,
+	model : Layer,
 	
 	/** @constructs */
 	initialize : function() {
@@ -89,9 +87,9 @@ var Layers = Backbone.Collection.extend({
 
 	/**
 	 *  Find the first (should be the only) editable Layer.
-	 *  @return {Backbone.Model} Layer with <tt>editable</tt> set to <tt>true</tt>
+	 *  @return {Backbone.Model} Layer
 	 */
-	editable: function() {
+	editable : function() {
 		return this.find(function(layer) { 
 			return layer.get("editable"); 
 		});
@@ -99,62 +97,61 @@ var Layers = Backbone.Collection.extend({
 
 	/**
 	 *  Find the first (should be the only) Layer with corresponding subdivision number.
-	 *  @param  {number} sub number of subdivision that contain the searched layer
-	 *  @return {Backbone.Model}     Layer with corresponding subdivision number
+	 *  @param  {number} sub 	number of subdivision that contain the searched layer
+	 *  @return {Backbone.Model} Layer
 	 */
-	getSub: function(sub) {
+	getSub : function(sub) {
 		return this.find(function(layer) {
-			return layer.get("sub") == sub;
+			return layer.get("sub") === sub;
 		});
 	}
 
 });
 
 /**
- *  Bloc contains a collection of Layer (Layers).
- *  Bloc is an element of the Grid.
+ *  Instance of a block in a grid.
+ *  Block contains a collection of Layer (Layers).
  *  @type {Backbone.Model}
  */
-var Bloc = Backbone.Model.extend({
+var Block = Backbone.Model.extend({
 
 	/**
-	 *  Default values of a Bloc variables.
-	 *  @return {object} key:value description of variables
+	 *  Default values of a Block attributes.
 	 */
 	defaults : function() {
 		return {
-			width: defaultBlocWidth,
-			order: editor.grid.nextOrder()
+			width : defaultBlockWidth,
+			order : editor.grid.nextOrder()
 		}
 	},
 
 	/** @constructs */
 	initialize : function() {
-		// use a width of reference to prevent unlimited widening of a bloc
+		// use a width of reference to prevent unlimited widening of a block
 		this.refWidth = this.get("width");
 
-		// add new Bloc "anchor" to DOM
-		$('<div class="bloc b-'+this.get("order")+'" style="width: '+this.refWidth+'px;"></div>').appendTo(".grid");
+		// add new Block "anchor" to DOM
+		$('<div class="block b-'+this.get("order")+'" style="width: '+this.refWidth+'px;"></div>').appendTo(".grid");
 		
 		// create new Layers and associated View
 		this.layers = new Layers();
 		this.layersView = new LayersView({
 			collection: this.layers,
 		});
-		this.layersView.bloc = this;
+		this.layersView.block = this;
 
 		// add a first new Layer
 		this.layers.add({
-			bloc: this.get("order")
+			block : this.get("order")
 		});
 	},
 
 	/**
 	 *  Set the new width.
-	 *  @param  {boolean} zoom true: increase width, false: descrease width
-	 *  @param  {number} [factor=50] added/subtracted number of pixels when zoom in/out 
+	 *  @param  {boolean} zoom 					true: increase width, false: descrease width
+	 *  @param  {number} [factor=resizeFactor] 	added/subtracted number of pixels when zoom in/out 
 	 */
-	resize: function(zoom) {
+	resize : function(zoom) {
 		var width = this.refWidth;
 		var sub = this.layers.editable().get("sub");
 		var factor = !_.isUndefined(arguments[1]) ? arguments[1] : resizeFactor;
@@ -174,7 +171,7 @@ var Bloc = Backbone.Model.extend({
 });
 
 /**
- *  Collection of Bloc.
+ *  Collection of Block.
  *  @type {Backbone.Collection}
  */
 var Grid = Backbone.Collection.extend({
@@ -183,77 +180,66 @@ var Grid = Backbone.Collection.extend({
 	 *  Associated model.
 	 *  @type {Backbone.Model}
 	 */
-	model: Bloc,
+	model : Block,
 	
 	/** @constructs */
 	initialize : function() {
-		// useful variables for notes selection
-		this.gridWin = $(".grid-win");
-		this.gridWinDim = {
-			left: this.gridWin.offset().left, 
-			top: this.gridWin.offset().top, 
-			width: this.gridWin.width(), 
-			height: this.gridWin.height()
-		};
-		this.startLeft = 0;
-		this.endLeft = 0;
 	},
 
 	/**
-	 *  Find the first (should be the only) Bloc with corresponding order.
-	 *  @param  {number} order Bloc order
-	 *  @return {Backbone.Model}       Model corresponding to the selected Bloc
+	 *  Find the first (should be the only) Block with corresponding order.
+	 *  @param  {number} order 		Block order
+	 *  @return {Backbone.Model}
 	 */
-	getBloc: function(order) {
-		return this.find(function(bloc) {
-			return bloc.get("order") == order;
+	getBlock : function(order) {
+		return this.find(function(block) {
+			return block.get("order") === order;
 		});
 	},
 
 	/**
-	 *  Calculate order of a new Bloc.
-	 *  @return {number} number of the last Bloc + 1
+	 *  Calculate order of a new Block.
+	 *  @return {number} number of the last Block + 1
 	 */
-	nextOrder: function() {
+	nextOrder : function() {
 		if (!this.length) return 1;
 		return this.last().get("order") + 1;
 	},
 
 	/**
-	 *  Toggle note in the selection.
-	 *  @param  {object} selection object representing the selection
+	 *  Toggle cell in the selection.
+	 *  @param  {object} selection 	object representing the selection
 	 */
-	selectRange: function(selection) {
-		var gridWin = this.gridWin,
-			gridWinDim = this.gridWinDim;
+	selectRange : function(selection) {
 		var pitch = selection.pitch,
-			startNote = selection.startNote,
-			endNote = selection.endNote,
+			startCell = selection.startCell,
+			endCell = selection.endCell,
 			user = selection.user;
-		var sub = startNote.layer;
+		var sub = startCell.layer;
 
-		for (var blocOrder = startNote.block; blocOrder <= endNote.block; blocOrder++) {
-			var layers = this.getBloc(blocOrder).layers;
+		for (var blockOrder = startCell.block; blockOrder <= endCell.block; blockOrder++) {
+			var layers = this.getBlock(blockOrder).layers;
 			
 			// create layer if it doesn't exist
 			if (!layers.getSub(sub)) {
 				layers.add({
-					bloc: blocOrder,
-					sub: sub,
-					editable: false
+					block : blockOrder,
+					sub : sub,
+					editable : false
 				});
 			};
 
-			var firstNote = (blocOrder == startNote.block) ? startNote.note : 1;
-			var lastNote = (blocOrder == endNote.block) ? endNote.note : sub;
+			var firstCell = (blockOrder == startCell.block) ? startCell.cell : 1;
+			var lastCell = (blockOrder == endCell.block) ? endCell.cell : sub;
 
-			for (var note = firstNote; note <= lastNote; note++) {
-				var id = blocOrder+'-'+sub+'-'+pitch+'-'+note;
+			// toggle cells in the corresponding layer and block
+			for (var cell = firstCell; cell <= lastCell; cell++) {
+				var id = blockOrder+'-'+sub+'-'+pitch+'-'+cell;
 
-				var className = 'bind-'+startNote.block+'-'+sub+'-'+pitch+'-'+startNote.note;
-				className += ((note == endNote.note) && (blocOrder == endNote.block)) ? " bind-end" : "";
+				var className = 'note-'+startCell.block+'-'+sub+'-'+pitch+'-'+startCell.cell;
+				className += ((cell == endCell.cell) && (blockOrder == endCell.block)) ? " note-end" : "";
 
-				layers.getSub(sub).toggleNote(id, user, className);
+				layers.getSub(sub).toggleCell(id, user, className);
 			};
 		};
 	}
@@ -263,13 +249,25 @@ var Grid = Backbone.Collection.extend({
  *  Editor is the root Model that contains a Grid collection.
  *  @type {Backbone.Model}
  */
-var Editor = Backbone.Model.extend({
+// var Editor = Backbone.Model.extend({
 
-	initialize: function() {
-		editor.grid = new Grid();
-	}
+// 	initialize : function() {
+// 		this.grid = new Grid();
 
-});
+// 		this.editorView = new EditorView({ 
+// 			collection : this.grid 
+// 		});
+
+// 		// Add 2 Blocks to begin
+// 		this.grid.add();
+// 		this.grid.add();
+
+// 		// for (var i = 0; i < 32; i++) {
+// 		// 	this.grid.add();
+// 		// };
+// 	}
+
+// });
 
 
 /**
@@ -278,14 +276,16 @@ var Editor = Backbone.Model.extend({
 
 var user,
 	pitch,
-	startNote,
-	startNoteId,
+	startCell,
+	startCellId,
 	startLeft,
 	startWidth,
-	endNote,
-	endNoteId,
+	endCell,
+	endCellId,
 	endLeft,
 	endWidth;
+var gridWin,
+	gridWinDim;
 
 /**
  *  Associated View to Layer Model.
@@ -297,25 +297,25 @@ var LayerView = Backbone.View.extend({
 	 *  Class attribute of the div associated to the View.
 	 *  @type {String}
 	 */
-	className: "layer",
+	className : "layer",
 
 	/**
 	 *  Delegated events: uses jQuery's delegate function to provide declarative callbacks for DOM events. 
-	 *  @type {Object}
+	 *  @type {object}
 	 */
-	events: {
-		"mousedown .note" : "startingNote",
-		"mousemove .note" : "movingNote",
-		"mouseup .note" : "endingNote"
+	events : {
+		"mousedown .cell" : "startingCell",
+		"mousemove .cell" : "movingCell",
+		"mouseup .cell" : "endingCell"
 	},
 
 	/** @constructs */
-	initialize: function() {
+	initialize : function() {
 		// function that render Underscore templating
 		this.layerTemplate = _.template($("#layer-template").html());
 
 		// Bound events
-		this.model.on("change:noteOn", this.toggleNote);
+		this.model.on("change:cellOn", this.toggleCell);
 		this.model.on("change:sub", this.actualize, this);
 	},
 
@@ -323,15 +323,15 @@ var LayerView = Backbone.View.extend({
 	 *  Render the View of a Layer.
 	 *  @return {Backbone.View} self View to enable chained calls
 	 */
-	render: function() {
+	render : function() {
 		var layer = this.model;
 		$(this.el)
 			.html(this.layerTemplate({
-				octave: nbOctave,
-				bloc: layer.get("bloc"),
-				sub: layer.get("sub"),
-				noteOn: layer.get("noteOn"),
-				pitches: pitches
+				octave : nbOctave,
+				block : layer.get("block"),
+				sub : layer.get("sub"),
+				cellOn : layer.get("cellOn"),
+				pitches : pitches
 			}))
 			.addClass('sub-'+layer.get("sub"));
 
@@ -343,30 +343,31 @@ var LayerView = Backbone.View.extend({
 	},
 
 	/**
-	 *  Actualize the View
+	 *  Actualize the Layer View
+	 *  @param  {Backbone.Model} layer layer to actualize
 	 */
-	actualize: function(layer) {
+	actualize : function(layer) {
 		$(this.el).html(this.layerTemplate({
-			octave: nbOctave,
-			bloc: layer.get("bloc"),
-			sub: layer.get("sub"),
-			noteOn: layer.get("noteOn"),
-			pitches: pitches
+			octave : nbOctave,
+			block : layer.get("block"),
+			sub : layer.get("sub"),
+			cellOn : layer.get("cellOn"),
+			pitches : pitches
 		}));
 
 		// TO-DO: need to resize Block width?
 	},
 
 	/**
-	 *  Toogle the "on" class on the selected note div.
-	 *  @param  {String} noteId ID of the selected note
+	 *  Toggle the "on" class on the selected cell div.
+	 *  @param  {object} cellOn cells being toggled
 	 */
-	toggleNote: function(noteOn) {
-		// TO-DO: test if it's a layer model or a noteOn object
+	toggleCell : function(cellOn) {
+		// TO-DO: test if it's a layer model or a cellOn object
 
-		_.each(noteOn, function(value, noteId) {
-			var el = $('#'+noteId);
-			var noteClass = 'user-'+value[0]+' '+value[1];
+		_.each(cellOn, function(value, cellId) {
+			var el = $('#'+cellId);
+			var cellClass = 'user-'+value[0]+' '+value[1];
 			var curClass = el.attr("class").match("user-[^ ]*");
 					
 			if (curClass)
@@ -375,7 +376,7 @@ var LayerView = Backbone.View.extend({
 			el.toggleClass("on");
 			
 			if (el.hasClass("on"))
-				el.addClass(noteClass);
+				el.addClass(cellClass);
 		});
 	},
 
@@ -383,24 +384,21 @@ var LayerView = Backbone.View.extend({
 	 *  Initialize selection variables on mousedown.
 	 *  @param  {object} e event object fired
 	 */
-	startingNote: function(e) {
-		var gridWin = editor.grid.gridWin,
-			gridWinDim = editor.grid.gridWinDim;
-		var id = e.target.id;
+	startingCell : function(e) {
+		startCellId = e.target.id;
 
-		// 0: Bloc, 1: Layer, 2: Pitch, 3: Note
-		var idArray = id.split("-");
-		startNote = {
-			block : idArray[0],
-			layer : idArray[1],
-			note : idArray[3],
+		// 0: Block, 1: Layer, 2: Pitch, 3: Cell
+		var idArray = startCellId.split("-");
+		startCell = {
+			block : parseInt(idArray[0]),
+			layer : parseInt(idArray[1]),
+			cell : parseInt(idArray[3]),
 		};
-		pitch = idArray[2];
-		startNoteId = idArray[0]+'-'+idArray[1]+'-'+pitch+'-'+idArray[3];
-		startLeft = $('#'+startNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
-		startWidth = $('#'+startNoteId).width();
+		pitch = parseInt(idArray[2]);
+		startLeft = $('#'+startCellId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
+		startWidth = $('#'+startCellId).width();
 
-		/* MULTI DRAG REALTIME SELECTION BUT NOT FOLLOWING MOUSE REVERSE OR TOGGLING NOTE */
+		/* MULTI DRAG REALTIME SELECTION BUT NOT FOLLOWING MOUSE REVERSE OR TOGGLING CELL */
 		// editor.editorView.onSelection = true;
 
 		e.preventDefault();
@@ -410,10 +408,7 @@ var LayerView = Backbone.View.extend({
 	 *  Scroll grid according to mouse position.
 	 *  @param  {object} e event object fired
 	 */
-	movingNote: function(e) {
-		var gridWin = editor.grid.gridWin,
-			gridWinDim = editor.grid.gridWinDim;
-
+	movingCell : function(e) {
 		// Scrolling
 		// down
 		if ((e.pageY + scrollMargin) > (gridWinDim.top + gridWinDim.height))
@@ -428,7 +423,7 @@ var LayerView = Backbone.View.extend({
 		if ((e.pageX - scrollMargin) < gridWinDim.left)
 			gridWin[0].scrollLeft -= scrollMargin;
 
-		/* MULTI DRAG REALTIME SELECTION BUT NOT FOLLOWING MOUSE REVERSE OR TOGGLING NOTE */
+		/* MULTI DRAG REALTIME SELECTION BUT NOT FOLLOWING MOUSE REVERSE OR TOGGLING CELL */
 		/*
 		var startLeft = editor.editorView.startLeft,
 			pitch = editor.pitch;
@@ -436,7 +431,7 @@ var LayerView = Backbone.View.extend({
 	
 		// Selecting
 		if (editor.editorView.onSelection) {
-			var selectables	= gridWin.find(".bloc").children(".editable").children(".p-"+pitch).children();
+			var selectables	= gridWin.find(".block").children(".editable").children(".p-"+pitch).children();
 			// Optimized but can be buggy
 			// var selectables	= $(this.el).children(".p-"+pitch).children();
 
@@ -462,27 +457,30 @@ var LayerView = Backbone.View.extend({
 	}, 
 
 	/**
-	 *  Toggle one note or a whole range of notes. 
+	 *  End selection and publish it. 
 	 *  @param  {object} e event object fired
 	 */
-	endingNote: function(e) {
-		var gridWin = editor.grid.gridWin,
-			gridWinDim = editor.grid.gridWinDim;
+	endingCell : function(e) {
 		var id = e.target.id;
 		user = jasmed.user;
 
-		// 0: Bloc, 1: Layer, 2: Pitch, 3: Note
+		// 0: Block, 1: Layer, 2: Pitch, 3: Cell
 		var idArray = id.split("-");
-		endNote = {
-			block :  idArray[0],
-			layer :  idArray[1],
-			note :  idArray[3],
+		endCell = {
+			block : parseInt(idArray[0]),
+			layer : parseInt(idArray[1]),
+			cell : parseInt(idArray[3]),
 		};
-		endNoteId = idArray[0]+'-'+idArray[1]+'-'+pitch+'-'+idArray[3];
-		endLeft = $('#'+endNoteId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
-		endWidth = $('#'+endNoteId).width();
+		endCellId = idArray[0]+'-'+idArray[1]+'-'+pitch+'-'+idArray[3];
+		endLeft = $('#'+endCellId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
+		endWidth = $('#'+endCellId).width();
 
 		// TO-DO: test if endLeft > startLeft or endLeft < startLeft and swap in case
+		if (endLeft < startLeft) {
+			var tmp1 = endLeft; endLeft = startLeft; startLeft = tmp1;
+			var tmp2 = endWidth; endWidth = startWidth; startWidth = tmp2;
+			var tmp3 = endCell; endCell = startCell; startCell = tmp3;
+		};
 
 		var selectable = true;
 		var alreadyOn = gridWin.find(".layer").children('.p-'+pitch).children(".on");
@@ -492,8 +490,7 @@ var LayerView = Backbone.View.extend({
 			var thisId = $(this).attr("id");
 
 			// in the selection range => cancel selection
-			if (((endLeft >= startLeft) && (thisLeft < endLeft+endWidth) && (thisLeft+thisWidth > startLeft))
-					|| ((endLeft <= startLeft) && (thisLeft+thisWidth > endLeft) && (thisLeft < startLeft+startWidth))) {
+			if ((thisLeft < endLeft+endWidth) && (thisLeft+thisWidth > startLeft)) {
 				alert("Pas de superposition de notes!");
 				selectable = false;
 				return false;
@@ -504,21 +501,21 @@ var LayerView = Backbone.View.extend({
 		if (selectable) {
 			editor.publish('toggleSelection', {
 				pitch : pitch,
-				startNote : startNote,
-				endNote : endNote,
+				startCell : startCell,
+				endCell : endCell,
 				user: user
 			});
 			
 			// Testing in local
-			// editor.grid.selectRange({
+			// editor.editor.grid.selectRange({
 			// 	pitch : pitch,
-			// 	startNote : startNote,
-			// 	endNote : endNote,
+			// 	startCell : startCell,
+			// 	endCell : endCell,
 			// 	user: user
 			// });
 		};
 
-		/* MULTI DRAG REALTIME SELECTION BUT NOT FOLLOWING MOUSE REVERSE OR TOGGLING NOTE */
+		/* MULTI DRAG REALTIME SELECTION BUT NOT FOLLOWING MOUSE REVERSE OR TOGGLING CELL */
 		// editor.editorView.onSelection = false;
 
 		e.preventDefault();
@@ -536,10 +533,10 @@ var LayersView = Backbone.View.extend({
 	 *  div associated to the View.
 	 *  @type {String}
 	 */
-	el: ".bloc",
+	el : ".block",
 
 	/** @constructs */
-	initialize: function() {
+	initialize : function() {
 		// Bound events
 		this.collection.on("add", this.addLayer, this);
 		this.collection.on("change:editable", this.switchEdit, this);
@@ -549,7 +546,7 @@ var LayersView = Backbone.View.extend({
 	 *  Insert in the DOM the added Layer to Layers collection.
 	 *  @param {Backbone.Model} layer newly added Layer
 	 */
-	addLayer: function(layer) {
+	addLayer : function(layer) {
 		// create a View for the Layer
 		var layerView = new LayerView({
 			model: layer
@@ -557,49 +554,49 @@ var LayersView = Backbone.View.extend({
 
 		// insert in the DOM the rendered View
 		if (layer.get("editable"))
-			$('.b-'+this.bloc.get("order")).append(layerView.render().el);
+			$('.b-'+this.block.get("order")).append(layerView.render().el);
 		else
-			$('.b-'+this.bloc.get("order")).prepend(layerView.render().el);
+			$('.b-'+this.block.get("order")).prepend(layerView.render().el);
 	},
 
 	/**
 	 *  Manipulate the DOM to get the correct Layer editable.
 	 *  @param  {Backbone.Model} layer Layer to edit
 	 */
-	switchEdit: function(layer) {
-		var blocOrder = '.b-'+this.bloc.get("order");
+	switchEdit : function(layer) {
+		var blockOrder = '.b-'+this.block.get("order");
 
-		$(blocOrder+' .editable').removeClass("editable");
+		$(blockOrder+' .editable').removeClass("editable");
 
 		if (layer.get("editable")) {
-			// TODO: find a cleaner way
-			$(blocOrder+' .sub-'+layer.get("sub")).addClass("editable").appendTo(blocOrder);
+			// TO-DO: find a cleaner way
+			$(blockOrder+' .sub-'+layer.get("sub")).addClass("editable").appendTo(blockOrder);
 		};
 	}
 
 });
 
 /**
- *  Associated View to Bloc Model
+ *  Associated View to Block Model.
  *  @type {Backbone.View}
  */
-var BlocView = Backbone.View.extend({
+var BlockView = Backbone.View.extend({
 
 	/**
 	 *  Class attribute of the div associated to the View.
 	 *  @type {String}
 	 */
-	className: "bloc-layer-info",
+	className : "block-layer-info",
 
 	/** @constructs */
-	initialize: function() {
+	initialize : function() {
 		this.grid = this.model.collection;
 
 		// function that render Underscore templating
 		this.layerInfoTemplate = _.template($("#layer-info-template").html());
 
 		// correct gridWinDim.top
-		this.grid.gridWinDim.top = this.grid.gridWin.offset().top;
+		gridWinDim.top = gridWin.offset().top;
 
 		// Bound events
 		this.model.on("change:width", this.resize, this);
@@ -610,56 +607,56 @@ var BlocView = Backbone.View.extend({
 	 *  Delegated events: uses jQuery's delegate function to provide declarative callbacks for DOM events. 
 	 *  @type {Object}
 	 */
-	events: {
+	events : {
 		"keypress .add-layer" : "newLayerOnEnter",
 		"click .edit-layer" : "editLayer"
 	},
 
 	/**
-	 *  Render the View of a Bloc.
+	 *  Render the View of a Block.
 	 *  @return {Backbone.View} self View to enable chained calls
 	 */
-	render: function() {
-		var bloc = this.model;
+	render : function() {
+		var block = this.model;
 		$(this.el)
 			.html(this.layerInfoTemplate({ 
-				layers: bloc.layers.models
+				layers : block.layers.models
 			}))
-			.addClass('bli-'+bloc.get("order"))
-			.css({"width" : bloc.refWidth+'px'});
+			.addClass('bli-'+block.get("order"))
+			.css({"width" : block.refWidth+'px'});
 
 		return this;
 	},
 
 	/**
-	 *  Set the new width of the Bloc
+	 *  Set the new width of the Block
 	 *  @param  {number} width new width in pixel
 	 */
-	resize: function(bloc) {
-		var order = this.model.get("order"),
-			width = this.model.get("width");
+	resize : function(block) {
+		var order = block.get("order"),
+			width = block.get("width");
 
 		$(".b-"+order).css({"width" : width+'px'});
 		$(this.el).css({"width" : width+'px'});
 	},
 
 	/**
-	 *  Actualize the View
+	 *  Actualize the View.
 	 */
-	actualize: function() {
+	actualize : function() {
 		$(this.el).html(this.layerInfoTemplate({
-			layers: this.model.layers.models
+			layers : this.model.layers.models
 		}));
 
 		// correct gridWinDim.top
-		this.grid.gridWinDim.top = this.grid.gridWin.offset().top;
+		gridWinDim.top = gridWin.offset().top;
 	},
 
 	/**
 	 *  Create new Layer according to the input value
 	 *  @param  {object} e event object fired
 	 */
-	newLayerOnEnter: function(e) {
+	newLayerOnEnter : function(e) {
 		var layers = this.model.layers;
 		var input = this.$(".add-layer");
 		var text = input.val();
@@ -680,13 +677,13 @@ var BlocView = Backbone.View.extend({
 			// Create new one
 			layers.editable().toggleEdit();
 			layers.add({
-				sub: sub,
-				bloc: this.model.get("order")
+				sub : sub,
+				block : this.model.get("order")
 			});
 		}
 		input.val("");
 
-		// adapt bloc width according to subdivisions of the layer
+		// adapt block width according to subdivisions of the layer
 		this.model.resize(true, 0);
 	},
 
@@ -694,9 +691,9 @@ var BlocView = Backbone.View.extend({
 	 *  Set a Layer editable, disable old editable Layer.
 	 *  @param  {object|number} e event object or sub number
 	 */
-	editLayer: function(e) {
+	editLayer : function(e) {
 		var layers = this.model.layers;
-		var sub = typeof(e)=="object" ? e.target.innerHTML : e;
+		var sub = typeof(e)=="object" ? parseInt(e.target.innerHTML) : e;
 
 		// if Layer to set isn't already editable
 		if (layers.editable() !== layers.getSub(sub)) {
@@ -704,7 +701,7 @@ var BlocView = Backbone.View.extend({
 			layers.getSub(sub).toggleEdit();
 		};
 
-		// adapt bloc width according to subdivisions of the layer
+		// adapt block width according to subdivisions of the layer
 		this.model.resize(true, 0);
 	}
 
@@ -720,10 +717,10 @@ var EditorView = Backbone.View.extend({
 	 *  div associated to the View.
 	 *  @type {String}
 	 */
-	el: ".editor",
+	el : ".editor",
 
 	/** @constructs */
-	initialize: function() {
+	initialize : function() {
 		// display piano
 		for (var o = nbOctave; o > 0; o--) {
 			_.each(pitches, function(pitch, i) {
@@ -733,47 +730,56 @@ var EditorView = Backbone.View.extend({
 			});
 		};
 
+		// initialize View variables
+		gridWin = $(".grid-win");
+		gridWinDim = {
+			left : gridWin.offset().left, 
+			top : gridWin.offset().top, 
+			width : gridWin.width(), 
+			height : gridWin.height()
+		};
+
 		// Bound events
-		this.collection.on("add", this.addBloc);
-		this.collection.gridWin.on("scroll", this.syncScroll);
+		this.collection.on("add", this.addBlock);
+		gridWin.on("scroll", this.syncScroll);
 	},
 
 	/**
 	 *  Delegated events: uses jQuery's delegate function to provide declarative callbacks for DOM events. 
 	 *  @type {Object}
 	 */
-	events: {
+	events : {
 	},
 
 	/**
-	 *  Insert in the DOM the added Bloc to grid collection.
-	 *  @param {Backbone.Model} bloc newly added Bloc
+	 *  Insert in the DOM the added Block to grid collection.
+	 *  @param {Backbone.Model} block newly added Block
 	 */
-	addBloc: function(bloc) {
-		// create a View for the Bloc
-		var blocView = new BlocView({
-			model: bloc
+	addBlock : function(block) {
+		// create a View for the Block
+		var blockView = new BlockView({
+			model: block
 		});
 
 		// insert in the DOM the rendered View
-		$(".layer-info").append(blocView.render().el);
+		$(".layer-info").append(blockView.render().el);
 
-		// adapt bloc width according to subdivisions of the layer
-		blocView.model.resize(true, 0);
+		// adapt block width according to subdivisions of the layer
+		blockView.model.resize(true, 0);
 	},
 
 	/**
-	 *  Add a new Bloc to the Grid collection.
+	 *  Add a new Block to the Grid collection.
 	 */
-	newBloc: function() {
+	newBlock : function() {
 		var width = this.collection.last().refWidth;
 		this.collection.add({
-			width: width
+			width : width
 		});
 	},
 
 	/**
-	 *  Synchronize scrolling between the grid, piano and layer-info window
+	 *  Synchronize scrolling between the grid, piano and layer-info window.
 	 *  @param  {object} e event object fired
 	 */
 	syncScroll: function(e) {
@@ -782,19 +788,19 @@ var EditorView = Backbone.View.extend({
 	},
 
 	/**
-	 *  Zoom in ou out in the Grid
-	 *  @param  {boolean} zoom true: zoom in, false: zoom out
+	 *  Zoom in ou out in the Grid.
+	 *  @param  {boolean} zoom 	true: zoom in, false: zoom out
 	 */
 	zoom: function(zoom) {
-		_.map(this.collection.models, function(bloc) {
-			if (!zoom && (bloc.get("width") <= minBlocWidth)) 
+		_.map(this.collection.models, function(block) {
+			if (!zoom && (block.get("width") <= minBlockWidth)) 
 				return false;
 			
-			bloc.resize(zoom);
+			block.resize(zoom);
 		});
 
 		// correct gridWinDim.top
-		this.collection.gridWinDim.top = this.collection.gridWin.offset().top;
+		gridWinDim.top = gridWin.offset().top;
 	}
 
 });
@@ -808,19 +814,21 @@ var EditorView = Backbone.View.extend({
  *  Module initialization method
  */
 editor.initialize = function() {
+
 	editor.grid = new Grid();
 
 	editor.editorView = new EditorView({ 
 		collection : editor.grid 
 	});
 
-	// Add 2 Blocs to begin
+	// Add 2 Blocks to begin
 	editor.grid.add();
 	editor.grid.add();
 
 	// for (var i = 0; i < 32; i++) {
 	// 	editor.grid.add();
 	// };
+
 };
 
 
@@ -837,10 +845,10 @@ editor.subscribe("toggleSelectionRes", function(selection) {
 });
 
 /**
- *  Add new Bloc
+ *  Add new Block
  */
 editor.subscribe("newBlockRes", function() {
-	editor.editorView.newBloc();
+	editor.editorView.newBlock();
 });
 
 })(jasmed.module("editor"));

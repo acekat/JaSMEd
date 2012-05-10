@@ -93,7 +93,7 @@ footer p {
   display: table-cell;
   white-space: nowrap;
 }
-.editor .bloc-layer-info {
+.editor .block-layer-info {
   display: inline-block;
   width: 200px;
   height: 100%;
@@ -211,14 +211,14 @@ footer p {
   white-space: nowrap;
   background: #e0e0e0 url("../images/grid-bg.png");
 }
-.editor .bloc {
+.editor .block {
   display: inline-block;
   position: relative;
   vertical-align: top;
   width: 200px;
   border-right: 1px solid #747474;
 }
-.editor .add-bloc {
+.editor .add-block {
   display: inline-block;
 }
 .editor .layer {
@@ -230,39 +230,39 @@ footer p {
 .editor .pitch {
   display: table-row;
 }
-.editor .note {
+.editor .cell {
   display: table-cell;
   height: 12px;
   border-bottom: 1px solid #747474;
 }
-.editor .note.on {
+.editor .cell.on {
   background: #00b7ff;
 }
-.editor .note.on.user-thibaud {
+.editor .cell.on.user-thibaud {
   background: #44accf;
 }
-.editor .note.on.user-jaimito {
+.editor .cell.on.user-jaimito {
   background: #ee3e64;
 }
-.editor .note.on.user-acekat {
+.editor .cell.on.user-acekat {
   background: #b7d84b;
 }
-.editor .note.on.user-esj {
+.editor .cell.on.user-esj {
   background: #8904b1;
 }
-.editor .note.on.user-grizix {
+.editor .cell.on.user-grizix {
   background: #e2a741;
 }
-.editor .note.on.user-berthou {
+.editor .cell.on.user-berthou {
   background: #000;
 }
 .editor .layer.editable {
   position: relative;
 }
-.editor .layer.editable .note:not(.editable) {
+.editor .layer.editable .cell:not(.editable) {
   border-right: 1px dotted #747474;
 }
-.editor .layer.editable .note.on:not(.bind-end) {
+.editor .layer.editable .cell.on:not(.note-end) {
   border-right: none;
 }
 .login.thibaud {

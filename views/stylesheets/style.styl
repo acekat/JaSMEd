@@ -79,9 +79,9 @@ footer
 	width: 15%
 
 // editor variables
-note-height = 12px
+cell-height = 12px
 pitch-style()
-	height: note-height
+	height: cell-height
 	border-bottom: 1px solid bd-color
 
 .editor
@@ -97,7 +97,7 @@ pitch-style()
 		display: table-cell
 		white-space: nowrap
 
-	.bloc-layer-info
+	.block-layer-info
 		display: inline-block
 		width: 200px
 		height: 100%
@@ -128,7 +128,7 @@ pitch-style()
 	.piano-key
 		position: relative
 		width: 100%
-		height: note-height
+		height: cell-height
 		
 	.piano-key.white
 		border-bottom: 1px solid bd-color
@@ -153,7 +153,7 @@ pitch-style()
 	.piano-key.white.B5, .piano-key.white.F5,
 	.piano-key.white.B6, .piano-key.white.F6,
 	.piano-key.white.B7, .piano-key.white.F7 
-		height: ((note-height*7)/4)
+		height: ((cell-height*7)/4)
 	.piano-key.white.E1, .piano-key.white.C1,
 	.piano-key.white.E2, .piano-key.white.C2,
 	.piano-key.white.E3, .piano-key.white.C3, 
@@ -164,12 +164,12 @@ pitch-style()
 	.piano-key.white.D1, .piano-key.white.D2,
 	.piano-key.white.D3, .piano-key.white.D4,
 	.piano-key.white.D5, .piano-key.white.D6, .piano-key.white.D7
-		height: ((note-height*5)/3)
+		height: ((cell-height*5)/3)
 
 	.piano-key.black
 		z-index: 1
 		width: 70%
-		margin: -(note-height/2) 0
+		margin: -(cell-height/2) 0
 		border-width: 2px 7px 2px 0
 		border-color: bd-color 
 		border-style: outset outset inset none 
@@ -187,14 +187,14 @@ pitch-style()
 		white-space: nowrap
 		background: bg-color url("../images/grid-bg.png")
 
-	.bloc
+	.block
 		display: inline-block
 		position: relative
 		vertical-align: top
 		width: 200px
 		border-right: 1px solid bd-color
 
-	.add-bloc
+	.add-block
 		display: inline-block
 
 	.layer
@@ -206,37 +206,37 @@ pitch-style()
 	.pitch
 		display: table-row
 		
-	.note
+	.cell
 		display: table-cell
-		height: note-height
+		height: cell-height
 		border-bottom: 1px solid bd-color
 
-	.note.on
+	.cell.on
 		background: link-color
 
-	.note.on.user-thibaud
+	.cell.on.user-thibaud
 		background: thibaud
 
-	.note.on.user-jaimito
+	.cell.on.user-jaimito
 		background: jaimito
 
-	.note.on.user-acekat
+	.cell.on.user-acekat
 		background: acekat
 
-	.note.on.user-esj
+	.cell.on.user-esj
 		background: esj
 
-	.note.on.user-grizix
+	.cell.on.user-grizix
 		background: grizix
 
-	.note.on.user-berthou
+	.cell.on.user-berthou
 		background: berthou
 
 	.layer.editable
 		position: relative
-		.note:not(.editable)
+		.cell:not(.editable)
 			border-right: 1px dotted bd-color
-		.note.on:not(.bind-end)
+		.cell.on:not(.note-end)
 			border-right: none
 
 

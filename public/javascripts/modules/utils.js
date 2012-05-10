@@ -76,15 +76,12 @@ var UtilsView = Backbone.View.extend({
 	 *  @type {Object}
 	 */
 	events: {
-		"click .add-bloc" : "newBloc",
+		"click .add-block" : "newBlock",
 		"click .zoom-in" : "zoomIn",
 		"click .zoom-out" : "zoomOut"
 	},
 
-	newBloc: function() {
-		// editor.editorView.newBloc();
-
-		// send to communication
+	newBlock: function() {
 		utils.publish("newBlock");
 	},
 

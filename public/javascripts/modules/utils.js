@@ -102,8 +102,7 @@ var UtilsView = Backbone.View.extend({
 /**
  *  Module initialization method
  */
-// WHY .initialize() doesn't work for me?
-utils.initialization = function() {
+utils.initialize = function() {
 	utils.utilsView = new UtilsView();
 };
 

@@ -44,7 +44,7 @@ $(function() {
 
 	jasmed.module("struct").initialize();
 	jasmed.module("editor").initialize();
-	// WHY .initialize() doesn't work for me?
-	jasmed.module("utils").initialization();
+	jasmed.module("utils").initialize();
+	jasmed.module("player").initialize();
 
 });

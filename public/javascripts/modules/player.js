@@ -214,7 +214,7 @@ var PlayersView = Backbone.View.extend({
 /**
  *  Module initialization method
  */
-utils.initialize = function() {
+player.initialize = function() {
 	player.view = new PlayersView();
 };
 

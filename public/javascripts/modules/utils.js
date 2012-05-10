@@ -1,4 +1,4 @@
-(function(utils){
+(function(utils) {
 
 /**
  * DEPENDENCIES 
@@ -82,7 +82,10 @@ var UtilsView = Backbone.View.extend({
 	},
 
 	newBloc: function() {
-		editor.editorView.newBloc();
+		// editor.editorView.newBloc();
+
+		// send to communication
+		utils.publish("newBlock");
 	},
 
 	zoomIn: function() {
@@ -95,6 +98,7 @@ var UtilsView = Backbone.View.extend({
 
 });
 
+
 /**
  *  Module initialization method
  */
@@ -102,4 +106,4 @@ utils.initialize = function() {
 	utils.utilsView = new UtilsView();
 };
 
-})(jasmed.module('utils'));
+})(jasmed.module("utils"));

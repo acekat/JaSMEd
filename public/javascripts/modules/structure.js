@@ -78,7 +78,6 @@ var track = {
         if(!end) {
             return startBlk.addNote(pitch, start.layer, start.start);
         }
-        
         var layer = start.layer,
             noteStart = start.start,
             noteEnd = end.end,
@@ -88,12 +87,12 @@ var track = {
             noteStart = start.start*layer/start.layer;
             noteEnd = end.end*layer/end.layer;
         }
+        // ERROR SHOULD COME FROM HERE!!!!
         if((pgcd = utils.pgcd(layer, utils.pgcd(noteEnd, noteStart))) != 1) {
             layer /= pgcd;
             noteStart /= pgcd;
             noteEnd /= pgcd;
         }
-
         
         if(start.block == end.block) {
             return startBlk.addNote(pitch, -layer, noteStart, noteEnd);
@@ -165,7 +164,7 @@ var block = {
                 end /= pgcd;
             }
         }
-        
+
         duration = ghost ? -duration : duration||0;
         duration += end - start;
         var result = {layer: layer,
@@ -212,18 +211,24 @@ var note = {
 
 var curSong, curTrack;
 
+
 struct.initialize = function() {
-    struct.publish('init');
+    struct.publish('initializationServer');
 };
 
-struct.subscribe('initResponse', function(song) {
+struct.subscribe('initializationRes', function(song) {
     curSong = song || struct.createSong();
     curTrack =  curSong.addTrack();
 });
 
 struct.subscribe('newBlock', function() {
     curSong.addBlocks();
-    struct.publish('newBlockResponse');
+    struct.publish('newBlockRes');
+    struct.publish('newBlockServer');
+});
+
+struct.subscribe('newBlockBroad', function() {
+    curSong.addBlocks();
 });
 
 struct.subscribe('toggleSelection', function(selection) {
@@ -231,7 +236,12 @@ struct.subscribe('toggleSelection', function(selection) {
     selection.endNote.end = selection.endNote.note;
     var result = curTrack.addNote(selection.pitch, selection.startNote, selection.endNote);
     selection.startNote.layer = selection.endNote.layer = result.layer;
-    struct.publish('toggleSelectionResponse', selection)
+    struct.publish('toggleSelectionRes', selection);
+    struct.publish('toggleSelectionServer', selection);
+});
+
+struct.subscribe('toggleSelectionBroad', function(selection) {
+    curTrack.addNote(selection.pitch, selection.startNote, selection.endNote);
 });
 
 })(jasmed.module('struct'));

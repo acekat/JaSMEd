@@ -5,6 +5,10 @@ acekat = #B7D84B
 esj = #8904B1
 grizix = #E2A741
 berthou = #000000
+link-color = #00B7FF
+bg-color = #E0E0E0
+win-color = #ACACAC
+bd-color = #747474
 
 
 /*
@@ -20,12 +24,18 @@ a:hover, a:active
 	outline: 0
 b, strong
 	font-weight: bold
+div
+	-moz-box-sizing: border-box
+	-webkit-box-sizing: border-box
+	box-sizing: border-box
 
+/*
 .clearfix:before, .clearfix:after
 	content: ""
 	display: table
 .clearfix:after
 	clear: both
+*/
 
 /*
  * Styling
@@ -36,18 +46,18 @@ body
 	padding: 30px
 
 a
-	color: #00B7FF
+	color: link-color
 
 header, footer
 	padding: 0 20px
-	background: #E0E0E0
+	background: bg-color
 
 header
 	overflow: hidden
 	h1
 		float: left
 	span
-		color: #00B7FF
+		color: link-color
 	#credentials
 		float: right
 
@@ -58,10 +68,9 @@ footer
 #content
 	padding: 20px
 
-section
+.module
 	display: inline-block
 	vertical-align: top
-	background: #ddd
 
 .instrument
 	width: 15%
@@ -70,17 +79,17 @@ section
 	width: 15%
 
 // editor variables
-note-height = 20px
+note-height = 12px
 pitch-style()
 	height: note-height
-	border-bottom: 1px solid #aaa
+	border-bottom: 1px solid bd-color
 
 .editor
 	width: 70%
 	
 	.layer-info-win
-		margin-left: 42px
-		background: #ddd
+		margin-left: 40px
+		background: win-color
 		border: 1px solid
 		overflow: hidden
 
@@ -92,7 +101,7 @@ pitch-style()
 		display: inline-block
 		width: 200px
 		height: 100%
-		border-right: 1px solid #aaa
+		border-right: 1px solid bd-color
 
 	.layer-list
 		list-style: none
@@ -108,7 +117,7 @@ pitch-style()
 		float: left
 		width: 40px
 		height: 300px
-		background: #ddd
+		background: win-color
 		border: 1px solid
 		overflow: hidden
 
@@ -117,34 +126,73 @@ pitch-style()
 		height: 480px
 
 	.piano-key
+		position: relative
 		width: 100%
 		height: note-height
-		border-bottom: 1px solid #aaa
 		
 	.piano-key.white
-		background: #fff
+		border-bottom: 1px solid bd-color
+		background: #EFEDEB
+		span
+			position: absolute
+			bottom: 0
+			right: 4px
+			font-size: 8px
+
+	.piano-key.white.A1, .piano-key.white.G1,
+	.piano-key.white.A2, .piano-key.white.G2,
+	.piano-key.white.A3, .piano-key.white.G3, 
+	.piano-key.white.A4, .piano-key.white.G4,
+	.piano-key.white.A5, .piano-key.white.G5,
+	.piano-key.white.A6, .piano-key.white.G6,
+	.piano-key.white.A7, .piano-key.white.G7,
+	.piano-key.white.B1, .piano-key.white.F1,
+	.piano-key.white.B2, .piano-key.white.F2,
+	.piano-key.white.B3, .piano-key.white.F3, 
+	.piano-key.white.B4, .piano-key.white.F4,
+	.piano-key.white.B5, .piano-key.white.F5,
+	.piano-key.white.B6, .piano-key.white.F6,
+	.piano-key.white.B7, .piano-key.white.F7 
+		height: ((note-height*7)/4)
+	.piano-key.white.E1, .piano-key.white.C1,
+	.piano-key.white.E2, .piano-key.white.C2,
+	.piano-key.white.E3, .piano-key.white.C3, 
+	.piano-key.white.E4, .piano-key.white.C4,
+	.piano-key.white.E5, .piano-key.white.C5,
+	.piano-key.white.E6, .piano-key.white.C6,
+	.piano-key.white.E7, .piano-key.white.C7, 
+	.piano-key.white.D1, .piano-key.white.D2,
+	.piano-key.white.D3, .piano-key.white.D4,
+	.piano-key.white.D5, .piano-key.white.D6, .piano-key.white.D7
+		height: ((note-height*5)/3)
 
 	.piano-key.black
-		background: #000
+		z-index: 1
+		width: 70%
+		margin: -(note-height/2) 0
+		border-width: 2px 7px 2px 0
+		border-color: bd-color 
+		border-style: outset outset inset none 
+		background: #7C7C7C
 
 	.grid-win
 		position: relative
 		height: 300px
-		background: #ddd
+		background: win-color
 		border: 1px solid
 		overflow: hidden
 
 	.grid
 		display: table-cell
 		white-space: nowrap
-		background: #ddd url("../images/grid-bg.png")
+		background: bg-color url("../images/grid-bg.png")
 
 	.bloc
 		display: inline-block
 		position: relative
 		vertical-align: top
 		width: 200px
-		border-right: 1px solid #aaa
+		border-right: 1px solid bd-color
 
 	.add-bloc
 		display: inline-block
@@ -161,10 +209,10 @@ pitch-style()
 	.note
 		display: table-cell
 		height: note-height
-		border-bottom: 1px solid #aaa
+		border-bottom: 1px solid bd-color
 
 	.note.on
-		background: #00B7FF
+		background: link-color
 
 	.note.on.user-thibaud
 		background: thibaud
@@ -187,7 +235,9 @@ pitch-style()
 	.layer.editable
 		position: relative
 		.note:not(.editable)
-			border-right: 1px dotted #bbb
+			border-right: 1px dotted bd-color
+		.note.on:not(.bind-end)
+			border-right: none
 
 
 .login.thibaud

@@ -146,7 +146,7 @@ var block = {
      * @param {number} pitch The value of the note to add.
      * @param {number} layer The layer in which add the note.
      * @param {number} start Index of the cell where the note starts.
-     * @param {number} [end=start+1] Index of the cell just after the en of the note.
+     * @param {number} [end=start+1] Index of the cell just after the end of the note.
      * @param {number} [duration] Should note be used.
      * @returns {{number} layer,
      *           {number} duration} The layer and duration of the new note.
@@ -167,9 +167,10 @@ var block = {
 
         duration = ghost ? -duration : duration||0;
         duration += end - start;
-        var result = {layer: layer,
-                      duration: duration,
-                      start: start
+        var result = {
+            layer: layer,
+            duration: duration,
+            start: start
         };
         
         if(!(layer in this.layers)) {
@@ -239,7 +240,11 @@ struct.subscribe('toggleSelection', function(selection) {
     var result = curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
     selection.startCell.layer = selection.endCell.layer = result.layer;
     selection.startCell.start = selection.startCell.cell = result.start + 1;
-		//that line below ain't doing it right... grizix please fix
+	/**********************************************************************************************************
+	(result.start + result.duration) is false (too big) when you have a selection over more than one block.
+	In the view, cell index start over in each block. Then max cell index is the number of sub_cell in a layer.
+	What is expected by the view, is more the noteEnd variable in the track.addNote method, I think. 
+	***********************************************************************************************************/
     selection.endCell.end = selection.endCell.cell = result.start + result.duration;
     struct.publish('toggleSelectionRes', selection);
     struct.publish('toggleSelectionServer', selection);

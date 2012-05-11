@@ -103,26 +103,29 @@ io.sockets.on('connection', function (socket) {
 
 	socket.emit('loginSync', session.login);
 	
-	socket.on('initializationServer', function() {
+	socket.on('editorInit', function() {
 		if (!session.seqName) {
-			socket.emit('initializationRes');
+			socket.emit('editorInitRes');
 			return;
 		}
 		
 		console.log(session.login + ' about to open ' + session.seqName);
 		store.importSeq(session.seqName, function(data) {
-			if (!data)
-				console.log('error reading file'); //must do something about that
+			if (!data) {
+				console.log('error reading file');
+				socket.emit('editorInitRes'); //should send back an error to tell client file doesn't exist!!
+				return;
+			}
 			
 			console.log('about to emit back: ' + session.seqName + ' + ' + JSON.stringify(data));
-			socket.emit('initializationRes', {
+			socket.emit('editorInitRes', {
 				name: session.seqName,
 				data: data
 			});
 		});
 	})
 	
-	socket.on('saveAs', function(seq) {
+	socket.on('editorGridExport', function(seq) {
 		store.exportSeq(seq.name, seq.data, function(res) {
 			if (!res)
 				console.log(session.login + ' error trying to save sequencer');

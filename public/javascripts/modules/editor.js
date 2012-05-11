@@ -11,6 +11,11 @@ var defaultSub = 4;
 var nbOctave = 7;
 var pitches = ['B', 'A#', 'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C'];
 
+/**
+ *  INSTANCES
+ */
+var editorModel;
+var editorView;
 
 /**
  *  MODELS & COLLECTIONS
@@ -121,7 +126,7 @@ var Block = Backbone.Model.extend({
 	defaults : function() {
 		return {
 			width : defaultBlockWidth,
-			order : editor.editorModel.grid.nextOrder()
+			order : editorModel.grid.nextOrder()
 		}
 	},
 
@@ -249,9 +254,83 @@ var Grid = Backbone.Collection.extend({
  *  Editor is the root Model that contains a Grid collection.
  *  @type {Backbone.Model}
  */
-// var Editor = Backbone.Model.extend({
+var Editor = Backbone.Model.extend({
+	initialize: function() {
+		this.grid = new Grid();
 
-// });
+		editorView = new EditorView({
+			collection: this.grid  //could be changed to editorModel?
+		});
+	},
+	
+	xport: function(opt) {
+		var result = {},
+			settings = _({
+				recurse: true
+			}).extend(opt || {});
+
+		function process(targetObj, source) {
+			targetObj.attrs = source.toJSON();
+			_.each(source, function (value, key) {
+				if (settings.recurse) {
+					if (key !== 'collection' && source[key] instanceof Backbone.Collection) {
+						targetObj.collections = targetObj.collections || {};
+						targetObj.collections[key] = {};
+						targetObj.collections[key].models = [];
+						_.each(source[key].models, function (value, index) {
+							process(targetObj.collections[key].models[index] = {}, value);
+						});
+					//not sure what 'parent' does... probs needz removing
+					} else if (key !== 'parent' && source[key] instanceof Backbone.Model) {
+						targetObj.models = targetObj.models || {};
+						process(targetObj.models[key] = {}, value);
+					}
+				}
+			});
+		}
+
+		process(result, this);
+		return result;
+	},
+	
+	mport: function(data, silent) {
+		function process(targetObj, data) {
+			console.log('process called with: ');
+			console.log('targetObj: ' + JSON.stringify(targetObj));
+			console.log('data: ' + JSON.stringify(data));
+			targetObj.set(data.attrs, {silent: silent});
+			/* bubble test
+			_.each(data.attrs, function (value, key) {
+				console.log('setting obj[' + key + '] = ' + JSON.stringify(value));
+				targetObj.set(key, value, {silent: silent});
+			})
+			*/
+			if (data.collections) {
+				_.each(data.collections, function (collection, name) {
+					console.log('(collection) about to do ' + name);
+					_.each(collection.models, function (modelData, index) {
+						console.log('(model in collection) about to do ' + name + '.models[' + index +']');
+						targetObj[name].add();
+						var nextObject = targetObj[name].models[index];
+						//var nextObject = targetObj[name].add({}, {silent: silent});
+						//var nextObject = targetObj[name].get(modelData.attrs.id) || targetObj[name]._add({}, {silent: silent});
+						process(nextObject, modelData);
+					});
+				});
+			}
+
+			if (data.models) {
+				_.each(data.models, function (modelData, name) {
+					console.log('(model) about to do ' + name);
+					process(targetObj[name], modelData);
+				});
+			}
+		}
+
+		process(this, data);
+		return this;
+	}
+});
 
 
 /**
@@ -348,7 +427,10 @@ var LayerView = Backbone.View.extend({
 	 */
 	toggleCell : function(cellOn) {
 		// TO-DO: test if it's a layer model or a cellOn object
-
+		// DONE'D (a bit quickly though... could be messy in future)
+		if (cellOn instanceof Layer)
+			cellOn = cellOn.get('cellOn');
+		
 		_.each(cellOn, function(value, cellId) {
 			var el = $('#'+cellId);
 			var cellClass = 'user-'+value[0]+' '+value[1];
@@ -799,23 +881,24 @@ var EditorView = Backbone.View.extend({
  *  Module initialization method
  */
 editor.initialize = function() {
+	editorModel = new Editor();
+	editor.publish('editorInit');
+};
 
-	editor.editorModel = new Backbone.Model.extend();
-	editor.editorModel.grid = new Grid();
+function loadExistingGrid(grid) {
+	console.log('about to update grid with: ' + JSON.stringify(grid));
+	console.log('which actually is: ' + JSON.stringify(editorModel.mport(grid)));
+}
 
-	editor.editorModel.editorView = new EditorView({ 
-		collection : editor.editorModel.grid 
-	});
-
+function createNewGrid() {
 	// Add 2 Blocks to begin
-	editor.editorModel.grid.add();
-	editor.editorModel.grid.add();
+	editorModel.grid.add();
+	editorModel.grid.add();
 
 	// for (var i = 0; i < 32; i++) {
-	// 	editor.editorModel.grid.add();
+	// 	editorModel.grid.add();
 	// };
-
-};
+}
 
 
 /**
@@ -823,18 +906,53 @@ editor.initialize = function() {
  */
 
 /**
+ *  Initialize editor (response from server)
+ *  @param  {object} grid object if exists, null otherwise
+ */
+editor.subscribe('editorInitRes', function(seq) {
+	console.log('editor received editorInitRes');
+	if (!seq)
+		return createNewGrid();
+		
+	document.title += (' - ' + seq.name);
+	loadExistingGrid(seq.data);
+});
+
+/**
+ *  Export grid
+ */
+editor.subscribe('exportAs', function(name) {
+	editor.publish('editorGridExport', {
+		name: name,
+		data: editorModel.xport()
+	});
+});
+
+/**
  *  Toggle selection received
  *  @param  {object} selection object with the selection variables
  */
 editor.subscribe("toggleSelectionRes", function(selection) {
-	editor.editorModel.grid.selectRange(selection);
+	editorModel.grid.selectRange(selection);
 });
 
 /**
  *  Add new Block
  */
-editor.subscribe("newBlockRes", function() {
-	editor.editorModel.editorView.newBlock();
+editor.subscribe('newBlockRes', function() {
+	editorView.newBlock();
 });
+
+/**
+ * Zoom in/out
+ */
+editor.subscribe('zoom', function(arg) {
+	editorView.zoom(arg);
+});
+
+/**
+ *  PUBLIC API
+ */
+editor.rootModel = editorModel;
 
 })(jasmed.module("editor"));

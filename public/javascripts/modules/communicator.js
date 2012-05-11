@@ -31,9 +31,11 @@
 		communicator.publish('newBlockBroad');
 	});
 	
-	socket.on('initializationRes', function(seq) {
-		console.log('initializationRes received from server');
-		communicator.publish('initializationRes', seq);
+	socket.on('editorInitRes', function(seq) {
+		console.log('editorInitRes received from server');
+		communicator.publish('editorInitRes', seq);
+		//so structure doesn't break!
+		communicator.publish('initializationRes');
 	})
 	
 
@@ -55,15 +57,16 @@
 	
 	communicator.subscribe('newBlockServer', newBlockServer);
 	
-	// communicator.subscribe('saveAs', function(seq) {
-	// 	console.log(jasmed.user + ' emits saveAs : ' + seq.name);
-	// 	console.log(JSON.stringify(seq.data));
-	// 	socket.emit('saveAs', seq);
-	// });
+	communicator.subscribe('editorGridExport', function(seq) {
+		console.log(jasmed.user + ' emits saveAs : ' + seq.name);
+		console.log(JSON.stringify(seq.data));
+		socket.emit('editorGridExport', seq);
+	});
 	
-	communicator.subscribe('initializationServer', function() {
-		console.log(jasmed.user + ' emits initializationServer');
-		socket.emit('initializationServer');
+	//I WANT MSG TO BE LIKE SOOOOO: [moduleName]init par module!
+	communicator.subscribe('editorInit', function() {
+		console.log(jasmed.user + ' emits editorInit');
+		socket.emit('editorInit');
 	});
 
 })(jasmed.module('communicator'));

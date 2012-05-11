@@ -169,7 +169,7 @@ var block = {
         duration += end - start;
         var result = {layer: layer,
                       duration: duration,
-                      start: start}
+                      start: start
         };
         
         if(!(layer in this.layers)) {

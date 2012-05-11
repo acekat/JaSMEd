@@ -458,7 +458,7 @@ var LayerView = Backbone.View.extend({
 		startCell = {
 			block : parseInt(idArray[0]),
 			layer : parseInt(idArray[1]),
-			cell : parseInt(idArray[3]),
+			cell : parseInt(idArray[3])
 		};
 		pitch = parseInt(idArray[2]);
 		startLeft = $('#'+startCellId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;
@@ -535,7 +535,7 @@ var LayerView = Backbone.View.extend({
 		endCell = {
 			block : parseInt(idArray[0]),
 			layer : parseInt(idArray[1]),
-			cell : parseInt(idArray[3]),
+			cell : parseInt(idArray[3])
 		};
 		endCellId = idArray[0]+'-'+idArray[1]+'-'+pitch+'-'+idArray[3];
 		endLeft = $('#'+endCellId).offset().left - gridWinDim.left + gridWin[0].scrollLeft;

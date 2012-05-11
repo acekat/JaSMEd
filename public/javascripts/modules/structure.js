@@ -239,6 +239,7 @@ struct.subscribe('toggleSelection', function(selection) {
     var result = curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
     selection.startCell.layer = selection.endCell.layer = result.layer;
     selection.startCell.start = selection.startCell.cell = result.start + 1;
+		//that line below ain't doing it right... grizix please fix
     selection.endCell.end = selection.endCell.cell = result.start + result.duration;
     struct.publish('toggleSelectionRes', selection);
     struct.publish('toggleSelectionServer', selection);

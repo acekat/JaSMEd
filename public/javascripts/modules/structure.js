@@ -168,7 +168,9 @@ var block = {
         duration = ghost ? -duration : duration||0;
         duration += end - start;
         var result = {layer: layer,
-                      duration: duration};
+                      duration: duration,
+                      start: start}
+        };
         
         if(!(layer in this.layers)) {
             this.initLayer(layer);
@@ -232,15 +234,17 @@ struct.subscribe('newBlockBroad', function() {
 });
 
 struct.subscribe('toggleSelection', function(selection) {
-    selection.startCell.start = selection.startCell.cell;
+    selection.startCell.start = selection.startCell.cell - 1;
     selection.endCell.end = selection.endCell.cell;
     var result = curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
     selection.startCell.layer = selection.endCell.layer = result.layer;
+    selection.startCell.start = selection.startCell.cell = result.start + 1;
+    selection.endCell.end = selection.endCell.cell = result.start + result.duration;
     struct.publish('toggleSelectionRes', selection);
     struct.publish('toggleSelectionServer', selection);
 });
 
-struct.subscribe('toggleSelectionBroad', function(selection) {
+struct.subscribe('toggleSelectionBroad', function(selection) {      //TODO alléger la modification des clients distants
     curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
 });
 

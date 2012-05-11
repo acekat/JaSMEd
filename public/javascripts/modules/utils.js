@@ -71,7 +71,8 @@ var UtilsView = Backbone.View.extend({
 	events: {
 		"click .add-block" : "newBlock",
 		"click .zoom-in" : "zoomIn",
-		"click .zoom-out" : "zoomOut"
+		"click .zoom-out" : "zoomOut",
+		"submit .export button": "exportAs"
 	},
 
 	newBlock: function() {
@@ -84,6 +85,18 @@ var UtilsView = Backbone.View.extend({
 
 	zoomOut: function() {
 		utils.publish('zoom', false);
+	},
+	
+	exportAs: function() {
+		console.log('in export as');
+		var name = $('.export input').val();
+		
+		if (name === '') {
+			$('.utils .export').append('<p>please provide an export name!!</p>');
+			return;
+		}
+		
+		utils.publish('exportAs', name);
 	}
 
 });

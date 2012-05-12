@@ -14,6 +14,7 @@ var ToolsView = Backbone.View.extend({
 
 	/** @constructs */
 	initialize: function() {
+		warned: false
 	},
 
 	/**
@@ -44,9 +45,15 @@ var ToolsView = Backbone.View.extend({
 		var name = $('.export input').val();
 
 		if (name === '') {
-			$('.utils .export').append('<p>please provide an export name!!</p>');
+			warned = true;
+			var warnDiv = $(document.createElement('div'));
+			warnDiv.addClass('flash warn').append('<p>please provide an export name!!</p>')
+			$('.utils .export').append(warnDiv);
 			return;
 		}
+		
+		warned && $('.utils .export .flash.warn').remove();
+		warned = false;
 
 		toolsView.publish('exportAs', name);
 	}

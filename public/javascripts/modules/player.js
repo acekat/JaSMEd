@@ -169,53 +169,10 @@ function loadBlock() {
 }
 
 /**
- *  Associated View to utils Module.
- *  @type {Backbone.View}
- */
-var PlayersView = Backbone.View.extend({
-
-	/**
-	 *  div associated to the View.
-	 *  @type {String}
-	 */
-	el: '.player',
-
-	/** @constructs */
-	initialize: function() {
-	},
-
-	/**
-	 *  Delegated events: uses jQuery's delegate function to provide declarative callbacks for DOM events. 
-	 *  @type {Object}
-	 */
-	events: {
-		'click .play' : 'play',
-		'click .pause' : 'pause',
-		'click .stop' : 'stop'
-	},
-
-	play: function() {
-		console.log('clicked on play');
-		player.publish('play');
-	},
-
-	pause: function() {
-		console.log('clicked on pause');
-		player.publish('pause');
-	},
-
-	stop: function() {
-		console.log('clicked on stop');
-		player.publish('stop');
-	}
-
-});
-
-/**
  *  Module initialization method
  */
 player.initialize = function() {
-	player.view = new PlayersView();
+	//
 };
 
 })(jasmed.module('player'));

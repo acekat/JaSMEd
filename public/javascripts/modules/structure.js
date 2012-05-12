@@ -240,12 +240,7 @@ struct.subscribe('toggleSelection', function(selection) {
     var result = curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
     selection.startCell.layer = selection.endCell.layer = result.layer;
     selection.startCell.start = selection.startCell.cell = result.start + 1;
-	/**********************************************************************************************************
-	(result.start + result.duration) is false (too big) when you have a selection over more than one block.
-	In the view, cell index start over in each block. Then max cell index is the number of sub_cell in a layer.
-	What is expected by the view, is more the noteEnd variable in the track.addNote method, I think. 
-	***********************************************************************************************************/
-    selection.endCell.end = selection.endCell.cell = result.start + result.duration;
+    selection.endCell.end = selection.endCell.cell = (result.start + result.duration - 1)%result.layer + 1;
     struct.publish('toggleSelectionRes', selection);
     struct.publish('toggleSelectionServer', selection);
 });

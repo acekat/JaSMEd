@@ -42,10 +42,10 @@ var jasmed = {
 // Single entry point into the application.
 $(function() {
 	//Modules
-	jasmed.module("struct").initialize();
-	jasmed.module("editor").initialize();
+	jasmed.module('struct').initialize();
+	jasmed.module('editorModels').initialize();
 	
 	//Views
-	jasmed.module("toolsView").initialize();
-	jasmed.module("playerView").initialize();
+	jasmed.module('toolsView').initialize();
+	jasmed.module('playerView').initialize();
 });

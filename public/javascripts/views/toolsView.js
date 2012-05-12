@@ -25,7 +25,7 @@ var ToolsView = Backbone.View.extend({
 		"click .add-block" : "newBlock",
 		"click .zoom-in" : "zoomIn",
 		"click .zoom-out" : "zoomOut",
-		"submit .export button": "exportAs"
+		"submit .export-button": "exportAs"
 	},
 
 	newBlock: function() {

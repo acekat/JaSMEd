@@ -376,6 +376,23 @@ editorModels.subscribe("toolsExport", function(name) {
 });
 
 /**
+ *  Add new Block
+ */
+editorModels.subscribe("structNewBlock", function() {
+	var width = editor.grid.last().refWidth;
+	editor.grid.add({
+		width : width
+	});
+});
+
+editorModels.subscribe("serverNewBlock", function() {
+	var width = editor.grid.last().refWidth;
+	editor.grid.add({
+		width : width
+	});
+});
+
+/**
  *  Selection from structure
  *  @param  {object} selection object with the selection variables
  */
@@ -383,10 +400,6 @@ editorModels.subscribe("structSelection", function(selection) {
 	editor.grid.selectRange(selection);
 });
 
-/**
- *  Selection from server
- *  @param  {object} selection object with the selection variables
- */
 editorModels.subscribe("serverSelection", function(selection) {
 	editor.grid.selectRange(selection);
 });

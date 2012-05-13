@@ -519,16 +519,6 @@ var EditorView = Backbone.View.extend({
 	},
 
 	/**
-	 *  Add a new Block to the Grid collection.
-	 */
-	newBlock : function() {
-		var width = this.collection.last().refWidth;
-		this.collection.add({
-			width : width
-		});
-	},
-
-	/**
 	 *  Synchronize scrolling between the grid, piano and layer-info window.
 	 *  @param  {object} e event object fired
 	 */
@@ -570,16 +560,6 @@ editorViews.subscribe("editorModelsNewLayers", function(models) {
 		collection: models.layers,
 	});
 	layersView.block = models.block;
-});
-
-/**
- *  Add new Block
- */
-editorViews.subscribe("structNewBlock", function() {
-	editorView.newBlock();
-});
-editorViews.subscribe("serverNewBlock", function() {
-	editorView.newBlock();
 });
 
 /**

@@ -1,6 +1,12 @@
 (function(playerView) {
 
 /**
+ *  Global variables
+ */
+var view;
+
+
+/**
  *  Associated View to utils Module.
  *  @type {Backbone.View}
  */
@@ -39,7 +45,6 @@ var PlayerView = Backbone.View.extend({
 
 });
 
-var view;
 
 /**
  *  Module initialization method

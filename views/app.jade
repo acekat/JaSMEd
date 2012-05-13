@@ -10,8 +10,10 @@ block content
 	.module.instrument
 		include includes/instrument
 	.module.controls
-		include includes/tools
-		include includes/player
+		.tools
+			include includes/tools
+		.player
+			include includes/player
 	.module.editor
 		include includes/editor		
 

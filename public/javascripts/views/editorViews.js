@@ -1,5 +1,23 @@
 (function(editorViews) {
 
+/**
+ *  INSTANCES
+ */
+var editorView
+
+
+/**
+ *  CONFIGURATION
+ */
+var scrollMargin = 15;
+var minBlockWidth = 100;
+var nbOctave = 7;
+var pitches = ['B', 'A#', 'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C'];
+
+
+/**
+ *  GLOBAL VARIABLES
+ */
 var user,
 	pitch,
 	startCell,
@@ -12,6 +30,7 @@ var user,
 	endWidth;
 var gridWin,
 	gridWinDim;
+
 
 /**
  *  Associated View to Layer Model.
@@ -90,9 +109,10 @@ var LayerView = Backbone.View.extend({
 	 */
 	toggleCell : function(cellOn) {
 		// TO-DO: test if it's a layer model or a cellOn object
+		
 		// DONE'D (a bit quickly though... could be messy in future)
-		if (cellOn instanceof Layer)
-			cellOn = cellOn.get('cellOn');
+		// if (cellOn instanceof Layer)
+		// 	cellOn = cellOn.get('cellOn');
 		
 		_.each(cellOn, function(value, cellId) {
 			var el = $('#'+cellId);
@@ -229,7 +249,7 @@ var LayerView = Backbone.View.extend({
 
 		// send to communication
 		if (selectable) {
-			editorViews.publish('toggleSelection', {
+			editorViews.publish("editorViewsSelection", {
 				pitch : pitch,
 				startCell : startCell,
 				endCell : endCell,
@@ -246,7 +266,7 @@ var LayerView = Backbone.View.extend({
 		};
 
 		/* MULTI DRAG REALTIME SELECTION BUT NOT FOLLOWING MOUSE REVERSE OR TOGGLING CELL */
-		// editor.editorView.onSelection = false;
+		// editor.editorViews.onSelection = false;
 
 		e.preventDefault();
 	}
@@ -535,13 +555,54 @@ var EditorView = Backbone.View.extend({
 
 });
 
-/**
- *  PUBLIC API
- */
-editorViews = {
-	LayersView: LayersView,
-	EditorView: EditorView
-};
-// the only two Constructors editorModel depends on.
 
-})(jasmed.module('editorViews'));
+/**
+ *  SUBSCRIBES
+ */
+
+/**
+ *  Create new LayersView on editorModels demand
+ *  @param  {{Backbone.Collection} layers,
+ *           {Backbone.Model} block} models Collection and Block associated to the view
+ */
+editorViews.subscribe("editorModelsNewLayers", function(models) {
+	var layersView = new LayersView({
+		collection: models.layers,
+	});
+	layersView.block = models.block;
+});
+
+/**
+ *  Add new Block
+ */
+editorViews.subscribe("structNewBlock", function() {
+	editorView.newBlock();
+});
+editorViews.subscribe("serverNewBlock", function() {
+	editorView.newBlock();
+});
+
+/**
+ *  Zoom In/Out
+ *  @param  {boolean} arg true: zoom in; false: zoom out
+ */
+editorViews.subscribe("toolsZoom", function(arg) {
+	editorView.zoom(arg);
+});
+
+
+/**
+ *  INITIALIZATION
+ */
+
+/**
+ *  Module initialization method
+ */
+editorViews.initialize = function(grid) {
+
+	editorView = new EditorView({
+		collection: grid
+	});
+};
+
+})(jasmed.module("editorViews"));

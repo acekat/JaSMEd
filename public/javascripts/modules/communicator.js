@@ -14,28 +14,25 @@ socket.on('error', function(reason) {
 	console.error('Unable to connect Socket.IO', reason);
 });
 
-socket.on('loginSync', function(login) {
+socket.on('serverLogin', function(login) {
 	console.log('login: ' + login);
 	jasmed.user = login;
 });
 
-socket.on('toggleSelectionBroad', function(selection) {
-	console.log(jasmed.user + ' received a toggleSelection from ' + selection.user);
-	communicator.publish('toggleSelectionRes', selection);
-	communicator.publish('toggleSelectionBroad', selection);
+socket.on('serverSelection', function(selection) {
+	console.log(jasmed.user + ' received a serverSelection from ' + selection.user);
+	communicator.publish('serverSelection', selection);
 });
 
-socket.on('newBlockBroad', function() {
-	console.log('newBlockBroad received from server');
-	communicator.publish('newBlockRes');
-	communicator.publish('newBlockBroad');
+socket.on('serverNewBlock', function() {
+	console.log('serverNewBlock received');
+	communicator.publish('serverNewBlock');
 });
 
-socket.on('editorInitRes', function(seq) {
-	console.log('editorInitRes received from server');
-	communicator.publish('editorInitRes', seq);
-	//so structure doesn't break!
-	communicator.publish('initializationRes');
+socket.on('serverInit', function(seq) {
+	console.log('serverInit received');
+	// PLEASE THIBAUD DESCRIBE WHAT SEQ STRUCTURE IS ON GOOGLE DOC!!!
+	communicator.publish('serverInit', seq);
 })
 
 
@@ -43,26 +40,25 @@ socket.on('editorInitRes', function(seq) {
  *  SUBSCRIBE => EMIT
  */
 
-communicator.subscribe('toggleSelectionServer', function(selection) {
-	console.log(jasmed.user + ' emits toggleSelectionServer');
-	socket.emit('toggleSelectionServer', selection);
+communicator.subscribe('structSelection', function(selection) {
+	console.log(jasmed.user + ' emits structSelection');
+	socket.emit('structSelection', selection);
 });
 
-communicator.subscribe('newBlockServer', function() {
-	console.log(jasmed.user + ' emits newBlockServer');
-	socket.emit('newBlockServer');
+communicator.subscribe('structNewBlock', function() {
+	console.log(jasmed.user + ' emits structNewBlock');
+	socket.emit('structNewBlock');
 });
 
-communicator.subscribe('editorGridExport', function(seq) {
+communicator.subscribe('editorModelsExport', function(seq) {
 	console.log(jasmed.user + ' emits saveAs : ' + seq.name);
 	console.log(JSON.stringify(seq.data));
-	socket.emit('editorGridExport', seq);
+	socket.emit('editorModelsExport', seq);
 });
 
-//I WANT MSG TO BE LIKE SOOOOO: [moduleName]init par module!
-communicator.subscribe('editorInit', function() {
-	console.log(jasmed.user + ' emits editorInit');
-	socket.emit('editorInit');
+communicator.subscribe('editorModelsInit', function() {
+	console.log(jasmed.user + ' emits editorModelsInit');
+	socket.emit('editorModelsInit');
 });
 
 })(jasmed.module('communicator'));

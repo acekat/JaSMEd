@@ -34,15 +34,15 @@ var ToolsView = Backbone.View.extend({
 	},
 
 	newBlock: function() {
-		toolsView.publish("newBlock");
+		toolsView.publish("toolsNewBlock");
 	},
 
 	zoomIn: function() {
-		toolsView.publish("zoom", true);
+		toolsView.publish("toolsZoom", true);
 	},
 
 	zoomOut: function() {
-		toolsView.publish("zoom", false);
+		toolsView.publish("toolsZoom", false);
 	},
 
 	exportAs: function(e) {
@@ -56,7 +56,7 @@ var ToolsView = Backbone.View.extend({
 			return;
 		}
 
-		toolsView.publish("exportAs", name);
+		toolsView.publish("toolsExport", name);
 	}
 
 });

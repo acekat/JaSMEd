@@ -42,7 +42,7 @@ var jasmed = {
 // Single entry point into the application.
 $(function() {
 	//Modules
-	jasmed.module('struct').initialize();
+	// jasmed.module('struct').initialize();
 	jasmed.module('editorModels').initialize();
 	
 	//Views

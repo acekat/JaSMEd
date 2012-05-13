@@ -215,37 +215,37 @@ var note = {
 var curSong, curTrack;
 
 
-struct.initialize = function() {
-    struct.publish('initializationServer');
+struct.initialize = function() {    
+    // struct.publish('structInit');
 };
 
-struct.subscribe('initializationRes', function(song) {
-    curSong = song || struct.createSong();
+struct.subscribe('serverInit', function(song) {
+    // curSong = song || struct.createSong();
+    // TO-DO: fix it when server will send correct structure
+    curSong = struct.createSong();
     curTrack =  curSong.addTrack();
 });
 
-struct.subscribe('newBlock', function() {
+struct.subscribe('toolsNewBlock', function() {
     curSong.addBlocks();
-    struct.publish('newBlockRes');
-    struct.publish('newBlockServer');
+    struct.publish('structNewBlock');
 });
 
-struct.subscribe('newBlockBroad', function() {
+struct.subscribe('serverNewBlock', function() {
     curSong.addBlocks();
 });
 
-struct.subscribe('toggleSelection', function(selection) {
+struct.subscribe('editorViewsSelection', function(selection) {
     selection.startCell.start = selection.startCell.cell - 1;
     selection.endCell.end = selection.endCell.cell;
     var result = curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
     selection.startCell.layer = selection.endCell.layer = result.layer;
     selection.startCell.start = selection.startCell.cell = result.start + 1;
     selection.endCell.end = selection.endCell.cell = (result.start + result.duration - 1)%result.layer + 1;
-    struct.publish('toggleSelectionRes', selection);
-    struct.publish('toggleSelectionServer', selection);
+    struct.publish('structSelection', selection);
 });
 
-struct.subscribe('toggleSelectionBroad', function(selection) {      //TODO alléger la modification des clients distants
+struct.subscribe('serverSelection', function(selection) {      //TODO alléger la modification des clients distants
     curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
 });
 

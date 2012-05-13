@@ -151,15 +151,15 @@
 	
 	player.init(beat);
 	
-	test_struct.subscribe('play', function() {
+	test_struct.subscribe('playerViewPlay', function() {
 		player.play();
 	});
 	
-	test_struct.subscribe('pause', function() {
+	test_struct.subscribe('playerViewPause', function() {
 		player.pause();
 	});
 	
-	test_struct.subscribe('stop', function() {
+	test_struct.subscribe('playerViewStop', function() {
 		player.stop();
 		player.init(beat);
 	});

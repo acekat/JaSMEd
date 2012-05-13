@@ -101,11 +101,11 @@ app.get('/store/:name', requireLogin, function(req, res) {
 io.sockets.on('connection', function (socket) {
 	var session = socket.handshake.session;
 
-	socket.emit('loginSync', session.login);
+	socket.emit('serverLogin', session.login);
 	
-	socket.on('editorInit', function() {
+	socket.on('editorModelsInit', function() {
 		if (!session.seqName) {
-			socket.emit('editorInitRes');
+			socket.emit('serverInit');
 			return;
 		}
 		
@@ -113,19 +113,19 @@ io.sockets.on('connection', function (socket) {
 		store.importSeq(session.seqName, function(data) {
 			if (!data) {
 				console.log('error reading file');
-				socket.emit('editorInitRes'); //should send back an error to tell client file doesn't exist!!
+				socket.emit('serverInit'); //should send back an error to tell client file doesn't exist!!
 				return;
 			}
 			
 			console.log('about to emit back: ' + session.seqName + ' + ' + JSON.stringify(data));
-			socket.emit('editorInitRes', {
+			socket.emit('serverInit', {
 				name: session.seqName,
 				data: data
 			});
 		});
 	})
 	
-	socket.on('editorGridExport', function(seq) {
+	socket.on('editorModelsExport', function(seq) {
 		store.exportSeq(seq.name, seq.data, function(res) {
 			if (!res)
 				console.log(session.login + ' error trying to save sequencer');
@@ -134,14 +134,14 @@ io.sockets.on('connection', function (socket) {
 		});
 	});
 
-	socket.on('toggleSelectionServer', function(selection) {
+	socket.on('structSelection', function(selection) {
 		console.log(selection.user + ' toggled a selection.'); //msg a ameliorer
-		socket.broadcast.emit('toggleSelectionBroad', selection);
+		socket.broadcast.emit('serverSelection', selection);
 	});
 
-	socket.on('newBlockServer', function() {
-		console.log("newBlockBroad broadcasted.");
-		socket.broadcast.emit('newBlockBroad');
+	socket.on('structNewBlock', function() {
+		console.log("serverNewBlock broadcasted.");
+		socket.broadcast.emit('serverNewBlock');
 	});
 });
 

@@ -30,17 +30,17 @@ var PlayerView = Backbone.View.extend({
 
 	play: function() {
 		console.log('clicked on play');
-		playerView.publish('play');
+		playerView.publish('playerViewPlay');
 	},
 
 	pause: function() {
 		console.log('clicked on pause');
-		playerView.publish('pause');
+		playerView.publish('playerViewPause');
 	},
 
 	stop: function() {
 		console.log('clicked on stop');
-		playerView.publish('stop');
+		playerView.publish('playerViewStop');
 	}
 
 });

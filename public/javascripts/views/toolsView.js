@@ -10,7 +10,7 @@ var ToolsView = Backbone.View.extend({
 	 *  div associated to the View.
 	 *  @type {String}
 	 */
-	el: ".utils",
+	el: ".tools",
 
 	/** @constructs */
 	initialize: function() {

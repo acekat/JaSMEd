@@ -73,12 +73,16 @@ footer p {
 .module {
   display: inline-block;
   vertical-align: top;
+  padding: 5px;
 }
 .instrument {
   width: 15%;
 }
 .controls {
   width: 15%;
+}
+.controls .warn {
+  display: none;
 }
 .editor {
   width: 70%;

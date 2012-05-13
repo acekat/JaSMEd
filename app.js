@@ -3,7 +3,7 @@ var express = require('express')
 	, fs = require('fs')
 	, auth = require('./modules/authentification')
 	, utils = require('./modules/utils')
-	,	store = require('./modules/store')
+	, store = require('./modules/store')
 	, sessionStore;
 
 var app = express();

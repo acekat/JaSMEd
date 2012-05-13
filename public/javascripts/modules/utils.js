@@ -48,11 +48,4 @@ utils.inherits = function(parent, props) {
     return _.extend(Object.create(parent), props);
 };
 
-/**
- *  Module initialization method
- */
-utils.initialize = function() {
-	//
-};
-
 })(jasmed.module("utils"));

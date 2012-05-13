@@ -1,6 +1,12 @@
 (function(toolsView) {
 
 /**
+ *  Global variables
+ */
+var view;
+
+
+/**
  *  Associated View to toolsView Module.
  *  @type {Backbone.View}
  */
@@ -14,7 +20,6 @@ var ToolsView = Backbone.View.extend({
 
 	/** @constructs */
 	initialize: function() {
-		warned: false
 	},
 
 	/**
@@ -25,7 +30,7 @@ var ToolsView = Backbone.View.extend({
 		"click .add-block" : "newBlock",
 		"click .zoom-in" : "zoomIn",
 		"click .zoom-out" : "zoomOut",
-		"submit .export-button": "exportAs"
+		"click .export-as" : "exportAs"
 	},
 
 	newBlock: function() {
@@ -33,34 +38,29 @@ var ToolsView = Backbone.View.extend({
 	},
 
 	zoomIn: function() {
-		toolsView.publish('zoom', true);
+		toolsView.publish("zoom", true);
 	},
 
 	zoomOut: function() {
-		toolsView.publish('zoom', false);
+		toolsView.publish("zoom", false);
 	},
 
-	exportAs: function() {
-		console.log('in export as');
-		var name = $('.export input').val();
+	exportAs: function(e) {
+		var warn = this.$(".flash.warn");
+		var name = this.$("#export-as").val();
 
-		if (name === '') {
-			warned = true;
-			var warnDiv = $(document.createElement('div'));
-			warnDiv.addClass('flash warn').append('<p>please provide an export name!!</p>')
-			$('.utils .export').append(warnDiv);
+		warn.hide();
+
+		if (name === "") {
+			warn.show();
 			return;
 		}
-		
-		warned && $('.utils .export .flash.warn').remove();
-		warned = false;
 
-		toolsView.publish('exportAs', name);
+		toolsView.publish("exportAs", name);
 	}
 
 });
 
-var view;
 
 /**
  *  Module initialization method

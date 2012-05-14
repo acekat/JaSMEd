@@ -70,6 +70,7 @@ var LayerView = Backbone.View.extend({
 	 */
 	render : function() {
 		var layer = this.model;
+		
 		$(this.el)
 			.html(this.layerTemplate({
 				octave : nbOctave,
@@ -92,13 +93,17 @@ var LayerView = Backbone.View.extend({
 	 *  @param  {Backbone.Model} layer layer to actualize
 	 */
 	actualize : function(layer) {
-		$(this.el).html(this.layerTemplate({
-			octave : nbOctave,
-			block : layer.get("block"),
-			sub : layer.get("sub"),
-			cellOn : layer.get("cellOn"),
-			pitches : pitches
-		}));
+		$(this.el)
+			.html(this.layerTemplate({
+				octave : nbOctave,
+				block : layer.get("block"),
+				sub : layer.get("sub"),
+				cellOn : layer.get("cellOn"),
+				pitches : pitches
+			}))
+			.attr("class", function(i, attr) {
+				return attr.replace(/sub-\d/, 'sub-'+layer.get("sub"));
+			});
 
 		// TO-DO: need to resize Block width?
 	},
@@ -108,11 +113,8 @@ var LayerView = Backbone.View.extend({
 	 *  @param  {object} cellOn cells being toggled
 	 */
 	toggleCell : function(cellOn) {
-		// TO-DO: test if it's a layer model or a cellOn object
-		
-		// DONE'D (a bit quickly though... could be messy in future)
-		// if (cellOn instanceof Layer)
-		// 	cellOn = cellOn.get('cellOn');
+		if (_.has(cellOn, "cid"))
+			cellOn = cellOn.get('cellOn');
 		
 		_.each(cellOn, function(value, cellId) {
 			var el = $('#'+cellId);
@@ -287,8 +289,12 @@ var LayersView = Backbone.View.extend({
 
 	/** @constructs */
 	initialize : function() {
+		// array of all the layerViews
+		this.layerViews = [];
+
 		// Bound events
 		this.collection.on("add", this.addLayer, this);
+		this.collection.on("remove", this.removeLayer, this);
 		this.collection.on("change:editable", this.switchEdit, this);
 	},
 
@@ -302,11 +308,27 @@ var LayersView = Backbone.View.extend({
 			model: layer
 		});
 
+		this.layerViews.push(layerView);
+
 		// insert in the DOM the rendered View
 		if (layer.get("editable"))
 			$('.b-'+this.block.get("order")).append(layerView.render().el);
 		else
 			$('.b-'+this.block.get("order")).prepend(layerView.render().el);
+	},
+
+	/**
+	 *  Remove from the DOM the removed Layer to Layers collection.
+	 *  @param {Backbone.Model} layer newly added Layer
+	 */
+	removeLayer : function(layer) {
+		var view = _.find(this.layerViews, function(layerView) { 
+			return layerView.model === layer;
+		});
+		this.layerViews = _.without(this.layerViews, view);
+		
+		// remove from the DOM
+		view.remove();
 	},
 
 	/**

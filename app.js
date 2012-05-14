@@ -117,7 +117,7 @@ io.sockets.on('connection', function (socket) {
 				return;
 			}
 			
-			console.log('about to emit back: ' + session.seqName + ' + ' + JSON.stringify(data));
+			// console.log('about to emit back: ' + session.seqName + ' + ' + JSON.stringify(data));
 			socket.emit('serverInit', {
 				name: session.seqName,
 				data: data

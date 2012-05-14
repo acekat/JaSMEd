@@ -5,8 +5,7 @@ script#layer-template(type="text/template")
 		<div class="pitch <%= pitch %><%= o %> p-<%= midiPitch %>">
 		<% for (var n=1; n<=sub; n++) { %>
 		<% var cellId = block+"-"+sub+"-"+midiPitch+"-"+n; %>
-		<% var on = _.indexOf(cellOn, cellId) === -1 ? "" : " on"; %>
-		<div id="<%= cellId %>" class="cell sc-<%= n %><%= on %>"></div>
+		<div id="<%= cellId %>" class="cell sc-<%= n %>"></div>
 		<% }; %>	
 		</div>
 		<% }); %>

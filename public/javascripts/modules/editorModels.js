@@ -38,8 +38,6 @@ var Layer = Backbone.Model.extend({
 
 	/** @constructs */
 	initialize : function() {
-		console.log("NEW LAYER");
-		console.log(this.cid);
 	},
 
 	/**
@@ -87,7 +85,6 @@ var Layers = Backbone.Collection.extend({
 	
 	/** @constructs */
 	initialize : function() {
-		console.log("NEW LAYERS");
 	},
 
 	/**
@@ -132,7 +129,6 @@ var Block = Backbone.Model.extend({
 
 	/** @constructs */
 	initialize : function() {
-		console.log("NEW BLOCK");
 		// use a width of reference to prevent unlimited widening of a block
 		this.refWidth = this.get("width");
 
@@ -302,12 +298,7 @@ var Editor = Backbone.Model.extend({
 			// console.log('>> targetObj: ' + JSON.stringify(targetObj));
 			// console.log('>> data: ' + JSON.stringify(data));
 			targetObj.set(data.attrs, {silent: silent});
-			/* bubble test
-			_.each(data.attrs, function (value, key) {
-				console.log('setting obj[' + key + '] = ' + JSON.stringify(value));
-				targetObj.set(key, value, {silent: silent});
-			})
-			*/
+
 			if (data.collections) {
 				_.each(data.collections, function (collection, name) {
 					// console.log('(collection) about to do ' + name + ' looking like :'+JSON.stringify(targetObj[name].models));
@@ -316,8 +307,6 @@ var Editor = Backbone.Model.extend({
 						var targetCol = targetObj[name];
 						targetCol.remove(targetCol.models[index]).add({}, {at: index});
 						var nextObject = targetCol.models[index];
-						//var nextObject = targetObj[name].add({}, {silent: silent});
-						//var nextObject = targetObj[name].get(modelData.attrs.id) || targetObj[name]._add({}, {silent: silent});
 						process(nextObject, modelData);
 					});
 				});

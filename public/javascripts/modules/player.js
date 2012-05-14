@@ -36,7 +36,7 @@ player.init = function(song) {
     track = song.tracks[trackNum];
     blocklength = Math.round(song.tempo*sampleRate);
     blocks = song.blocks;
-    compress = audioLib.Compressor(sampleRate);
+    compress = audioLib.Compressor(sampleRate, 0, 0.5);
     osc = {};
     for(var pitch in song.pitchs) {
         osc[pitch] = audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch));

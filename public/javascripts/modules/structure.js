@@ -170,8 +170,7 @@ var block = {
         var result = {
             layer: layer,
             duration: duration,
-            start: start,
-            end: end
+            start: start
         };
         
         if(!(layer in this.layers)) {
@@ -225,6 +224,9 @@ struct.subscribe('serverInit', function(song) {
     // TO-DO: fix it when server will send correct structure
     curSong = struct.createSong();
     curTrack =  curSong.tracks[0] || curSong.addTrack();
+
+		struct.curSong = curSong;
+		struct.curTrack = curTrack;
 });
 
 struct.subscribe('toolsNewBlock', function() {
@@ -243,13 +245,15 @@ struct.subscribe('editorViewsSelection', function(selection) {
     selection.startCell.layer = selection.endCell.layer = result.layer;
     selection.startCell.start = result.start;
     selection.startCell.cell = result.start + 1;
-    selection.endCell.end = result.end;
-    selection.endCell.cell = result.end - 1;
+    selection.endCell.end = selection.endCell.cell = (result.start + result.duration - 1)%result.layer + 1;
+		console.log('curTrack', curTrack);
+		console.log('curSong', curSong);
     struct.publish('structSelection', selection);
 });
 
 struct.subscribe('serverSelection', function(selection) {      //TODO alléger la modification des clients distants
     curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
 });
+
 
 })(jasmed.module('struct'));

@@ -34,10 +34,10 @@ function exportSequencer(fileName, data, callback) {
 function list(callback) {
 	fs.readdir('./store', function(err, files) {
 		if (err) {
-			console.err('problem reading directory');
+			console.log('problem reading directory');
 			return;
 		}
-
+		//TO-DO fix
 		callback(files);
 	})
 }

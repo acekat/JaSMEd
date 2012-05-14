@@ -374,6 +374,10 @@ var BlockView = Backbone.View.extend({
 		// correct gridWinDim.top
 		gridWinDim.top = gridWin.offset().top;
 
+		// hack: scroll to middle when you are on top
+		if (!gridWin[0].scrollTop)
+			gridWin.scrollTop(420);
+
 		// Bound events
 		this.model.on("change:width", this.resize, this);
 		this.model.layers.on("change add", this.actualize, this);

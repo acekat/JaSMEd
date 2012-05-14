@@ -121,7 +121,7 @@ var LayerView = Backbone.View.extend({
 		_.each(cellOn, function(value, cellId) {
 			var el = $('#'+cellId);
 			var cellClass = 'user-'+value[0]+' '+value[1];
-			var curClass = el.attr("class").match("user-[^ ]*");
+			var curClass = el.attr("class").match(/user-[^ ]*/);
 					
 			if (curClass)
 				el.removeClass(curClass[0]);
@@ -506,7 +506,12 @@ var EditorView = Backbone.View.extend({
 			_.each(pitches, function(pitch, i) {
 				var color = /^.#$/.test(pitch) ? "black" : "white";
 				var content = /^C$/.test(pitch) ? pitch+o : "";
-				$(".piano").append('<div class="piano-key '+pitch+o+' '+color+' pk-'+((12*(o+1))+(pitches.length-(i+1)))+'"><span>'+content+'</span></div>');
+				var pianoKey = $(document.createElement("div"));
+				pianoKey
+					.addClass('piano-key '+pitch+o+' '+color+' pk-'+((12*(o+1))+(pitches.length-(i+1))))
+					.appendTo(".piano");
+
+				content && pianoKey.html('<span>'+content+'</span>');
 			});
 		};
 

@@ -133,8 +133,11 @@ var Block = Backbone.Model.extend({
 		this.refWidth = this.get("width");
 
 		// add new Block "anchor" to DOM
-		$('<div class="block b-'+this.get("order")+'" style="width: '+this.refWidth+'px;"></div>').appendTo(".grid");
-		
+		$(document.createElement('div'))
+			.addClass('block b-'+this.get("order"))
+			.css({"width" : this.refWidth+'px'})
+			.appendTo(".grid");
+
 		// create new Layers and associated View
 		this.layers = new Layers();
 

@@ -224,7 +224,7 @@ struct.subscribe('serverInit', function(song) {
     // curSong = song || struct.createSong();
     // TO-DO: fix it when server will send correct structure
     curSong = struct.createSong();
-    curTrack =  curSong.addTrack();
+    curTrack =  curSong.tracks[0] || surSong.addTrack();
 });
 
 struct.subscribe('toolsNewBlock', function() {

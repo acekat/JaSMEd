@@ -3,7 +3,7 @@ var fs = require('fs');
 function importSequencer(fileName, callback) {
 	var pathName = 'store/' + fileName;
 	
-	console.log('about to open ' +  pathName);
+	// console.log('about to open ' +  pathName);
 	
 	fs.readFile(pathName, function(err, data) {
 		if (err) {

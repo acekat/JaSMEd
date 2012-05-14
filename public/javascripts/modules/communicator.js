@@ -51,8 +51,8 @@ communicator.subscribe('structNewBlock', function() {
 });
 
 communicator.subscribe('editorModelsExport', function(seq) {
-	console.log(jasmed.user + ' emits saveAs : ' + seq.name);
-	console.log(JSON.stringify(seq.data));
+	// console.log(jasmed.user + ' emits saveAs : ' + seq.name);
+	// console.log(JSON.stringify(seq.data));
 	socket.emit('editorModelsExport', seq);
 });
 

@@ -170,7 +170,8 @@ var block = {
         var result = {
             layer: layer,
             duration: duration,
-            start: start
+            start: start,
+            end: end
         };
         
         if(!(layer in this.layers)) {
@@ -240,8 +241,10 @@ struct.subscribe('editorViewsSelection', function(selection) {
     selection.endCell.end = selection.endCell.cell;
     var result = curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
     selection.startCell.layer = selection.endCell.layer = result.layer;
-    selection.startCell.start = selection.startCell.cell = result.start + 1;
-    selection.endCell.end = selection.endCell.cell = (result.start + result.duration - 1)%result.layer + 1;
+    selection.startCell.start = result.start;
+    selection.startCell.cell = result.start + 1;
+    selection.endCell.end = result.end;
+    selection.endCell.cell = result.end - 1;
     struct.publish('structSelection', selection);
 });
 

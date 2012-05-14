@@ -280,7 +280,6 @@ var Editor = Backbone.Model.extend({
 						_.each(source[key].models, function (value, index) {
 							process(targetObj.collections[key].models[index] = {}, value);
 						});
-					//not sure what 'parent' does... probs needz removing
 					} else if (key !== 'parent' && source[key] instanceof Backbone.Model) {
 						targetObj.models = targetObj.models || {};
 						process(targetObj.models[key] = {}, value);
@@ -295,15 +294,11 @@ var Editor = Backbone.Model.extend({
 	
 	mport : function(data, silent) {
 		function process(targetObj, data) {
-			// console.log('>> targetObj: ' + JSON.stringify(targetObj));
-			// console.log('>> data: ' + JSON.stringify(data));
 			targetObj.set(data.attrs, {silent: silent});
 
 			if (data.collections) {
 				_.each(data.collections, function (collection, name) {
-					// console.log('(collection) about to do ' + name + ' looking like :'+JSON.stringify(targetObj[name].models));
 					_.each(collection.models, function (modelData, index) {
-						// console.log('(model in collection) about to do ' + name + '.models[' + index +']');
 						var targetCol = targetObj[name];
 						targetCol.remove(targetCol.models[index]).add({}, {at: index});
 						var nextObject = targetCol.models[index];
@@ -314,13 +309,11 @@ var Editor = Backbone.Model.extend({
 
 			if (data.models) {
 				_.each(data.models, function (modelData, name) {
-					// console.log('(model) about to do ' + name);
 					process(targetObj[name], modelData);
 				});
 			}
 		}
 
-		console.log(this);
 		process(this, data);
 		return this;
 	},
@@ -333,10 +326,13 @@ var Editor = Backbone.Model.extend({
 		// for (var i = 0; i < 32; i++) {
 		// 	this.grid.add();
 		// };
+		
+		console.log("New Grid!");
 	},
 
 	loadGrid : function(grid) {
-		editor.mport(grid);
+		this.mport(grid);
+		console.log("Grid loaded!");
 	}
 
 });
@@ -354,8 +350,6 @@ editorModels.subscribe("serverInit", function(seq) {
 	if (!seq)
 		return editor.newGrid();
 		
-	console.log('about to update grid with: ' + JSON.stringify(seq.data));
-
 	document.title += ' - '+seq.name;
 	editor.loadGrid(seq.data);
 });

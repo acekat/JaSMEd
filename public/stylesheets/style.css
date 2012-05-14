@@ -111,6 +111,10 @@ footer p {
 .editor .layer-list li {
   float: left;
 }
+.editor .layer-list button.selected {
+  font-weight: bold;
+  color: #00b7ff;
+}
 .editor .add-layer {
   width: 20px;
 }

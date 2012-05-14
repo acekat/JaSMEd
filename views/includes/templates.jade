@@ -15,8 +15,9 @@ script#layer-template(type="text/template")
 script#layer-info-template(type="text/template")
 	ul.layer-list
 		<% _.each(layers, function(layer) { %>
+		<% var selected = layer.get("editable") ? " selected" : ""; %>
 		li
-			<button class="edit-layer subi-<%= layer.get("sub") %>"><%= layer.get("sub") %></button>
+			<button class="edit-layer subi-<%= layer.get("sub") %><%= selected %>"><%= layer.get("sub") %></button>
 		<% }); %>
 		li
 			input.add-layer(type="text", placeholder=" +")

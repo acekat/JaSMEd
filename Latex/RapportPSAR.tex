@@ -87,10 +87,36 @@ Le nom de «JavaScript» est en fait quelque peu trompeur. Sauf pour une superfici
 La dernière version définit de nouvelles fonctionnalités pour le développement de gros logiciels à grande échelle.
 
 \section{Librairies}
+Toutes les librairies ci-dessous, aussi bien du côté client que du côté serveur, sont écrites en JavaScript.
+
 \subsection{Client}
-audiolib, jquerry, underscore, backbone, socket.io, 
+\subsubsection{jQuery}
+jQuery sert à faciliter les tâches JavaScript les plus communes, et cacher la différence qu'il existe entre les différents navigateurs.
+Elle permet de trouver et de manipuler simplement les éléments du DOM, de manipuler les attributs HTML et les propriétés CSS.\\
+Beaucoup de programmeurs web utilisent jQuery pour sa petite taille et sa stabilité, ce qui en fait actuellement une des librairies JavaScript les plus populaire.
+L'objet jQuery est souvent utilisé, il est donc accessible dans le code par "\$".
+
+\subsubsection{Underscore.js}
+Underscore est une librairie qui fournit un tas d'outils pour la programmation fonctionnelle.\\
+L'objet Underscore est accessible dans le code par "\_".
+
+\subsubsection{Backbone}
+Backbone permet de construire une structure solide pour les applications Web avec une interface utilisateur complexe.
+Elle repose sur une architecture MVC.\\
+Backbone dépend fortement de Underscore.js.
+
+\subsubsection{Socket.iIO}
+Socket.IO permet d'écrire des applications temps réel.
+
+\subsubsection{audiolib.js}
+Cette librairie audio fournit un moyen de générer et jouer du son en assurant l'inter-opérabilité entre les API audio respectives des navigateurs Firefox et Chrome.
+Son développeur est très actif et elle est bien suivie par la communauté, elle fournit aussi beaucoup d'outils de synthèse sonore visant à simplifier le travail du programmeur.
+
 \subsection{Serveur}
-node, socket.io, express, redis
+\subsubsection{node.js}
+\subsubsection{Socket.IO}
+\subsubsection{express}
+\subsubsection{redis}
 
 \chapter{Conception}
 \section{Général}
@@ -155,6 +181,8 @@ dictionnaire de tableau de tableau
 tableau de pistes -> tableau de mesures ->tableau de temps
 
 remise en question du midi car trop contraignant pour peu de bénéfices court terme (->portabilité) possibilité d’écrire une fonction qui traduirait notre représentation musicale en midi
+
+
 
 \chapter{Manuel d'utilisation}
 Le client fournit à l’utilisateur des outils d’édition, de lecture,  d’instrumentation, et représente graphiquement la piste en cours d’édition.

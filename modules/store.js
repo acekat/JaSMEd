@@ -3,8 +3,6 @@ var fs = require('fs');
 function importSequencer(fileName, callback) {
 	var pathName = 'store/' + fileName;
 	
-	// console.log('about to open ' +  pathName);
-	
 	fs.readFile(pathName, function(err, data) {
 		if (err) {
 			callback(null);
@@ -35,11 +33,12 @@ function list(callback) {
 	fs.readdir('./store', function(err, files) {
 		if (err) {
 			console.log('problem reading directory');
+			callback(null);
 			return;
 		}
-		//TO-DO fix
+		
 		callback(files);
-	})
+	});
 }
 
 module.exports = {

@@ -34,7 +34,8 @@ function expressConfig(app, express, sessionStore) {
 
 function socketIOConfig(io, sessionStore) {
 	io.configure(function() {
-		io.set('log level', 1); //sinon il log beaucoup trop, ça me rend fou :)
+		io.set('log level', 1); // minimal logs...
+		io.set('transports', ['websocket']); // ONLY WEBSOCKET (faster ? could switch to ws)
 		io.set('authorization', function(data, callback) {
 			if (!data.headers.cookie)
 				return callback('No cookie', false);

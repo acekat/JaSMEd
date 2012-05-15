@@ -6,7 +6,7 @@
 var view;
 
 /**
- *  Associated View to utils Module.
+ *  Associated View to players Module.
  *  @type {Backbone.View}
  */
 var PlayerView = Backbone.View.extend({
@@ -28,7 +28,7 @@ var PlayerView = Backbone.View.extend({
 		'change .trackSelector input[name=\'track\']' : 'initTrack'
 	},
 
-	initTrack: function(input) {
+	initTrack: function() {
 		var track = $('.player .trackSelector input[name=\'track\']:checked').val();
 		playerView.publish('playerViewTrackSelect', track);
 	},

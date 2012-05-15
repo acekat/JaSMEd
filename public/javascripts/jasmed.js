@@ -48,4 +48,5 @@ $(function() {
 	//Views
 	jasmed.module('toolsView').initialize();
 	jasmed.module('playerView').initialize();
+	jasmed.module('instrumentView').initialize();
 });

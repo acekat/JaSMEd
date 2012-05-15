@@ -157,7 +157,6 @@ function init(song) {
     for(var pitch in song.pitches) {
         osc[pitch] = audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch));
 				osc[pitch].waveShape = curWaveForm;
-				console.log('waveform', osc[pitch].waveShape);
     }
     blocknum = -1;
     layers = {};

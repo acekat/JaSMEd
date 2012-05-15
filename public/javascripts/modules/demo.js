@@ -1,32 +1,31 @@
-(function(test_struct) {
-	var struct = jasmed.module('struct');
-	var player = jasmed.module('player');
+(function(demo) {
+var struct = jasmed.module('struct');
 
-	var song = [
-	    [
-	        [4, 60],
-	        [4, 62],
-	        [4, 64],
-	        [4, 60]
-	    ],[
-	        [4, 64],
-	        [4, 65],
-	        [8, 67]
-	    ],[
-	        [3, 67],
-	        [1, 69],
-	        [2, 67],
-	        [2, 65],
-	        [4, 64],
-	        [4, 60]
-	    ],[
-	        [3, 60],
-	        [3, 55],
-	        [10,60]
-	    ]
-	], i, j, k;
+var song = [
+    [
+        [4, 60],
+        [4, 62],
+        [4, 64],
+        [4, 60]
+    ],[
+        [4, 64],
+        [4, 65],
+        [8, 67]
+    ],[
+        [3, 67],
+        [1, 69],
+        [2, 67],
+        [2, 65],
+        [4, 64],
+        [4, 60]
+    ],[
+        [3, 60],
+        [3, 55],
+        [10,60]
+    ]
+], i, j, k;
 
-
+function render() {
 	var beat = struct.createSong({
 	    title: "Jack by beat",
 	    tempo: 0.5,
@@ -149,20 +148,12 @@
 	    }
 	}
 	
-	player.init(beat);
-	
-	test_struct.subscribe('playerViewPlay', function() {
-		player.play();
-	});
-	
-	test_struct.subscribe('playerViewPause', function() {
-		player.pause();
-	});
-	
-	test_struct.subscribe('playerViewStop', function() {
-		player.stop();
-		player.init(beat);
-	});
-	
-	
-})(jasmed.module('test_struct'));
+	return beat;
+}
+
+/**
+ *  PUBLIC API
+ */
+demo.render = render;
+
+})(jasmed.module('demo'));

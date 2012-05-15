@@ -1,4 +1,13 @@
-p frère jacques...
-button.play play
-button.pause pause
-button.stop stop
+.trackSelector
+	p select track to play:
+	.option
+		input(type='radio', name='track', value='demo')
+		label(for='demo') demo
+	.option
+		input(type='radio', name='track', value='grid', checked)
+		label(for='grid') grid
+
+.playerControls
+	button.play play
+	button.pause pause
+	button.stop stop

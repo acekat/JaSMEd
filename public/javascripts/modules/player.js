@@ -37,7 +37,8 @@ var channelCount = 2, // :) no more krakz yeah!
     blocknum,
     blocks,
     samplenum,
-		stopped;
+		stopped,
+		curWaveForm = 'sine';
 
 /**
  *  FUNCTIONS
@@ -155,6 +156,8 @@ function init(song) {
     osc = {};
     for(var pitch in song.pitches) {
         osc[pitch] = audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch));
+				osc[pitch].waveShape = curWaveForm;
+				console.log('waveform', osc[pitch].waveShape);
     }
     blocknum = -1;
     layers = {};
@@ -202,6 +205,10 @@ player.subscribe('playerViewPause', function() {
 
 player.subscribe('playerViewStop', function() {
 	stop();
+});
+
+player.subscribe('instrumentViewSwitchWaveForm', function(wave) {
+	curWaveForm = wave;
 });
 
 })(jasmed.module('player'));

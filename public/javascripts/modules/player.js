@@ -2,10 +2,16 @@
 
 (function(player) {
 
+/**
+ *  DEPENDENCIES
+ */
 var utils = jasmed.module('utils');
 
-var channelCount = 1,
-    bufferSize = 4096,
+/**
+ *  PARAMS
+ */
+var channelCount = 2, // :) no more krakz yeah!
+    bufferSize = 4096, // why ???
     sampleRate = 44100,
     nSampleFade = 10,
     trackNum = 0,
@@ -30,39 +36,13 @@ var channelCount = 1,
     blocklength,
     blocknum,
     blocks,
-    samplenum;
+    samplenum,
+		stopped,
+		curWaveForm = 'sine';
 
-player.init = function(song) {
-    track = song.tracks[trackNum];
-    blocklength = Math.round(song.tempo*sampleRate);
-    blocks = song.blocks;
-    compress = audioLib.Compressor(sampleRate, 0, 0.5);
-    osc = {};
-    for(var pitch in song.pitchs) {
-        osc[pitch] = audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch));
-    }
-    blocknum = -1;
-    layers = {};
-    loadBlock();
-    pause = true;
-    device = audioLib.AudioDevice(audioCallback, channelCount, bufferSize, sampleRate);
-};
-    
-player.play = function(song) {
-    pause = false;
-};
-
-player.stop = function() {
-    pause = true;
-    device.kill();
-    compress = null;
-    osc = null;
-};
-
-player.pause = function() {
-    pause = true;
-};
-
+/**
+ *  FUNCTIONS
+ */
 function audioCallback(buffer, channelCount) {
     if(pause) return;
     
@@ -70,7 +50,7 @@ function audioCallback(buffer, channelCount) {
     
     for(var i = 0 ; i < buffer.length ; i += channelCount, samplenum++) {
         if(samplenum == blocklength) {
-            if(!loadBlock()) return player.stop();
+            if(!loadBlock()) return stop();
         }
         
         sample = 0;
@@ -168,11 +148,66 @@ function loadBlock() {
     return true;
 }
 
-/**
- *  Module initialization method
- */
-player.initialize = function() {
-	//
+function init(song) {
+    track = song.tracks[trackNum];
+    blocklength = Math.round(song.tempo*sampleRate);
+    blocks = song.blocks;
+    compress = audioLib.Compressor(sampleRate, 0, 0.5);
+    osc = {};
+    for(var pitch in song.pitches) {
+        osc[pitch] = audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch));
+				osc[pitch].waveShape = curWaveForm;
+    }
+    blocknum = -1;
+    layers = {};
+    loadBlock();
+    pause = true;
+		stopped = false;
+    device = audioLib.AudioDevice(audioCallback, channelCount, bufferSize, sampleRate);
 };
+
+/**
+ *  CONTROLS
+ */
+function play() {
+    pause = false;
+};
+
+function pause() {
+    pause = true;
+};
+
+function stop() {
+	//otherwise tries to kill device which is already killed :D
+	if (stopped)
+		return;
+		
+    pause = true;
+    device.kill();
+    compress = null;
+    osc = null;
+	stopped = true;
+};
+
+/**
+ *  SUBSCRIBES
+ */
+player.subscribe('playerViewPlay', function() {
+	//struct.selectedSong is the instance to be played.. allways..
+	init(jasmed.module('struct').selectedSong);
+	play();
+});
+
+player.subscribe('playerViewPause', function() {
+	pause();
+});
+
+player.subscribe('playerViewStop', function() {
+	stop();
+});
+
+player.subscribe('instrumentViewSwitchWaveForm', function(wave) {
+	curWaveForm = wave;
+});
 
 })(jasmed.module('player'));

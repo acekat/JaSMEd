@@ -9,7 +9,7 @@ var editorView
 /**
  *  CONFIGURATION
  */
-var scrollMargin = 15;
+var scrollMargin = 30;
 var minBlockWidth = 100;
 var nbOctave = 7;
 var pitches = ['B', 'A#', 'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C'];
@@ -61,7 +61,9 @@ var LayerView = Backbone.View.extend({
 
 		// Bound events
 		this.model.on("change:cellOn", this.toggleCell);
-		this.model.on("change:sub", this.actualize, this);
+		// block is changed before sub on mport, better not to duplicate actualize
+		// this.model.on("change:sub", this.actualize, this);
+		this.model.on("change:block", this.actualize, this);
 	},
 
 	/**
@@ -102,7 +104,7 @@ var LayerView = Backbone.View.extend({
 				pitches : pitches
 			}))
 			.attr("class", function(i, attr) {
-				return attr.replace(/sub-\d/, 'sub-'+layer.get("sub"));
+				return attr.replace(/sub-\d+/, 'sub-'+layer.get("sub"));
 			});
 
 		// TO-DO: need to resize Block width?
@@ -119,7 +121,7 @@ var LayerView = Backbone.View.extend({
 		_.each(cellOn, function(value, cellId) {
 			var el = $('#'+cellId);
 			var cellClass = 'user-'+value[0]+' '+value[1];
-			var curClass = el.attr("class").match("user-[^ ]*");
+			var curClass = el.attr("class").match(/user-[^ ]*/);
 					
 			if (curClass)
 				el.removeClass(curClass[0]);
@@ -162,11 +164,11 @@ var LayerView = Backbone.View.extend({
 	movingCell : function(e) {
 		// Scrolling
 		// down
-		if ((e.pageY + scrollMargin) > (gridWinDim.top + gridWinDim.height))
-			gridWin[0].scrollTop += scrollMargin;
+		// if ((e.pageY + scrollMargin) > (gridWinDim.top + gridWinDim.height))
+		// 	gridWin[0].scrollTop += scrollMargin;
 		// up
-		if ((e.pageY - scrollMargin) < gridWinDim.top)
-			gridWin[0].scrollTop -= scrollMargin;
+		// if ((e.pageY - scrollMargin) < gridWinDim.top)
+		// 	gridWin[0].scrollTop -= scrollMargin;
 		// right
 		if ((e.pageX + scrollMargin) > (gridWinDim.left + gridWinDim.width))
 			gridWin[0].scrollLeft += scrollMargin;
@@ -257,14 +259,6 @@ var LayerView = Backbone.View.extend({
 				endCell : endCell,
 				user: user
 			});
-			
-			// Testing in local
-			// editor.editor.grid.selectRange({
-			// 	pitch : pitch,
-			// 	startCell : startCell,
-			// 	endCell : endCell,
-			// 	user: user
-			// });
 		};
 
 		/* MULTI DRAG REALTIME SELECTION BUT NOT FOLLOWING MOUSE REVERSE OR TOGGLING CELL */
@@ -299,6 +293,17 @@ var LayersView = Backbone.View.extend({
 	},
 
 	/**
+	 *  Get the view associated to a layer
+	 *  @param  {Layer} layer model you whant the view
+	 *  @return {LayerView}       the wanted view
+	 */
+	getLayerView : function(layer) {
+		return _.find(this.layerViews, function(layerView) { 
+			return layerView.model === layer;
+		});
+	},
+
+	/**
 	 *  Insert in the DOM the added Layer to Layers collection.
 	 *  @param {Backbone.Model} layer newly added Layer
 	 */
@@ -322,9 +327,7 @@ var LayersView = Backbone.View.extend({
 	 *  @param {Backbone.Model} layer newly added Layer
 	 */
 	removeLayer : function(layer) {
-		var view = _.find(this.layerViews, function(layerView) { 
-			return layerView.model === layer;
-		});
+		var view = this.getLayerView(layer);
 		this.layerViews = _.without(this.layerViews, view);
 		
 		// remove from the DOM
@@ -336,13 +339,14 @@ var LayersView = Backbone.View.extend({
 	 *  @param  {Backbone.Model} layer Layer to edit
 	 */
 	switchEdit : function(layer) {
-		var blockOrder = '.b-'+this.block.get("order");
-
-		$(blockOrder+' .editable').removeClass("editable");
+		var blockClass = '.b-'+this.block.get("order");
+		var view = this.getLayerView(layer);
 
 		if (layer.get("editable")) {
-			// TO-DO: find a cleaner way
-			$(blockOrder+' .sub-'+layer.get("sub")).addClass("editable").appendTo(blockOrder);
+			$(blockClass+' .editable').removeClass("editable");
+			$(view.el).addClass("editable").appendTo(blockClass);
+		} else {
+			$(view.el).removeClass("editable").prependTo(blockClass);
 		};
 	}
 
@@ -369,6 +373,10 @@ var BlockView = Backbone.View.extend({
 
 		// correct gridWinDim.top
 		gridWinDim.top = gridWin.offset().top;
+
+		// hack: scroll to middle when you are on top
+		if (!gridWin[0].scrollTop)
+			gridWin.scrollTop(420);
 
 		// Bound events
 		this.model.on("change:width", this.resize, this);
@@ -498,7 +506,12 @@ var EditorView = Backbone.View.extend({
 			_.each(pitches, function(pitch, i) {
 				var color = /^.#$/.test(pitch) ? "black" : "white";
 				var content = /^C$/.test(pitch) ? pitch+o : "";
-				$(".piano").append('<div class="piano-key '+pitch+o+' '+color+' pk-'+((12*(o+1))+(pitches.length-(i+1)))+'"><span>'+content+'</span></div>');
+				var pianoKey = $(document.createElement("div"));
+				pianoKey
+					.addClass('piano-key '+pitch+o+' '+color+' pk-'+((12*(o+1))+(pitches.length-(i+1))))
+					.appendTo(".piano");
+
+				content && pianoKey.html('<span>'+content+'</span>');
 			});
 		};
 

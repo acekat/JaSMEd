@@ -5,9 +5,8 @@
  */
 var view;
 
-
 /**
- *  Associated View to utils Module.
+ *  Associated View to players Module.
  *  @type {Backbone.View}
  */
 var PlayerView = Backbone.View.extend({
@@ -23,23 +22,26 @@ var PlayerView = Backbone.View.extend({
 	},
 
 	events: {
-		'click .play' : 'play',
-		'click .pause' : 'pause',
-		'click .stop' : 'stop'
+		'click .playerControls .play' : 'play',
+		'click .playerControls .pause' : 'pause',
+		'click .playerControls .stop' : 'stop',
+		'change .trackSelector input[name=\'track\']' : 'initTrack'
 	},
 
+	initTrack: function() {
+		var track = $('.player .trackSelector input[name=\'track\']:checked').val();
+		playerView.publish('playerViewTrackSelect', track);
+	},
+	
 	play: function() {
-		console.log('clicked on play');
 		playerView.publish('playerViewPlay');
 	},
 
 	pause: function() {
-		console.log('clicked on pause');
 		playerView.publish('playerViewPause');
 	},
 
 	stop: function() {
-		console.log('clicked on stop');
 		playerView.publish('playerViewStop');
 	}
 

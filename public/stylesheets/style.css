@@ -89,6 +89,7 @@ footer p {
 }
 .editor .layer-info-win {
   margin-left: 40px;
+  margin-right: 15px;
   background: #acacac;
   border: 1px solid;
   overflow: hidden;
@@ -100,6 +101,7 @@ footer p {
 .editor .block-layer-info {
   display: inline-block;
   width: 200px;
+  min-width: 100px;
   height: 100%;
   border-right: 1px solid #747474;
 }
@@ -110,6 +112,10 @@ footer p {
 }
 .editor .layer-list li {
   float: left;
+}
+.editor .layer-list button.selected {
+  font-weight: bold;
+  color: #00b7ff;
 }
 .editor .add-layer {
   width: 20px;
@@ -208,7 +214,8 @@ footer p {
   height: 300px;
   background: #acacac;
   border: 1px solid;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .editor .grid {
   display: table-cell;
@@ -220,6 +227,7 @@ footer p {
   position: relative;
   vertical-align: top;
   width: 200px;
+  min-width: 100px;
   border-right: 1px solid #747474;
 }
 .editor .add-block {

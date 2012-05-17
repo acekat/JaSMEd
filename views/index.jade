@@ -13,11 +13,15 @@ block content
 		a(href='/app') THIS
 		|  is what all the fuss is about.
 
-	p some saved sequences: (warning: it don't work!! (yet))
-		ul
-			each file in files
-				li
-					a(href='/store/#{file}') #{file} 
+	if files && files.length
+		p some saved sequences:
+			ul
+				each file in files
+					li
+						a(href='/store/#{file}') #{file}
+	else
+		p no saved sequences so far.
+	
 	p 
 		| you can also check out your 
 		a(href='/session') session

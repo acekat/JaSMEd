@@ -1,18 +1,28 @@
 (function(struct) {
 
+/**
+ *  DEPENDENCIES
+ */
 var utils = jasmed.module('utils');
 
-struct.createSong = function(props) {
-    return utils.inherits(song, _.extend(props||{}, {tracks: [], pitchs: {}}));
-};
+/**
+ *  INSTANCES
+ */
+var curSong, curTrack;
+var demo; //where demo is stored (init once.. shouldn't change later)
+// all this is a fucking ugly hack to make demo work... will all disappear soon
+
+/**
+ *  CONSTRUCTORS / CLASSES
+ */
 
 /** @class */
 var song = {
     title: "Untitled",
     tempo: 4, // in seconds per block
     tracks: [],
-    blocks: 32,
-    pitchs: {},
+    blocks: 3, // ps: 2 makes it crash (editing second block...)
+    pitches: {},
     
     /**
      * Add a track to the song, initialized with {@link song#blocks} blocks with the specified layer.
@@ -23,7 +33,7 @@ var song = {
     addTrack: function(name, layer) {
         var newTrack = utils.inherits(track, {
             name: name || "Track " + (this.tracks.length+1),
-            songPitchs: this.pitchs
+            songPitches: this.pitches
         });
         newTrack.addBlocks(this.blocks);
         if(layer) {
@@ -56,7 +66,7 @@ var track = {
     name: "New Track",
     instrument: "Piano",
     blocks: [],
-    songPitchs: {},
+    songPitches: {},
     
     /**
      * Add a note to the track.
@@ -71,7 +81,7 @@ var track = {
      *           {number} duration} The layer and duration of the new note.
      */
     addNote: function(pitch, start, end) {
-        this.songPitchs[pitch]++ || (this.songPitchs[pitch] = 1);
+        this.songPitches[pitch]++ || (this.songPitches[pitch] = 1);
         
         var startBlk = this.blocks[start.block];
         
@@ -211,22 +221,30 @@ var note = {
     duration: 1
 };
 
+/**
+ *  PUBLIC API
+ */
 
-var curSong, curTrack;
-
+struct.createSong = function(props) {
+    return utils.inherits(song, _.extend(props||{}, {tracks: [], pitches: {}}));
+};
 
 struct.initialize = function() {    
     // struct.publish('structInit');
 };
 
+/**
+ *  SUBSCRIBES
+ */
+
 struct.subscribe('serverInit', function(song) {
     // curSong = song || struct.createSong();
     // TO-DO: fix it when server will send correct structure
     curSong = struct.createSong();
-    curTrack =  curSong.tracks[0] || curSong.addTrack();
+    curTrack = curSong.tracks[0] || curSong.addTrack();
 
-		struct.curSong = curSong;
-		struct.curTrack = curTrack;
+		struct.selectedSong = curSong;
+		//demo = jasmed.module('demo').render();
 });
 
 struct.subscribe('toolsNewBlock', function() {
@@ -246,8 +264,6 @@ struct.subscribe('editorViewsSelection', function(selection) {
     selection.startCell.start = result.start;
     selection.startCell.cell = result.start + 1;
     selection.endCell.end = selection.endCell.cell = (result.start + result.duration - 1)%result.layer + 1;
-		console.log('curTrack', curTrack);
-		console.log('curSong', curSong);
     struct.publish('structSelection', selection);
 });
 
@@ -255,5 +271,13 @@ struct.subscribe('serverSelection', function(selection) {      //TODO alléger l
     curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
 });
 
+struct.subscribe('playerViewTrackSelect', function(track) {
+	if (track === 'demo')
+		struct.selectedSong = demo;
+	else if (track === 'grid')
+		struct.selectedSong = curSong;
+		
+	console.log('changed track', track);
+});
 
 })(jasmed.module('struct'));

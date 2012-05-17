@@ -5,8 +5,7 @@ script#layer-template(type="text/template")
 		<div class="pitch <%= pitch %><%= o %> p-<%= midiPitch %>">
 		<% for (var n=1; n<=sub; n++) { %>
 		<% var cellId = block+"-"+sub+"-"+midiPitch+"-"+n; %>
-		<% var on = _.indexOf(cellOn, cellId) === -1 ? "" : " on"; %>
-		<div id="<%= cellId %>" class="cell sc-<%= n %><%= on %>"></div>
+		<div id="<%= cellId %>" class="cell sc-<%= n %>"></div>
 		<% }; %>	
 		</div>
 		<% }); %>
@@ -16,8 +15,9 @@ script#layer-template(type="text/template")
 script#layer-info-template(type="text/template")
 	ul.layer-list
 		<% _.each(layers, function(layer) { %>
+		<% var selected = layer.get("editable") ? " selected" : ""; %>
 		li
-			button.edit-layer <%= layer.get("sub") %>
+			<button class="edit-layer subi-<%= layer.get("sub") %><%= selected %>"><%= layer.get("sub") %></button>
 		<% }); %>
 		li
 			input.add-layer(type="text", placeholder=" +")

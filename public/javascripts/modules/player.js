@@ -37,8 +37,8 @@ var channelCount = 2, // :) no more krakz yeah!
     blocknum,
     blocks,
     samplenum,
-		stopped,
-		curWaveForm = 'sine';
+    stopped,
+    curWaveForm = 'sine';
 
 /**
  *  FUNCTIONS
@@ -75,8 +75,9 @@ function audioCallback(buffer, channelCount) {
                     fade = 1;
                 }
               
-                generator.generate();
-                sample += generator.getMix()*fade;
+                generator.o.generate();
+		generator.a.generate();
+                sample += generator.o.getMix() * generator.a.getMix();
                 compBy++;
             }
         }
@@ -155,14 +156,18 @@ function init(song) {
     compress = audioLib.Compressor(sampleRate, 0, 0.5);
     osc = {};
     for(var pitch in song.pitches) {
-        osc[pitch] = audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch));
-				osc[pitch].waveShape = curWaveForm;
+        osc[pitch] = { 
+	    o : audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch)),
+	    a : audioLib.ADSREnvelope(sampleRate, 10, 100, 0.8, 1, 100, null)
+	}
+	osc[pitch].o.waveShape = curWaveForm;
+	osc[pitch].a.triggerGate(true);
     }
     blocknum = -1;
     layers = {};
     loadBlock();
     pause = true;
-		stopped = false;
+    stopped = false;
     device = audioLib.AudioDevice(audioCallback, channelCount, bufferSize, sampleRate);
 };
 
@@ -186,7 +191,7 @@ function stop() {
     device.kill();
     compress = null;
     osc = null;
-	stopped = true;
+    stopped = true;
 };
 
 /**

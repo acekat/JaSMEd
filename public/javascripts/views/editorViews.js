@@ -9,7 +9,7 @@ var editorView
 /**
  *  CONFIGURATION
  */
-var scrollMargin = 15;
+var scrollMargin = 30;
 var minBlockWidth = 100;
 var nbOctave = 7;
 var pitches = ['B', 'A#', 'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C'];
@@ -164,11 +164,11 @@ var LayerView = Backbone.View.extend({
 	movingCell : function(e) {
 		// Scrolling
 		// down
-		if ((e.pageY + scrollMargin) > (gridWinDim.top + gridWinDim.height))
-			gridWin[0].scrollTop += scrollMargin;
+		// if ((e.pageY + scrollMargin) > (gridWinDim.top + gridWinDim.height))
+		// 	gridWin[0].scrollTop += scrollMargin;
 		// up
-		if ((e.pageY - scrollMargin) < gridWinDim.top)
-			gridWin[0].scrollTop -= scrollMargin;
+		// if ((e.pageY - scrollMargin) < gridWinDim.top)
+		// 	gridWin[0].scrollTop -= scrollMargin;
 		// right
 		if ((e.pageX + scrollMargin) > (gridWinDim.left + gridWinDim.width))
 			gridWin[0].scrollLeft += scrollMargin;

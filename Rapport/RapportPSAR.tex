@@ -128,6 +128,9 @@ Le programme client offre divers outils d’édition et de lecture du morceau, tand
 
 \section{Architecture}
 
+\includegraphics[width=\linewidth]{./jasmedDirectory}
+
+
 \subsection{Modularité}
 
 \subsection{Serveur}
@@ -148,7 +151,7 @@ Un même bloc peut être composé de différents “calques”, un calque représentant c
 
 \section{Jeux de tests}
 
-\chapter{Journal de bord et déroulement}
+\chapter{Choix d'implémentation}
 Février
 
     choix du projet, M.Saint-James accepte d’être notre professeur référent
@@ -182,7 +185,7 @@ tableau de pistes -> tableau de mesures ->tableau de temps
 
 remise en question du midi car trop contraignant pour peu de bénéfices court terme (->portabilité) possibilité d’écrire une fonction qui traduirait notre représentation musicale en midi
 
-
+\chapter{Etat actuel de l'outil}
 
 \chapter{Manuel d'utilisation}
 Le client fournit à l’utilisateur des outils d’édition, de lecture,  d’instrumentation, et représente graphiquement la piste en cours d’édition.
@@ -203,7 +206,7 @@ Le panneau d’instrumentation permet de choisir l’instrument qui jouera la piste 
 \section{Édition}
 La partie édition représente une partition musicale à éditer/jouer, spécifiant la hauteur, la longueur, et la position de chaque note. L’éditeur permet la navigation verticale et horizontale:horizontalement sur l’axe du temps et verticalement selon la hauteur du son.
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
 
 \bibitem{Flanagan}
   David Flanagan,
@@ -224,3 +227,10 @@ W3C (,
 \end{thebibliography}
 
 \end{document}
+
+pb et difficultés:
+-MIDI (chap conception)
+-largeur de bloc ->affichage non-cohérent, curseur de lecture
+-sample décalage
+-app scalable -> modulaire/gestion centralisé, MV*
+-latence d'initialisation lecture

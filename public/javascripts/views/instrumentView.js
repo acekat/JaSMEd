@@ -19,6 +19,12 @@ var InstrumentView = Backbone.View.extend({
 
 	/** @constructs */
 	initialize: function() {
+	    $('.instrument. #sustainSlider').({
+			min: 0,
+			max: 1,
+			step: .01,
+			value: ratio
+		});
 	},
 
 	events: {
@@ -29,7 +35,11 @@ var InstrumentView = Backbone.View.extend({
 		var wave = $('.instrument .waveFormSelector input[name=\'waveForm\']:checked').val();
 		instrumentView.publish('instrumentViewSwitchWaveForm', wave);
 	}
-
+        
+        sustain: function() {
+	    var value = $('.instrument sustainSlider').val();
+	    instrumentView.publish('instrumentViewSustain', value);
+	}
 });
 
 /**

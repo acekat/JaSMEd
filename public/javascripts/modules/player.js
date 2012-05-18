@@ -39,7 +39,8 @@ var channelCount = 2, // :) no more krakz yeah!
     blocks,
     samplenum,
     stopped,
-    curWaveForm = 'sine';
+    curWaveForm = 'sine',
+    sustain = 0.5;
 
 /**
  *  FUNCTIONS
@@ -157,7 +158,7 @@ function init(song) {
     for(var pitch in song.pitches) {
         instrument[pitch] = { 
 	    osc : audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch)),
-	    envelope : audioLib.ADSREnvelope(sampleRate, 40, 20, 0.5, 90, 0, null)
+	    envelope : audioLib.ADSREnvelope(sampleRate, 40, 20, sustain, 90, 0, null)
 	};
 	instrument[pitch].osc.waveShape = curWaveForm;
 	instrument[pitch].envelope.triggerGate(true);
@@ -212,6 +213,10 @@ player.subscribe('playerViewStop', function() {
 
 player.subscribe('instrumentViewSwitchWaveForm', function(wave) {
 	curWaveForm = wave;
+});
+    
+player.subscribe('instrumentViewSustain', function(value) {
+	sustain = value;
 });
 
 })(jasmed.module('player'));

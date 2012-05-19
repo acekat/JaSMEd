@@ -236,15 +236,16 @@ var Grid = Backbone.Collection.extend({
 				});
 			};
 
-			var firstCell = (blockOrder == startCell.block) ? startCell.cell : 1;
-			var lastCell = (blockOrder == endCell.block) ? endCell.cell : sub;
+			var firstCell = (blockOrder === startCell.block) ? startCell.cell : 1;
+			var lastCell = (blockOrder === endCell.block) ? endCell.cell : sub;
 
 			// toggle cells in the corresponding layer and block
 			for (var cell = firstCell; cell <= lastCell; cell++) {
 				var id = blockOrder+'-'+sub+'-'+pitch+'-'+cell;
 
 				var className = 'note-'+startCell.block+'-'+sub+'-'+pitch+'-'+startCell.cell;
-				className += ((cell == endCell.cell) && (blockOrder == endCell.block)) ? " note-end" : "";
+				className += ((cell === startCell.cell) && (blockOrder === startCell.block)) ? " note-start" : "";
+				className += ((cell === endCell.cell) && (blockOrder === endCell.block)) ? " note-end" : "";
 
 				layers.getSub(sub).toggleCell(id, user, className);
 			};

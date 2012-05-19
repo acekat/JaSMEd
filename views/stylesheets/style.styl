@@ -1,3 +1,20 @@
+// mixins
+note-start-border-radius(n)
+	-webkit-border-top-left-radius n
+	-webkit-border-bottom-left-radius n
+	-moz-border-top-left-radius n
+	-moz-border-bottom-left-radius n
+	border-top-left-radius n
+	border-bottom-left-radius n
+
+note-end-border-radius(n)
+	-webkit-border-top-right-radius n
+	-webkit-border-bottom-right-radius n
+	-moz-border-top-right-radius n
+	-moz-border-bottom-right-radius n
+	border-top-right-radius n
+	border-bottom-right-radius n
+
 // color variables
 thibaud = #44ACCF
 jaimito = #EE3E64
@@ -250,6 +267,11 @@ pitch-style()
 		.cell.on:not(.note-end)
 			border-right: none
 
+	.note-start
+		note-start-border-radius(6px)
+
+	.note-end
+		note-end-border-radius(6px)
 
 .login.thibaud
 	color: thibaud

@@ -2,20 +2,24 @@ p ZE INSTRUMENTE!
 .waveFormSelector
 	p choose that wave!!
 	.option
-		input(type='radio', name='waveForm', value='sine', checked)
+		input(type='radio', id='sine', name='waveForm', value='sine', checked)
 		label(for='sine') sine
 	.option
-		input(type='radio', name='waveForm', value='square')
+		input(type='radio', id='square', name='waveForm', value='square')
 		label(for='square') square
 	.option
-		input(type='radio', name='waveForm', value='sawtooth')
+		input(type='radio', id='sawtooth', name='waveForm', value='sawtooth')
 		label(for='sawtooth') saw tooth
 	.option
-		input(type='radio', name='waveForm', value='invSawtooth')
+		input(type='radio', id='invSawtooth', name='waveForm', value='invSawtooth')
 		label(for='invSawtooth') inv saw tooth
 	.option
-		input(type='radio', name='waveForm', value='triangle')
+		input(type='radio', id='triangle', name='waveForm', value='triangle')
 		label(for='triangle') triangle
 	.option
-		input(type='radio', name='waveForm', value='pulse')
+		input(type='radio', id='pulse', name='waveForm', value='pulse')
 		label(for='pulse') pulse
+
+.sustainSlider
+	label(for="sustain") sustain instensity:
+	input(type="range", min="0", max="100", step="1", id="sustain")

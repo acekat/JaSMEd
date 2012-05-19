@@ -13,7 +13,7 @@ var utils = jasmed.module('utils');
 var channelCount = 2, // :) no more krakz yeah!
     bufferSize = 4096, // why ???
     sampleRate = 44100,
-    nSampleFade = 10,
+    nSampleFade = 200,
     trackNum = 0,
     pause,
     device,

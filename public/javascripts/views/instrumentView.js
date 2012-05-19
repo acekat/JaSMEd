@@ -22,12 +22,18 @@ var InstrumentView = Backbone.View.extend({
 	},
 
 	events: {
-		'change .waveFormSelector input[name=\'waveForm\']' : 'switchWaveForm'
+		'change .waveFormSelector input[name=\'waveForm\']' : 'switchWaveForm',
+		"mouseup .sustainSlider input" : "slideSustain"
 	},
 
 	switchWaveForm: function() {
 		var wave = $('.instrument .waveFormSelector input[name=\'waveForm\']:checked').val();
 		instrumentView.publish('instrumentViewSwitchWaveForm', wave);
+	},
+
+	slideSustain: function(e) {
+		var sustain = $(this.el).find(".sustainSlider input").val() / 100;
+		instrumentView.publish('instrumentViewSustain', sustain);
 	}
 
 });

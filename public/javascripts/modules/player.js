@@ -17,8 +17,9 @@ var channelCount = 2, // :) no more krakz yeah!
     trackNum = 0,
     pause,
     device,
+    tempo,
     compress,
-    osc,
+    instrument,
     track,
     layers, /*= {
         numero du layer: {
@@ -37,8 +38,9 @@ var channelCount = 2, // :) no more krakz yeah!
     blocknum,
     blocks,
     samplenum,
-		stopped,
-		curWaveForm = 'sine';
+    stopped,
+    curWaveForm = 'sine',
+    sustain = 0.5;
 
 /**
  *  FUNCTIONS
@@ -63,20 +65,19 @@ function audioCallback(buffer, channelCount) {
                 loadLayer(n);
             }
             
+	    var sustainTime = Math.floor(tempo / n) - 150; //150 = attack + delay + release
+
             for(var j = 0 ; j < layer.notes.length ; j++) {
                 note = layer.notes[j];
-                generator = osc[note.pitch];
+                generator = instrument[note.pitch];
                 
-                if(++note.nsample < nSampleFade) {
-                    fade = note.nsample/nSampleFade; 
-                } else if(note.nsample > note.fadeout) {
-                    fade = 1 - (note.nsample - note.fadeout)/nSampleFade;
-                } else {
-                    fade = 1;
-                }
-              
-                generator.generate();
-                sample += generator.getMix()*fade;
+		generator.envelope.sustainTime = sustainTime;
+		if(++note.nsample == layer.notelength)
+		    generator.envelope.state = 0;
+
+                generator.osc.generate();
+		generator.envelope.generate();
+                sample += generator.osc.getMix() * generator.envelope.getMix();
                 compBy++;
             }
         }
@@ -106,7 +107,6 @@ function loadLayer(n) {
             layer.notes.push({
                 pitch: chord[i].pitch,
                 nsample: 0,
-                fadeout: Math.ceil(chord[i].duration*blocklength/n)-nSampleFade
             });
         } else if(chord[i].duration < 0) {
             for(var j = 0 ; j < exlength ; j++) {
@@ -151,18 +151,23 @@ function loadBlock() {
 function init(song) {
     track = song.tracks[trackNum];
     blocklength = Math.round(song.tempo*sampleRate);
+    tempo = song.tempo * 1000;
     blocks = song.blocks;
     compress = audioLib.Compressor(sampleRate, 0, 0.5);
-    osc = {};
+    instrument = {};
     for(var pitch in song.pitches) {
-        osc[pitch] = audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch));
-				osc[pitch].waveShape = curWaveForm;
+        instrument[pitch] = { 
+	    osc : audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch)),
+	    envelope : audioLib.ADSREnvelope(sampleRate, 40, 20, sustain, 90, 0, null)
+	};
+	instrument[pitch].osc.waveShape = curWaveForm;
+	instrument[pitch].envelope.triggerGate(true);
     }
     blocknum = -1;
     layers = {};
     loadBlock();
     pause = true;
-		stopped = false;
+    stopped = false;
     device = audioLib.AudioDevice(audioCallback, channelCount, bufferSize, sampleRate);
 };
 
@@ -178,15 +183,14 @@ function pause() {
 };
 
 function stop() {
-	//otherwise tries to kill device which is already killed :D
 	if (stopped)
 		return;
 		
     pause = true;
     device.kill();
     compress = null;
-    osc = null;
-	stopped = true;
+    instrument = null;
+    stopped = true;
 };
 
 /**
@@ -206,8 +210,12 @@ player.subscribe('playerViewStop', function() {
 	stop();
 });
 
-player.subscribe('instrumentViewSwitchWaveForm', function(wave) {
+player.subscribe('instrumentViewWaveForm', function(wave) {
 	curWaveForm = wave;
+});
+    
+player.subscribe('instrumentViewSustain', function(value) {
+	sustain = value;
 });
 
 })(jasmed.module('player'));

@@ -25,12 +25,12 @@ var PlayerView = Backbone.View.extend({
 		'click .playerControls .play' : 'play',
 		'click .playerControls .pause' : 'pause',
 		'click .playerControls .stop' : 'stop',
-		'change .trackSelector input[name=\'track\']' : 'initTrack'
+		'change .trackSelector input' : 'selectTrack'
 	},
 
-	initTrack: function() {
-		var track = $('.player .trackSelector input[name=\'track\']:checked').val();
-		playerView.publish('playerViewTrackSelect', track);
+	selectTrack: function() {
+		var track = $(this.el).find('.trackSelector input:checked').val();
+		playerView.publish('playerViewTrack', track);
 	},
 	
 	play: function() {

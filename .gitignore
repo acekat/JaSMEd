@@ -4,7 +4,7 @@ node_modules
 myTODOs
 tmp
 dump.rdb
-Latex/*.toc
-Latex/*.aux
-Latex/*.log
-Latex/*.gz
+Rapport/*.toc
+Rapport/*.aux
+Rapport/*.log
+Rapport/*.gz

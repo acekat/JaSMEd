@@ -13,7 +13,7 @@ var utils = jasmed.module('utils');
 var channelCount = 2, // :) no more krakz yeah!
     bufferSize = 4096, // why ???
     sampleRate = 44100,
-    nSampleFade = 10,
+    nSampleFade = 200,
     trackNum = 0,
     pause,
     device,
@@ -183,7 +183,6 @@ function pause() {
 };
 
 function stop() {
-	//otherwise tries to kill device which is already killed :D
 	if (stopped)
 		return;
 		
@@ -211,7 +210,7 @@ player.subscribe('playerViewStop', function() {
 	stop();
 });
 
-player.subscribe('instrumentViewSwitchWaveForm', function(wave) {
+player.subscribe('instrumentViewWaveForm', function(wave) {
 	curWaveForm = wave;
 });
     

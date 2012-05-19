@@ -277,6 +277,22 @@ footer p {
 .editor .layer.editable .cell.on:not(.note-end) {
   border-right: none;
 }
+.editor .note-start {
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  -moz-border-top-left-radius: 6px;
+  -moz-border-bottom-left-radius: 6px;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+.editor .note-end {
+  -webkit-border-top-right-radius: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  -moz-border-top-right-radius: 6px;
+  -moz-border-bottom-right-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
 .login.thibaud {
   color: #44accf;
 }

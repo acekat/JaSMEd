@@ -243,8 +243,12 @@ struct.subscribe('serverInit', function(song) {
     curSong = struct.createSong();
     curTrack = curSong.tracks[0] || curSong.addTrack();
 
-		struct.selectedSong = curSong;
-		//demo = jasmed.module('demo').render();
+	struct.selectedSong = curSong;
+	// console.log("selected", struct.selectedSong);
+	
+	// TO-DO: fix error on demo initialisation
+	// demo = jasmed.module('demo').render();
+	// console.log("demo", demo);
 });
 
 struct.subscribe('toolsNewBlock', function() {
@@ -271,13 +275,11 @@ struct.subscribe('serverSelection', function(selection) {      //TODO alléger l
     curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
 });
 
-struct.subscribe('playerViewTrackSelect', function(track) {
+struct.subscribe('playerViewTrack', function(track) {
 	if (track === 'demo')
 		struct.selectedSong = demo;
 	else if (track === 'grid')
 		struct.selectedSong = curSong;
-		
-	console.log('changed track', track);
 });
 
 })(jasmed.module('struct'));

@@ -10,7 +10,8 @@ Le client n'est pleinement compatible qu'avec une version récente de [Google Ch
 ### Dépendances
 
 Une fois node.js installé et les sources de JaSMEd récupérées.
-Pour s'assurer que toutes les dépendances sont installées, exécuter la commande à la source du projet:
+
+Pour s'assurer que toutes les dépendances sont installées, exécutez la commande suivante à la source du projet:
 
 	npm install
 

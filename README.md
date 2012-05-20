@@ -1,8 +1,17 @@
-# JaSMEd
+## JaSMEd
+
+### Configuration requise
+
+Le serveur de JaSMEd tourne sur [node.js](http://nodejs.org/) *(>= v0.6.12)*.
+Vous trouverez [ici](https://github.com/joyent/node/wiki/Installation) un guide d'installation.
+
+Le client n'est pleinement compatible qu'avec une version récente de [Google Chrome](https://www.google.com/chrome) pour l'instant.
 
 ### Dépendances
 
-Pour s'assurer que toutes les dépendances sont installées, exécuter la commande:
+Une fois node.js installé et les sources de JaSMEd récupérées.
+
+Pour s'assurer que toutes les dépendances sont installées, exécutez la commande suivante à la source du projet:
 
 	npm install
 
@@ -12,19 +21,22 @@ Instructions pour l'installer et le démarrer: [Redis Quick Start](http://redis.
 
 Grace à Redis, plus besoin de se ré-identifier au redémarrage du serveur.
 
-ps: si redis server est dans votre PATH, on peut démarrer le serveur redis avec la commande:
+P.S.: si redis server est dans votre PATH, on peut démarrer le serveur redis avec la commande:
 
 	./bin/redis
 
 ### Exécutable
 
-Un dossier bin a été ajouté pour simplifier les choses, pour faire tourner JaSMEd exécuter la commande:
+Pour faire tourner le serveur, exécutez la commande:
 
 	./bin/devserver
 	
-Plus besoin de relancer le serveur quand des modifications sont apportés.
+Plus besoin de relancer le serveur quand des modifications sont apportées.
 
-# GIT
+L'application est ensuite accessible dans Chrome à l'adresse `http://localhost:3000`
+
+
+## GIT
 
 ### Master branch
 

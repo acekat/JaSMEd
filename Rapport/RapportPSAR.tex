@@ -1,12 +1,16 @@
 \documentclass[12pt,a4paper]{report}
-\usepackage{url}
+
 \usepackage[french]{babel}
 \usepackage[applemac]{inputenc}
+%\usepackage[latin1]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{textcomp}		%caractËres spÈciaux
-\usepackage[cm]{fullpage}
-\usepackage{graphicx}
+
 \usepackage[final]{pdfpages}
+\usepackage[cm]{fullpage}
+
+\usepackage{url}
+%\usepackage{textcomp}		%caractËres spÈciaux
+\usepackage{graphicx}
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 \newcommand{\jasmed}{\texttt{JaSMEd}}
@@ -30,44 +34,42 @@ La question des protocoles audio à utiliser sera aussi abordée.
 
 \chapter{Introduction}
 
-Nous avons proposé \jasmed\ car il s'inscrit à la fois dans le domaine des applications réparties (web), et reflète nos orientations musicales dans la pratique de l'informatique.
+Nous avons proposé \jasmed\ car il s'inscrit à la fois dans le domaine des applications réparties, et reflète nos orientations musicales dans la pratique de l'informatique.
 C'est dans un cadre internet en constante transformation que l'on a développé \jasmed, une application client/serveur qui tire partie des nouvelles API d’HTML5.\\
 
-\jasmed\ est un éditeur musical multi-utilisateur temps réel implémenté à partir des nouveaux standards du web qui tire sa spécificité de part son approche de composition polyrythmique~\footnote{Superposition de plusieurs parties ayant chacune un rythme différent et dont les accents d'appui ne coïncident pas entre eux`` (Larousse de la Musique, Paris, t. 2, 1982, p. 1247).}.\\
+\jasmed\ est un éditeur musical multi-utilisateur temps réel implémenté à partir des nouveaux standards du web qui tire sa spécificité de part son approche de composition polyrythmique~\footnote{Superposition de plusieurs parties ayant chacune un rythme différent et dont les accents d'appui ne coïncident pas entre eux (Larousse de la Musique, Paris, t. 2, 1982, p. 1247).}.\\
 Actuellement il n'existe pas d'outils pour créer une polyrythmie musicale de manière collaborative. En général il n'y a pas de moyens simples permettant d'écrire ce genre de rythmes complexes, et encore moins sur internet où la majeure partie des applications musicales ne sont pas de véritables outils de composition.\\
 C'est en faisant ce constat que nous est apparue l'idée de développer \jasmed.
-Notre travail s'inscrit dans l'ue PSAR, c'est donc un projet fonctionnel mais non encore abouti que nous présentons, et qui s'axe sur une partie répartie pour s'inscrire dans la problématique du master SAR.\\
+De part son approche de l'édition web collaborative, notre travail s'inscrit parfaitement dans le cadre du master SAR \footnote{Systèmes et Applications Répartis}.\\
+Il faut préciser que c'est une application non encore aboutie que nous présentons ici, elle est fonctionnelle mais mais ne représente pas encore complètement l'ampleur du projet.\\
 
-Nous avons cherché à travailler de la meilleure façon possible, en nous servant d'outils utiles aux programmateurs souhaitant travailler en groupe. 
-Nous avons proposé le projet, ce qui est une chance mais qui peut aussi être un danger si le sujet se révèle trop ambitieux, nous avons constamment cherché à nous recentrer et nous concerter avec notre professeur référent Emmanuel Saint-James.
+Nous avons eu la chance de proposer notre propre projet à Emmanuel Saint-James, nous avons constamment cherché à nous recentrer et nous concerter avec notre professeur référent.
 
 %démarche inrérêt proposition domaine de l'audio apllications informatique répartie
 
 \chapter{Etat de l'art}
 
 Le HTML est le langage principal du World Wide Web, le W3C\footnote{World Wide Web Consortium} est actuellement entrain de travailler sur HTML5, qui est la 5ème révision majeure de ce langage. Il est important de noter que cette version est toujours à l'état d'ébauche~\footnote{\url{http://www.w3.org/TR/html5/index.html}} et ne cesse d'évoluer.
-HTML5 fournit une flopée de nouvelles API, 
-%peut être pas très utile
-notamment la balise <audio>~\footnote{\url{http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#the-audio-element}} qui permet de fournir un lecteur audio simple, et enfin de se passer des vieux lecteurs et codecs lourds et privés (Windows media player, realPlayer, quicktime).
+HTML5 fournit une flopée de nouvelles API, notamment la balise <audio>~\footnote{\url{http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#the-audio-element}} qui permet de fournir un lecteur audio simple, et enfin de se passer des vieux lecteurs et codecs lourds et privés (Windows media player, realPlayer, quicktime).
 Malheureusement ce n'est pas suffisant pour un traitement de l'audio plus poussé, c'est ainsi que des librairies audio ont fait leur apparition.
-%
 
-Les navigateurs Firefox et Google Chrome ont ainsi développé leur propre API audio, permettant de 
-Ces API ont été crées dans le but d'offrir au web game developer un vrai environnement sonore pour la conception de
-WebAudio est un peu plus poussée que Firefox, de même elle bénéficie d'un plus grand engouement de la communauté.D'après les listes de diffusion du working draft du W3C, l'API de Google serait même candidate à la standardisation.
+\medskip
+Les navigateurs Firefox et Google Chrome ont ainsi développé leur propre API audio, permettant de véritablement traiter le signal numérique sur nos navigateurs.
+Ces API ont été crées dans le but d'offrir au web game developer un vrai environnement sonore pour la conception de jeu sur le web, dans la synergie avec la sortie du WebGL.\\
+WebAudio est un peu plus poussée que Firefox, de même elle bénéficie d'un plus grand engouement dans la communauté web. D'après les listes de diffusion du working draft du W3C, l'API de Google serait même candidate à une standardisation imminente.
 
 WebAudio, largement inspiré du sytème CoreAudio d'Apple, pour Google Chrome
 Audio Data Api pour firefox
 
+\medskip
 Il existe déjà beaucoup de librairies javascript qui abstraient ces API et permettent de construire des applications audio sur le web plus facilement~\footnote{\url{https://wiki.mozilla.org/Audio_Data_API#JavaScript_Audio_Libraries}}.
 Certaines, comme audiolib.js\cite{audiolib} ou audionode.js, permettent d'abstraire les différences entre les 2 API concurrentes et ainsi grandement faciliter la portabilité entre navigateurs. \\
 
-Une quantité de nouvelles applications web musicales sont apparues sur la toile avec l'arrivée d'HTML5. La majeure partie de ces applications ont un aspect ludique (ou se bornent à être de simples gadgets) , et ne sont pas vraiment utiles à des compositeurs/musiciens. On en a recensé un échantillon : \\
-
+Une quantité de nouvelles applications web musicales sont apparues sur la toile avec l'arrivée d'HTML5. La majeure partie de ces applications ont un aspect ludique (ou se bornent à être de simples gadgets) , et ne sont pas vraiment utiles à des compositeurs/musiciens. On en a recensé un échantillon : 
 \begin{itemize}
 \item jeux sonores
 \item éditeur musical
-\end{itemize}
+\end{itemize}\\
 
 Si on regarde les logiciels d'édition musicale ils ne permettent pas de créer facilement des musiques poly-rythmiques, mais se prettent plus facilement à composer des tempos binaires. Les plus connus d'entre eux :\\
 Ableton Live\\
@@ -78,19 +80,17 @@ Notre projet s'inscrit donc au coeur des avancées actuelles du web dans le domai
 
 \chapter{Conception}
 \section{Général}
+L’idée est de se détacher des notations solfégiques usuelles pour s’orienter vers une écriture musicale plus ludique et intuitive, adaptée notamment aux enfants. Dans ce but, nous nous sommes émancipé de la signature rythmique et avons imaginé une division en blocs (aparentable à des mesures). Tous les blocs ont une durée identique, et sont indépendamment subdivisibles (un bloc s’apparente à une mesure avec une signature et une vitesse d’exécution adapté).\\
+
 le client s’exécute sur un navigateur web, la synthèse du son étant gérée par l’API audiolib ;
 la communication temps-réel entre les deux parties s’effectue via le protocole webSocket.\\
 Le serveur utilise nodejs, une librairie JavaScript ajoutant la programmation évenementielle au langage.\\
 Plusieurs clients peuvent éditer une unique piste musicale de manière concurrente.\\
 Le programme client offre divers outils d’édition et de lecture du morceau, tandis que le serveur s’occupe de la communication entre les différents éditeurs et de la sauvegarde des données.
 
-\includegraphics[width=\linewidth]{./jasmedDirectory}
-
-
 \section{Modularité}
 
 \section{Concurrence}
-
 
 \includegraphics[width=\linewidth]{./PSAR-Client}
 
@@ -103,11 +103,14 @@ Les technologies que nous avons utilisées pour ce projet ont été le fruit d'une 
 
 \section{Confort de développement}
 
+Nous avons cherché à travailler en groupe de la meilleure façon possible, en nous servant d'outils utiles aux programmateurs souhaitant travailler en groupe. \\
 Dès les premières semaines nous avons insisté sur la recherche d'outils collaboratifs permettant au groupe de travailler et de partager ce travail de la meilleure manière qui soit.\\
 Tous les documents écrits ont été partagées et rédigées sous Google docs.\\
 Notre application a été développée avec le gestionnaire de version Git.\\
 Nous avons hébergé notre code sur le serveur Github, qui est un site web très actif et où l'on retrouve la majorité des projets informatiques issus du monde du libre.\\
-cloud9 est un éditeur javascript écrit avec node.js
+cloud9 est un éditeur javascript écrit avec node.js\\
+
+Tous le code de l'application est correctement commenté, et est rédigé en anglais pour permettre au plus grand nombre de suivre le développement sur gitHub.
 
 \section{JavaScript}
 
@@ -121,8 +124,6 @@ La dernière version définit de nouvelles fonctionnalités pour le développement d
 Toutes les librairies ci-dessous, aussi bien du côté client que du côté serveur, sont écrites en JavaScript.
 
 \section{Client}
-L’idée est de se détacher des notations solfégiques usuelles pour s’orienter vers une écriture musicale plus ludique et intuitive, adaptée notamment aux enfants. Dans ce but, nous nous sommes émancipé de la signature rythmique et avons imaginé une division en blocs (aparentable à des mesures). Tous les blocs ont une durée identique, et sont indépendamment subdivisibles (un bloc s’apparente à une mesure avec une signature et une vitesse d’exécution adapté).\\
-
 
 jQuery\\
 jQuery sert à faciliter les tâches JavaScript les plus communes, et cacher la différence qu'il existe entre les différents navigateurs.
@@ -157,26 +158,55 @@ Il implante deux protocoles réseaux :
 \chapter{Avancement}
 
 \section{Etat actuel de l'outil}
+
+
 \section{Détails techniques}
 
 \chapter{Manuel d'utilisation}
-Le client fournit à l’utilisateur des outils d’édition, de lecture,  d’instrumentation, et représente graphiquement la piste en cours d’édition.
 
-\includegraphics[width=\linewidth]{./PSAR-ClientTrack}
+Ce manuel présente les possibilités offertes à l'utilisateur pour la version actuelle de \jasmed.\\
+
+Tout d'abord, un utilisateur doit d'abord être authentifié par le serveur pour pouvoir accéder à une session.
+Pour rajouter un utilisateur, il faut éditer le fichier authentification.js.\\
+Une fois identifié il peux se rendre sur la page principale et commencer à éditer.\\
+L'application fournit à l’utilisateur des outils d’édition, de lecture,  d’instrumentation, et représente graphiquement la piste en cours d’édition.
+
+\includegraphics[width= \linewidth]{./track}
+
+\section{Édition}
+La partie édition représente une partition musicale à éditer/jouer, spécifiant la hauteur, la longueur, et la position de chaque note. L’éditeur permet la navigation verticale et horizontale : horizontalement sur l’axe du temps et verticalement selon la hauteur du son.\\
+L'utilisateur peut faire défiler l'éditeur horizontalement en mettant son pointeur de souris près du bord d'un des blocs situés aux extrémités, ou verticalement avec la barre de défilement.
+
+\medskip
+On peut ajouter un layer à un bloc en entrant le nombre de subdivision voulu dans la zone rectangulaire (avec un +) au dessus de celui-ci.
+On peut ensuite changer le layer apparent du bloc en cliquant sur le bouton correspondant.
+
+\medskip
+Pour créer une note qui aura la durée voulue, il faut d'abord sélectionner/créer le bon layer puis cliquer sur une case du bloc.
+Il est possible de cliquer sur une case et relâcher la souris sur une case suivante de la même hauteur pour pouvoir créer une note plus longue.\\
+Pour l'instant on ne peut pas supprimer de notes, pour commencer une nouvelle session il faut recharger la page.
 
 \section{Lecture}
 Les outils de lecture sont simplement constitués de trois boutons :
 \begin{itemize}
-\item lecture/pause
+\item play
+\item pause
 \item stop
-\item répétition de la piste
 \end{itemize}
     
+\section{Outils}
+L'utilisateur peut exporter son morceau sur le serveur (l'enregistrer) en lui donnant un nom dans la zone sous "export as", puis en appuyant sur le bouton "BANG!".
+On peut agrandir ou rétrécir la taille des blocs dans la zone d'édition avec les boutons zoom in et zoom out.
+Si on veut rajouter un bloc à notre piste on clique sur le bouton add block.
+    
 \section{Instrumentation}
-Le panneau d’instrumentation permet de choisir l’instrument qui jouera la piste lors de la lecture, ainsi que de modifier le volume et d’y ajouter des effets prédéfinis.
+Le panneau d’instrumentation permet de choisir le type de l'oscillateur qui jouera la piste lors de la lecture, ainsi que de modifier l'intensité du sustain de l'enveloppe ADSR en bougeant le slider.
 
-\section{Édition}
-La partie édition représente une partition musicale à éditer/jouer, spécifiant la hauteur, la longueur, et la position de chaque note. L’éditeur permet la navigation verticale et horizontale:horizontalement sur l’axe du temps et verticalement selon la hauteur du son.
+\chapter{Conclusion}
+pouvoir changer le tempo\\
+plus d'interaction avec l'instrument\\
+gérer les collisions\\
+
 
 \begin{thebibliography}{99}
 
@@ -200,7 +230,10 @@ W3C (,
 
 \appendix
 
-\chapter{Messages échangés}
+\chapter*{Diagramme de l'architecture}
+\includegraphics[width=\linewidth]{./jasmedDirectory}
+
+\chapter*{Messages échangés}
 
 \end{document}
 

@@ -245,24 +245,31 @@ struct.subscribe("toolsExport", function(name) {
 	});
 });
 
+
+function importSong(song) {
+	_.each(song.data, function(val, key) {
+		curSong[key] = val;
+
+		if (key === 'tracks') {
+			_.each(val, function(trck) {
+				trck.__proto__ = track;
+				
+				_.each(trck.blocks, function(blck) {
+						blck.__proto__ = block;
+				});
+			});
+		}
+	});
+}
+
 struct.subscribe('structServerInit', function(song) {
 	console.log('structServerInit', song);
-	curSong = struct.createSong(); // curSong doit être une struct... donc il faut l'init...
-	if (song) {
-		_.each(song.data, function(val, key) {
-			curSong[key] = val;
-
-			if (key === 'tracks') {
-				_.each(val, function(trck) {
-					trck.__proto__ = track;
-					
-					_.each(trck.blocks, function(blck) {
-							blck.__proto__ = block;
-					});
-				});
-			}
-		});
-	}
+	curSong = struct.createSong();
+	// curSong doit être une struct... donc il faut l'init...
+	// pourrait faire sng.__proto__ = song dans importSong...
+	if (song)
+		importSong(curSong, song);
+	
 	curTrack = curSong.tracks[0] || curSong.addTrack();
 
 	struct.selectedSong = curSong;

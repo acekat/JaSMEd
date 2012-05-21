@@ -249,10 +249,19 @@ struct.subscribe('structServerInit', function(song) {
 	console.log('structServerInit', song);
 	curSong = struct.createSong(); // curSong doit être une struct... donc il faut l'init...
 	if (song) {
-		curSong.pitches = song.data.pitches;
-		curSong.tracks = song.data.tracks;
-		if (song.data.blocks)
-			curSong.blocks = song.data.blocks;
+		_.each(song.data, function(val, key) {
+			curSong[key] = val;
+
+			if (key === 'tracks') {
+				_.each(val, function(trck) {
+					trck.__proto__ = track;
+					
+					_.each(trck.blocks, function(blck) {
+							blck.__proto__ = block;
+					});
+				});
+			}
+		});
 	}
 	curTrack = curSong.tracks[0] || curSong.addTrack();
 

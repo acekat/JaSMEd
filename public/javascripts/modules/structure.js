@@ -251,6 +251,8 @@ struct.subscribe('structServerInit', function(song) {
 	if (song) {
 		curSong.pitches = song.data.pitches;
 		curSong.tracks = song.data.tracks;
+		if (song.data.blocks)
+			curSong.blocks = song.data.blocks;
 	}
 	curTrack = curSong.tracks[0] || curSong.addTrack();
 

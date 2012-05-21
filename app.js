@@ -4,7 +4,6 @@ var express = require('express')
 	, utils = require('./modules/utils')
 	, store = require('./modules/store')
 	, sessionStore;
-var fs = require('fs');
 
 var app = express();
 var server = http.createServer(app);

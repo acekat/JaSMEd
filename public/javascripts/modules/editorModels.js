@@ -405,11 +405,12 @@ editorModels.subscribe("serverSelection", function(selection) {
 /**
  *  Module initialization method
  */
-editorModels.initialize = function() {
+editorModels.initialize = function(seqName) {
 
 	editor = new Editor();
 	
-	editorModels.publish("editorModelsInit");
+	editorModels.publish("editorModelsInit", seqName);
+	//console.log('editorModels published editorModelsInit', seqName);
 };
 
 })(jasmed.module("editorModels"));

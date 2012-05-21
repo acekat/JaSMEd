@@ -8,6 +8,11 @@ var socket = io.connect('http://localhost/');
 
 socket.on('connect', function(data) {
 	console.log('socket.io connection established');
+	/*
+	devrait publish un message pour init à la place d'appeler initialize...
+	car parfois connexion est lente..., fait des pub/sub avant ouverture de ws...
+	ou alors faire un requête XHR...
+	*/
 });
 
 socket.on('error', function(reason) {
@@ -29,7 +34,11 @@ socket.on('serverNewBlock', function() {
 
 socket.on('serverInit', function(seq) {
 	communicator.publish('serverInit', seq);
-})
+});
+
+socket.on('structServerInit', function(seq) {
+	communicator.publish('structServerInit', seq);
+});
 
 
 /**
@@ -48,8 +57,18 @@ communicator.subscribe('editorModelsExport', function(seq) {
 	socket.emit('editorModelsExport', seq);
 });
 
-communicator.subscribe('editorModelsInit', function() {
-	socket.emit('editorModelsInit');
+communicator.subscribe('structExport', function(seq) {
+	socket.emit('structExport', seq);
+});
+
+communicator.subscribe('editorModelsInit', function(seqName) {
+	socket.emit('editorModelsInit', seqName);
+	//console.log('socket emited editorModelsInit', seqName);
+});
+
+communicator.subscribe('structInit', function(seqName) {
+	socket.emit('structInit', seqName);
+	//console.log('socket emited editorModelsInit', seqName);
 });
 
 })(jasmed.module('communicator'));

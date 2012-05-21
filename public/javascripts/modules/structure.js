@@ -229,19 +229,30 @@ struct.createSong = function(props) {
     return utils.inherits(song, _.extend(props||{}, {tracks: [], pitches: {}}));
 };
 
-struct.initialize = function() {    
-    // struct.publish('structInit');
+struct.initialize = function(seqName) {
+	struct.publish('structInit', seqName);
+	//console.log('struct published structInit', seqName);
 };
 
 /**
  *  SUBSCRIBES
  */
 
-struct.subscribe('serverInit', function(song) {
-    // curSong = song || struct.createSong();
-    // TO-DO: fix it when server will send correct structure
-    curSong = struct.createSong();
-    curTrack = curSong.tracks[0] || curSong.addTrack();
+struct.subscribe("toolsExport", function(name) {
+	struct.publish("structExport", {
+		name : name,
+		data : struct.selectedSong
+	});
+});
+
+struct.subscribe('structServerInit', function(song) {
+	console.log('structServerInit', song);
+	curSong = struct.createSong(); // curSong doit être une struct... donc il faut l'init...
+	if (song) {
+		curSong.pitches = song.data.pitches;
+		curSong.tracks = song.data.tracks;
+	}
+	curTrack = curSong.tracks[0] || curSong.addTrack();
 
 	struct.selectedSong = curSong;
 	// console.log("selected", struct.selectedSong);

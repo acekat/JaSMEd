@@ -1,10 +1,10 @@
 var express = require('express')
 	, http = require('http')
-	, fs = require('fs')
 	, auth = require('./modules/authentification')
 	, utils = require('./modules/utils')
 	, store = require('./modules/store')
 	, sessionStore;
+var fs = require('fs');
 
 var app = express();
 var server = http.createServer(app);
@@ -86,12 +86,10 @@ app.get('/session', requireLogin, function(req, res) {
 });
 
 app.get('/app', requireLogin, function(req, res) {
-	delete req.session.seqName;
 	res.render('app');
 });
 
 app.get('/store/:name', requireLogin, function(req, res) {
-	req.session.seqName = req.params.name;
 	res.render('app');
 });
 
@@ -101,16 +99,18 @@ app.get('/store/:name', requireLogin, function(req, res) {
 io.sockets.on('connection', function (socket) {
 	var session = socket.handshake.session;
 
+	//do something better about that...
 	socket.emit('serverLogin', session.login);
 	
-	socket.on('editorModelsInit', function() {
-		if (!session.seqName) {
+	socket.on('editorModelsInit', function(seqName) {
+		console.log('editorModelsInit', seqName);
+		if (!seqName) {
 			socket.emit('serverInit');
 			return;
 		}
 		
-		console.log(session.login + ' about to open ' + session.seqName);
-		store.importSeq(session.seqName, function(data) {
+		var seqPath = seqName + '.models';
+		store.importSeq(seqPath, function(data) {
 			if (!data) {
 				console.log('error reading file');
 				socket.emit('serverInit'); //should send back an error to tell client file doesn't exist!!
@@ -119,18 +119,54 @@ io.sockets.on('connection', function (socket) {
 			
 			// console.log('about to emit back: ' + session.seqName + ' + ' + JSON.stringify(data));
 			socket.emit('serverInit', {
-				name: session.seqName,
+				name: seqName,
 				data: data
 			});
 		});
-	})
+	});
+	
+	socket.on('structInit', function(seqName) {
+		console.log('structInit', seqName);
+		if (!seqName) {
+			socket.emit('structServerInit');
+			return;
+		}
+		
+		var seqPath = seqName + '.struct';
+		store.importSeq(seqPath, function(data) {
+			if (!data) {
+				console.log('error reading file');
+				socket.emit('structServerInit'); //should send back an error to tell client file doesn't exist!!
+				return;
+			}
+			
+			// console.log('about to emit back: ' + session.seqName + ' + ' + JSON.stringify(data));
+			socket.emit('structServerInit', {
+				name: seqName,
+				data: data
+			});
+		});
+	});
 	
 	socket.on('editorModelsExport', function(seq) {
-		store.exportSeq(seq.name, seq.data, function(res) {
+		var seqPath = seq.name + '.models';
+		console.log('seqPath', seqPath);
+		store.exportSeq(seqPath, seq.data, function(res) {
 			if (!res)
 				console.log(session.login + ' error trying to save sequencer');
 			else
-				console.log(session.login + ' saved current sequencer as ' + seq.name);
+				console.log(session.login + ' saved current sequencer as ' + seqPath);
+		});
+	});
+	
+	socket.on('structExport', function(seq) {
+		var seqPath = seq.name + '.struct';
+		console.log('seqPath', seqPath);
+		store.exportSeq(seqPath, seq.data, function(res) {
+			if (!res)
+				console.log(session.login + ' error trying to save sequencer');
+			else
+				console.log(session.login + ' saved current sequencer as ' + seqPath);
 		});
 	});
 
@@ -142,8 +178,23 @@ io.sockets.on('connection', function (socket) {
 	socket.on('structNewBlock', function() {
 		console.log("serverNewBlock broadcasted.");
 		socket.broadcast.emit('serverNewBlock');
+		//
 	});
 });
+
+/**
+function structNewBlock() {
+	var grid = editor.grid(name);
+	var width = grid.last().refWidth;
+	grid.add({
+		width: width
+	});
+};
+
+function structSelection(selection) {
+	editor.grid(name).selectRange(selection);
+};
+*/
 
 /**
  * start listening!

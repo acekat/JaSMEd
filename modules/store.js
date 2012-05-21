@@ -1,4 +1,5 @@
 var fs = require('fs');
+var _ = require('underscore');
 
 function importSequencer(fileName, callback) {
 	var pathName = 'store/' + fileName;
@@ -37,7 +38,11 @@ function list(callback) {
 			return;
 		}
 		
-		callback(files);
+		var filteredFiles = _.map(files, function(fileName) {
+			return fileName.split('.')[0];
+		});
+		
+		callback(_.uniq(filteredFiles));
 	});
 }
 

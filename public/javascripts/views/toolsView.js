@@ -50,6 +50,8 @@ var ToolsView = Backbone.View.extend({
 		var name = this.$("#export-as").val();
 
 		warn.hide();
+		
+		//ajouter warn -> ne peut y avoir de '.' dans le nom...
 
 		if (name === "") {
 			warn.show();

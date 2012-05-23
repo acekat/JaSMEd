@@ -1,4 +1,4 @@
-\documentclass[pdftex,12pt,a4paper]{article}
+\documentclass[12pt,a4paper]{article}
 
 \usepackage[french]{babel}
 \usepackage[utf8]{inputenc}
@@ -53,6 +53,13 @@ Nous décrivons ici les trois grands axes de réflexion qui nous ont permis de d
 
 \subsubsection{Visuelle}
 
+Pour ce qui concerne le rendu graphique de l’application, il est intéressant de séparer la vue des données, à la manière d’une architecture MVC. Une fois la vue correctement liée au changement des modèles, on ne s’occupe plus que de la modification des données et la vue suit automatiquement. De plus ceci a un avantage dans la réutilisation du code des modèles côté serveur comme nous le verront dans la section archivage.\\
+La structure des données de l’affichage est en quelque sorte conditionnée par les possibilités du couple HTML5/CSS3. Cependant celui-ci a beaucoup évolué dans ses dernières versions respectives, et nous permet d’obtenir le rendu que nous souhaitions. L’éditeur est alors composé de plusieurs blocs, chacun contenant une pile de calques avec un unique calque éditable par bloc. Les blocs peuvent être ajoutés ou supprimés, afin de faire varier la taille de la grille d’édition. Un calque est un tableau où chaque ligne représente une hauteur et une case une division dans le temps. Les calques sont caractérisés par leur nombre de subdivision, on peut en créer de nouveau ou échanger leur ordre dans la pile, le calque du dessus est celui éditable. C’est à travers les calques éditables de chaque bloc que l’on peut faire des sélections de subdivisions afin d’activer ou désactiver des notes.
+
+\bigskip
+L’usage de cette représentation novatrice sous forme de calques incarnant chacun une division du bloc en temps égaux permet d’appréhender le rythme, et surtout la polyrythmie, sous un aspect simpliste voire ludique, exempt de toute référence solfégique culturelle. De cette manière, il est ainsi possible de représenter tout type de musique rythmique, quelque soit sa structure. Nous nous somme volontairement éloigné des usages occidentaux (mesures, signature rythmique) pour offrir un maximum de liberté.\\
+Afin de permettre des écarts vers des divisions inégales, principalement à des fins d’interprétation musicale, la création d’un outil appropriée est envisagée.
+
 \subsection{Collaboration}
 
 Un point innovant du projet et qui justifie l’utilisation de technologies récentes, est la collaboration temps réel entre plusieurs client. Le choix de développer l’application dans un navigateur web peut paraître restrictif à première vue, mais il apporte une plus grande facilité de développement pour son aspect collaboratif.\\
@@ -88,10 +95,8 @@ Toutes les bibliothèques que nous avons utilisées, aussi bien du côté client
 \paragraph{JavaScript}~\\
 Le JavaScript (JS) dont le nom exact est ECMAScript est un langage de haut niveau, dynamique, non typé et interprété. Il est standardisé par l’ECMA Internationnal et est l’unique\footnote{Dart et NaCl éxistent aussi maintenant.} langage de programmation proposé par les navigateurs web.\\
 Ces dernières années il a bénéficié d’interpréteurs de plus en plus rapides et performants et récemment sa popularité s’est encore accrue grâce à une technologie prometteuse nommée node.js qui permet d’utiliser le langage pour développer entre autres des serveurs web très facilement.\\
-C’est pour cela que nous avons choisi de construire JaSMEd exclusivement en JavaScript.
-
-\medskip
-Il a cependant fallu apprendre les spécificités du langage, telles que les closures, l’héritage prototypal (pas de classes... tout est une instance), ou l’aspect dynamique de \texttt{this} entre autres. Le langage présente quand même quelques peu pratiques, notamment le fait qu’il n’y ait pas de modularité nativement, soit un seul espace d’exécution (pas de paquetage comme en Java) ce qui implique des conflits potentiels de variables globales.\\
+C’est pour cela que nous avons choisi de construire JaSMEd exclusivement en JavaScript.\\
+Il a cependant fallu apprendre les spécificités du langage, telles que les closures, l’héritage prototypal (pas de classes... tout est une instance), ou l’aspect dynamique de \texttt{this} entre autres. Le langage présente quand même quelques aspects peu pratiques, notamment le fait qu’il n’y ait pas de modularité nativement, soit un seul espace d’exécution (pas de paquetage comme en Java) ce qui implique des conflits potentiels de variables globales.\\
 Les livres \emph{JavaScript: The Good Parts}~\cite{Crockford} et \emph{JavaScript: The Definitive Guide}~\cite{Flanagan} sont les “bibles” du javascript et nous ont permis de comprendre mieux le langage et d’appréhender ses spécificités et les défauts.
 
 \paragraph{Node.js}\url{http://nodejs.org/}\\
@@ -113,19 +118,20 @@ Il existe de nombreuses bibliothèques similaires mais nous avons opté pour cel
 À plusieurs reprise nous avons pensé à opter pour une bibliothèque plus récente et donc plus adapté. Notamment Ender mais surtout Zepto, qui a été conçue pour les navigateurs récents et propose une API très proche de celle de jQuery mais plus modulaire (Ajax, évènements, effets/animations sont des modules).\\
 JaSMEd n’est fonctionnel que sur les navigateurs les plus récents et donc l’utilisation de Zepto semble beaucoup plus adaptée. C’est d'ailleurs une des modifications prévues à court terme.
 
-\paragraph{Underscore}\url{http://documentcloud.github.com/underscore/}\\
-Underscore est une bibliothèque qui fournit des outils pour la programmation fonctionnelle (\texttt{map}, \texttt{reduce}, \texttt{filter}, etc...) ainsi que des extensions à JS pour manipuler les structures de données plus simplement (\texttt{Collection.size}, \texttt{max/min}, \texttt{Array.contains}). Elle est très utilisé car elle n’étend pas les objets natifs du JS (ce qui évite des problèmes de compatibilité) et utilise les méthodes ‘natives’ si jamais celles-ci sont disponibles (map, filter etc... font partie de la spécification de l’ECMAScript 5\footnote{Standard ECMA-262, juin 2011: \url{http://ecma-international.org/ecma-262/5.1/}}). Elle est très utile pour améliorer la qualité et la lisibilité du code.
+\paragraph{Underscore}\url{http://underscorejs.org/}\\
+Underscore est une bibliothèque qui fournit des outils pour la programmation fonctionnelle (\texttt{map}, \texttt{reduce}, \texttt{filter}, etc...) ainsi que des extensions à JS pour manipuler les structures de données plus simplement (\texttt{Collection.size}, \texttt{max/min}, \texttt{Array.contains}). Elle est très utilisé car elle n’étend pas les objets natifs du JS (ce qui évite des problèmes de compatibilité) et utilise les méthodes "natives" si jamais celles-ci sont disponibles (map, filter etc... font partie de la spécification de l’ECMAScript 5\footnote{Standard ECMA-262, juin 2011: \url{http://ecma-international.org/ecma-262/5.1/}}). Elle est très utile pour améliorer la qualité et la lisibilité du code.
 
-\paragraph{Backbone}\url{http://documentcloud.github.com/backbone/}\\
+\paragraph{Backbone}\url{http://backbonejs.org/}\\
 Backbone permet de structurer les applications web. Elle fournit des \texttt{Model}, des \texttt{Collection} ainsi que des \texttt{View} pour aboutir à une organisation MV*, différente du MVC dans son absence de Contrôleur à part entière. Les \texttt{Model} structurent les données (de la même manière qu’en MVC), les \texttt{Collection} sont de simples listes de \texttt{Model}, et ce sont les \texttt{View} qui, en plus de leur rôle habituel en MVC, intègre un contrôle de l’intéraction avec les données.\\
 Il y a une multitude de bibliothèques JS visant à aider à une structure MVC. Nous avons quelques temps analysés les différentes options telles que ember.js, spine.js, knockout.js, etc... mais nous avons choisi Backbone.js du fait de sa popularité, sa légèreté et sa documentation. Backbone est assez simple, et nous a permis de structurer notre code client d’une façon claire. De plus Backbone dépend d’Underscore et jQuery (ou Zepto ou Ender aux choix), deux bibliothèques que nous utilisons déjà.
 
-\paragraph{Audiolib}\url{https://github.com/jussi-kalliokoski/audiolib.js}\\
-Audiolib fournit entre-autres une API permettant la synthèse et la lecture de son dans un navigateur web en abstrayant les différences entre les API audio expérimentaux de Google et Mozilla (webAudio API et AudioData API respectivement).
-Nous avons opté pour cette bibilothèque car elle permet que JaSMEd fonctionne à la fois sur les dernière versions de Google Chrome et de Firefox.
-La bibliothèque est en général assez bien documenté à quelques exceptions près mais peu de projets l’utilise, donc nous n’avions pas énormément d’exemples pour nous inspirer. Son utilisation n’était donc pas toujours évidente.
-Cependant, même si  nous avions hésiter à n’utiliser que le webAudio API car celui-ci est assez bien documenté et est utilisé par plusieurs projets open source. (la prochaine version du navigateur Safari supportera le webAudio API)
-De plus, début Mai (link: http://www.w3.org/2012/05/09-audio-minutes.html), le groupe de travail W3C de l’audio a décidé de ne poursuivre la standardisation que de l’API webAudio proposé par Google. Nous envisageons donc de remplacer Audiolib par l’usage direct du webAudio API dans le futur, d’autant plus que son système de routage/mixage de multiples sources semble plus adapté à notre application.
+\paragraph{Audiolib}\url{http://audiolibjs.org/}\\
+Audiolib fournit entre-autres une API permettant la synthèse et la lecture de son dans un navigateur web en abstrayant les différences entre les API audio expérimentaux de Google et Mozilla (webAudio API et AudioData API respectivement). La bibliothèque est en général assez bien documentée à quelques exceptions près mais peu de projets l’utilisent, donc nous n’avions pas énormément d’exemples pour nous inspirer.\\
+Nous avons opté pour cette bibliothèque car elle permet à JaSMEd de fonctionner à la fois sur les dernière versions de Google Chrome et de Firefox. Cependant — même si cela voudrait dire se restreindre seulement à Google Chrome — nous avions hésité à n’utiliser que le webAudio API car celui-ci est assez bien documenté et est utilisé par plusieurs projets open source. (la prochaine version du navigateur Safari supportera le webAudio API)\\
+De plus, début mai le groupe de travail W3C de l’audio a décidé de ne poursuivre la standardisation que de l’API webAudio proposé par Google\footnote{\emph{“<olivier> RESOLVED: our new charter will document the focus on the web audio API as our audio processing spec”} sur \url{http://www.w3.org/2012/05/09-audio-minutes.html#item01}}. Nous envisageons donc de remplacer Audiolib par l’usage direct du webAudio API dans le futur, d’autant plus que son système de routage/mixage de multiples sources semble plus adapté à notre application.
+
+\bigskip
+Pour conclure on peut dire que nous avons opter dans un premier temps pour les bibliothèques les plus populaires et mieux documentés dans la majorité des cas. Cela étant surtout pour nous éviter de mauvaises surprises (bugs inattendus dans la librairie, fonctionnalités non adaptés...) mais également car les membres du groupes avaient déjà de l’expérience avec plusieurs de ces bibliothèques. Même si — comme expliqué précédemment — ce ne sont pas toujours les choix les mieux adaptés en termes de performance, ce sont les choix les plus simples/sains pour développer/expérimenter avec notre application.
 
 \subsection{Architecture}
 
@@ -169,9 +175,9 @@ De plus, début Mai (link: http://www.w3.org/2012/05/09-audio-minutes.html), le 
 \medskip
 
 \bibitem{audiolib}
-	Jussi Kalliokosky,
+	Official.fm Labs,
 	\emph{Audio Library Application Programming Interface}.\\
-	\url{https://github.com/jussi-kalliokoski/audiolib.js}
+	\url{http://audiolibjs.org/}
 
 \end{thebibliography}
 

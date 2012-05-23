@@ -34,7 +34,7 @@ var PlayerView = Backbone.View.extend({
 	},
 	
 	playPause: function(ev) {
-		var button = ev.target;
+		var button = $(ev.target);
 		var isPlaying = button.hasClass('playing');
 		
 		if (isPlaying) {
@@ -49,7 +49,7 @@ var PlayerView = Backbone.View.extend({
 	},
 
 	stop: function(ev) {
-		var button = ev.target;
+		var button = $(ev.target);
 		
 		playerView.publish('playerViewStop');
 		button.removeClass('playing');

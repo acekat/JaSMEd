@@ -49,7 +49,7 @@ var PlayerView = Backbone.View.extend({
 	},
 
 	stop: function(ev) {
-		var button = $(ev.target);
+		var button = $(this.el).find('.playerControls .playPause');
 		
 		playerView.publish('playerViewStop');
 		button.removeClass('playing');

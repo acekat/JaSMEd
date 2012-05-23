@@ -145,13 +145,27 @@ Pour conclure on peut dire que nous avons opter dans un premier temps pour les b
 
 \section{Manuel d'utilisation}
 
-\subsection{Édition}
+Ce manuel présente les possibilités offertes à l'utilisateur dans la version actuelle de JaSMEd.
 
-\subsection{Lecture}
+\paragraph{Authentification}~\\
+Avant de pouvoir accéder à l’éditeur, il faut s'authentifier. Les utilisateurs autorisés à se connecter sont pour l’instant codé directement dans le fichier \emph{authentification.js}. Nous n’avons pas encore implémenté la création de nouveaux utilisateurs, car ce n’est pas l’objectif premier de l’application. Cependant, le développement d’un système de session nous a permis de nous familiariser avec des modules de node.js comme Express.\\
+Une fois authentifié, on accède à l’éditeur soit en chargeant un morceau pré-enregistré, soit en partant de zéro avec un nouveau morceau.
 
-\subsection{Outils}
+\paragraph{Édition}~\\
+La partie édition représente une partition musicale à éditer, proposant de sélectionner une note en fonction de sa hauteur, sa durée, et sa position. Il est possible de naviguer verticalement le long des octaves du piano à l’aide de la barre de défilement mais aussi horizontalement sur l’axe du temps en plaçant la souris aux extrémités gauche et droite de la grille.\\
+L’ajout d’un nouveau bloc se fait à l’aide du bouton \emph{add block}.\\
+Pour ajouter un nouveau calque à un bloc il suffit de préciser le nombre de subdivision souhaité dans le champs de texte au dessus de chaque bloc puis de valider avec \emph{Entrée}. Si le calque existe déjà dans le bloc, aucun calque n’est créé, mais celui désigné par le nombre de subdivision devient alors éditable. Pour changer de calque éditable dans un bloc, il suffit de cliquer sur le bouton symbolisant le calque voulu. Un seul calque par bloc est éditable.\\
+Pour créer une note, on peut sélectionner une seul cellule d’un calque, ou faire une sélection de plusieurs cellules. Pour cela, il faut cliquer sur la cellule de début et glisser la souris jusqu’à la cellule de fin de la note avant de relâcher le clique. La sélection n’est pas visible directement, car pour l’instant seules les notes activées sont affichées.\\
+On ne peut pas encore supprimer de notes.\\
+L'utilisateur peut aussi exporter son morceau sur le serveur en spécifiant un nom sans accents ni caractère “.” dans le champ \emph{export as}.\\
+On peut agrandir ou rétrécir la largeur des blocs dans la zone d'édition à l’aide des boutons \emph{zoom in} et \emph{zoom out}.
 
-\subsection{Instrumentation}
+\paragraph{Lecture}~\\
+La lecture du morceau se fait à l’aide du bouton \emph{play}. Une fois lancé, ce dernier se transforme en bouton \emph{pause}, pour arrêter puis reprendre la lecture en cours. Un bouton \emph{stop} est aussi disponible pour réinitialiser la lecture.\\
+\emph{Remarque:} un temps de latence entre l’appuie du bouton \emph{play} et la lecture effective du morceau est à noter.
+
+\paragraph{Instrumentation}~\\
+Le panneau d’instrumentation permet de choisir le type de l'oscillateur qui jouera la piste lors de la lecture, ainsi que de modifier l'intensité du \emph{sustain} de l'enveloppe ADSR en déplaçant le curseur.
 
 
 \section{Conclusion}

@@ -5,6 +5,7 @@
  */
 var view;
 
+
 /**
  *  Associated View to players Module.
  *  @type {Backbone.View}
@@ -22,8 +23,7 @@ var PlayerView = Backbone.View.extend({
 	},
 
 	events: {
-		'click .playerControls .play' : 'play',
-		'click .playerControls .pause' : 'pause',
+		'click .playerControls .playPause' : 'playPause',
 		'click .playerControls .stop' : 'stop',
 		'change .trackSelector input' : 'selectTrack'
 	},
@@ -33,18 +33,28 @@ var PlayerView = Backbone.View.extend({
 		playerView.publish('playerViewTrack', track);
 	},
 	
-	play: function() {
-		playerView.publish('playerViewPlay');
+	playPause: function(ev) {
+		var button = ev.target;
+		var isPlaying = button.hasClass('playing');
+		
+		if (isPlaying) {
+			playerView.publish('playerViewPause');
+			button.removeClass('playing');
+			button.html('play');
+		} else {
+			playerView.publish('playerViewPlay')
+			button.addClass('playing');;
+			button.html('pause');
+		}	
 	},
 
-	pause: function() {
-		playerView.publish('playerViewPause');
-	},
-
-	stop: function() {
+	stop: function(ev) {
+		var button = ev.target;
+		
 		playerView.publish('playerViewStop');
-	}
-
+		button.removeClass('playing');
+		button.html('play');
+	},
 });
 
 
@@ -54,5 +64,12 @@ var PlayerView = Backbone.View.extend({
 playerView.initialize = function() {
 	view = new PlayerView();
 };
+
+/**
+ *  SUBSCRIBES
+ */
+playerView.subscribe('playerStop', function() {
+	view.stop();
+});
 
 })(jasmed.module('playerView'));

@@ -221,10 +221,13 @@ var Grid = Backbone.Collection.extend({
 		var pitch = selection.pitch,
 			startCell = selection.startCell,
 			endCell = selection.endCell,
+			// shift with structure
+			startBlock = startCell.block+1,
+			endBlock = endCell.block+1,
 			user = selection.user;
 		var sub = startCell.layer;
 
-		for (var blockOrder = startCell.block; blockOrder <= endCell.block; blockOrder++) {
+		for (var blockOrder = startBlock; blockOrder <= endBlock; blockOrder++) {
 			var layers = this.getBlock(blockOrder).layers;
 			
 			// create layer if it doesn't exist
@@ -236,16 +239,16 @@ var Grid = Backbone.Collection.extend({
 				});
 			};
 
-			var firstCell = (blockOrder === startCell.block) ? startCell.cell : 1;
-			var lastCell = (blockOrder === endCell.block) ? endCell.cell : sub;
+			var firstCell = (blockOrder === startBlock) ? startCell.cell : 1;
+			var lastCell = (blockOrder === endBlock) ? endCell.cell : sub;
 
 			// toggle cells in the corresponding layer and block
 			for (var cell = firstCell; cell <= lastCell; cell++) {
 				var id = blockOrder+'-'+sub+'-'+pitch+'-'+cell;
 
 				var className = 'note-'+startCell.block+'-'+sub+'-'+pitch+'-'+startCell.cell;
-				className += ((cell === startCell.cell) && (blockOrder === startCell.block)) ? " note-start" : "";
-				className += ((cell === endCell.cell) && (blockOrder === endCell.block)) ? " note-end" : "";
+				className += ((cell === startCell.cell) && (blockOrder === startBlock)) ? " note-start" : "";
+				className += ((cell === endCell.cell) && (blockOrder === endBlock)) ? " note-end" : "";
 
 				layers.getSub(sub).toggleCell(id, user, className);
 			};

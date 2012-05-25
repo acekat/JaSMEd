@@ -143,7 +143,7 @@ var LayerView = Backbone.View.extend({
 		// 0: Block, 1: Layer, 2: Pitch, 3: Cell
 		var idArray = startCellId.split("-");
 		startCell = {
-			block : parseInt(idArray[0]),
+			block : parseInt(idArray[0])-1,	// shift with structure
 			layer : parseInt(idArray[1]),
 			cell : parseInt(idArray[3])
 		};
@@ -220,7 +220,7 @@ var LayerView = Backbone.View.extend({
 		// 0: Block, 1: Layer, 2: Pitch, 3: Cell
 		var idArray = id.split("-");
 		endCell = {
-			block : parseInt(idArray[0]),
+			block : parseInt(idArray[0])-1,	// shift with structure
 			layer : parseInt(idArray[1]),
 			cell : parseInt(idArray[3])
 		};

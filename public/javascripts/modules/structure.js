@@ -21,7 +21,7 @@ var song = {
     title: "Untitled",
     tempo: 4, // in seconds per block
     tracks: [],
-    blocks: 3, // ps: 2 makes it crash (editing second block...)
+    blocks: 2,
     pitches: {},
     
     /**
@@ -266,7 +266,7 @@ struct.subscribe('structServerInit', function(song) {
 	console.log('structServerInit', song);
 	curSong = struct.createSong();
 	// curSong doit être une struct... donc il faut l'init...
-	// pourrait faire sng.__proto__ = song dans importSong...
+	// pourrait faire song.__proto__ = song dans importSong...
 	if (song)
 		importSong(curSong, song);
 	

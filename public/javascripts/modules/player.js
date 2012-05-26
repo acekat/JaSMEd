@@ -151,6 +151,9 @@ function loadBlock() {
 		loadLayer(n);
 	}
 	
+	//publish
+	player.publish('playerNextBlock', blocknum);
+	
 	return true;
 }
 

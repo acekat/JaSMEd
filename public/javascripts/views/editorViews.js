@@ -14,6 +14,9 @@ var minBlockWidth = 100;
 var nbOctave = 7;
 var pitches = ['B', 'A#', 'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C'];
 
+/*cursor business*/
+var cursorInitialPos = 40; //cursor starts at 40px
+
 
 /**
  *  GLOBAL VARIABLES
@@ -576,10 +579,31 @@ var EditorView = Backbone.View.extend({
 
 		// correct gridWinDim.top
 		gridWinDim.top = gridWin.offset().top;
+	},
+	
+	moveCursor: function(blockNum) {
+		var cursorEl = $(this.el).find('.cursor');
+		
+		//boulce qui cherche et add up tous les width précédents... (cohérence avec le zoom)
+		var range = _.first(this.collection.models, blockNum + 1);
+		var width = _.reduce(range, function(memo, block) {
+			return memo + block.get('width');
+		}, 0);
+		var offset = cursorInitialPos + width;
+		
+		//annuler la transition et la recommencer... très jumpy
+		//cursorEl.removeClass('translate');
+		//cursorEl.css({left: cursorEl.position().left});		
+		cursorEl.addClass('translate');
+		cursorEl.css({left: offset});
+	},
+	
+	resetCursor: function() {
+		var cursorEl = $(this.el).find('.cursor');
+		cursorEl.removeClass('translate');
+		cursorEl.css({left: cursorInitialPos});
 	}
-
 });
-
 
 /**
  *  SUBSCRIBES
@@ -603,6 +627,14 @@ editorViews.subscribe("editorModelsNewLayers", function(models) {
  */
 editorViews.subscribe("toolsZoom", function(arg) {
 	editorView.zoom(arg);
+});
+
+editorViews.subscribe('playerNextBlock', function(blockNum) {
+	editorView.moveCursor(blockNum);
+});
+
+editorViews.subscribe('playerViewStop', function() {
+	editorView.resetCursor();
 });
 
 

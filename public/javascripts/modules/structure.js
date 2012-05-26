@@ -252,7 +252,8 @@ function importSong(song) {
 	curSong.__proto__ = Song;
 	
 	_.each(song.data, function(val, key) {
-		curSong[key] = val;
+		if (key !== 'pitches')
+			curSong[key] = val; //hack pour la ref
 
 		if (key === 'tracks') {
 			_.each(val, function(track) {
@@ -261,10 +262,10 @@ function importSong(song) {
 				_.each(track.blocks, function(block) {
 						block.__proto__ = Block;
 				});
+				curSong.pitches = track.songPitches; //hack pour la ref
 			});
 		}
 	});
-	//note.proto is not 
 	
 	return curSong;
 }

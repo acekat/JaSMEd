@@ -1,19 +1,25 @@
+// interpolation
+vendor(prop, args)
+	-webkit-{prop} args
+	-moz-{prop} args
+	{prop} args
+
 // mixins
 note-start-border-radius(n)
-	-webkit-border-top-left-radius n
-	-webkit-border-bottom-left-radius n
-	-moz-border-top-left-radius n
-	-moz-border-bottom-left-radius n
-	border-top-left-radius n
-	border-bottom-left-radius n
+	vendor("border-top-left-radius", n)
+	vendor("border-bottom-left-radius", n)
+
 
 note-end-border-radius(n)
-	-webkit-border-top-right-radius n
-	-webkit-border-bottom-right-radius n
-	-moz-border-top-right-radius n
-	-moz-border-bottom-right-radius n
-	border-top-right-radius n
-	border-bottom-right-radius n
+	vendor("border-top-right-radius", n)
+	vendor("border-bottom-right-radius", n)
+
+arrow-up(size, color)
+	width: 0;
+	height: 0;
+	border-left: size solid transparent;
+	border-right: size solid transparent;
+	border-bottom: size solid color;
 
 // color variables
 thibaud = #44ACCF
@@ -88,7 +94,7 @@ footer
 .module
 	display: inline-block
 	vertical-align: top
-	padding: 5px
+//	padding: 5px
 
 .instrument
 	width: 15%
@@ -100,12 +106,15 @@ footer
 		display: none
 
 // editor variables
+piano-win-width = 40px
+grid-win-height = 300px
 cell-height = 12px
 pitch-style()
 	height: cell-height
 	border-bottom: 1px solid bd-color
 
 .editor
+	position: relative
 	width: 70%
 	
 	.layer-info-win
@@ -141,15 +150,11 @@ pitch-style()
 
 	.piano-win
 		float: left
-		width: 40px
-		height: 300px
+		width: piano-win-width
+		height: grid-win-height
 		background: win-color
 		border: 1px solid
 		overflow: hidden
-
-	.piano
-		width: 40px
-		height: 480px
 
 	.piano-key
 		position: relative
@@ -201,9 +206,23 @@ pitch-style()
 		border-style: outset outset inset none 
 		background: #7C7C7C
 
+	.cursor
+		position: absolute
+		left: piano-win-width
+		z-index: 10
+		.cursor-line
+			position: relative
+			height: grid-win-height
+			width: 1px
+			background: #DF013A
+		.cursor-arrow
+			position: relative
+			left: -6px
+			arrow-up(6px, #3A3A3A)
+
 	.grid-win
 		position: relative
-		height: 300px
+		height: grid-win-height
 		background: win-color
 		border: 1px solid
 		overflow-x: hidden
@@ -272,6 +291,7 @@ pitch-style()
 
 	.note-end
 		note-end-border-radius(6px)
+
 
 .login.thibaud
 	color: thibaud

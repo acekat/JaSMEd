@@ -73,7 +73,6 @@ footer p {
 .module {
   display: inline-block;
   vertical-align: top;
-  padding: 5px;
 }
 .instrument {
   width: 15%;
@@ -85,6 +84,7 @@ footer p {
   display: none;
 }
 .editor {
+  position: relative;
   width: 70%;
 }
 .editor .layer-info-win {
@@ -127,10 +127,6 @@ footer p {
   background: #acacac;
   border: 1px solid;
   overflow: hidden;
-}
-.editor .piano {
-  width: 40px;
-  height: 480px;
 }
 .editor .piano-key {
   position: relative;
@@ -209,6 +205,26 @@ footer p {
   border-style: outset outset inset none;
   background: #7c7c7c;
 }
+.editor .cursor {
+  position: absolute;
+  left: 40px;
+  z-index: 10;
+}
+.editor .cursor .cursor-line {
+  position: relative;
+  height: 300px;
+  width: 1px;
+  background: #df013a;
+}
+.editor .cursor .cursor-arrow {
+  position: relative;
+  left: -6px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #3a3a3a;
+}
 .editor .grid-win {
   position: relative;
   height: 300px;
@@ -279,18 +295,18 @@ footer p {
 }
 .editor .note-start {
   -webkit-border-top-left-radius: 6px;
-  -webkit-border-bottom-left-radius: 6px;
   -moz-border-top-left-radius: 6px;
-  -moz-border-bottom-left-radius: 6px;
   border-top-left-radius: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  -moz-border-bottom-left-radius: 6px;
   border-bottom-left-radius: 6px;
 }
 .editor .note-end {
   -webkit-border-top-right-radius: 6px;
-  -webkit-border-bottom-right-radius: 6px;
   -moz-border-top-right-radius: 6px;
-  -moz-border-bottom-right-radius: 6px;
   border-top-right-radius: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  -moz-border-bottom-right-radius: 6px;
   border-bottom-right-radius: 6px;
 }
 .login.thibaud {

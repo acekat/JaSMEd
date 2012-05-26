@@ -1,6 +1,3 @@
-//module perso...
-//ne sera disponible aux autres modules seul ce qui est définit par 'module.exports.X'
-
 var users = {
 	'thibaud' : {login: 'thibaud', password: 'pwd'},
 	'jaimito' : {login: 'jaimito', password: 'pwd'},

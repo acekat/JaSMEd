@@ -17,7 +17,7 @@ var demo; //where demo is stored (init once.. shouldn't change later)
  */
 
 /** @class */
-var song = {
+var Song = {
     title: "Untitled",
     tempo: 4, // in seconds per block
     tracks: [],
@@ -31,12 +31,12 @@ var song = {
      * @returns {track} The new track added.
      */
     addTrack: function(name, layer) {
-        var newTrack = utils.inherits(track, {
+        var newTrack = utils.inherits(Track, {
             name: name || "Track " + (this.tracks.length+1),
             songPitches: this.pitches
         });
         newTrack.addBlocks(this.blocks);
-        if(layer) {
+        if (layer) {
             newTrack.init(layer);
         }
         this.tracks.push(newTrack);
@@ -54,7 +54,7 @@ var song = {
      */
     addBlocks: function(n, pos) {
         var i, nTracks = this.tracks.length;
-        for(i = 0 ; i < nTracks ; i++) {
+        for (i = 0 ; i < nTracks ; i++) {
             this.tracks[i].addBlocks(n, pos);
         }
         return (this.blocks += n || 1);
@@ -62,7 +62,7 @@ var song = {
 };
 
 /** @class */
-var track = {
+var Track = {
     name: "New Track",
     instrument: "Piano",
     blocks: [],
@@ -85,26 +85,27 @@ var track = {
         
         var startBlk = this.blocks[start.block];
         
-        if(!end) {
+        if (!end)
             return startBlk.addNote(pitch, start.layer, start.start);
-        }
+
         var layer = start.layer,
             noteStart = start.start,
             noteEnd = end.end,
             pgcd;
-        if(start.layer != end.layer) {
+        
+				if (start.layer != end.layer) {
             layer = utils.ppcm(start.layer, end.layer);
             noteStart = start.start*layer/start.layer;
             noteEnd = end.end*layer/end.layer;
         }
         
-        if((pgcd = utils.pgcd(layer, utils.pgcd(noteEnd, noteStart))) != 1) {
+        if ((pgcd = utils.pgcd(layer, utils.pgcd(noteEnd, noteStart))) != 1) {
             layer /= pgcd;
             noteStart /= pgcd;
             noteEnd /= pgcd;
         }
         
-        if(start.block == end.block) {
+        if (start.block == end.block) {
             return startBlk.addNote(pitch, -layer, noteStart, noteEnd);
         } else {
             var tmpRes = this.blocks[end.block].addNote(pitch, layer, 0, noteEnd, 0);
@@ -122,10 +123,10 @@ var track = {
      */
     addBlocks: function(n, pos) {
         var i, nb = n||1, add = [];
-        for(i = 0 ; i < nb ; i++) {
-            add.push(utils.inherits(block));
+        for (i = 0 ; i < nb ; i++) {
+            add.push(utils.inherits(Block));
         }
-        if(pos) {
+        if (pos) {
             add = add.concat(this.blocks.slice(pos));
             this.blocks = this.blocks.slice(0,pos);
         }
@@ -139,14 +140,14 @@ var track = {
      */
     init: function(layer) {
         var i, n = this.blocks.length;
-        for(i = 0 ; i < n ; i++) {
+        for (i = 0 ; i < n ; i++) {
             this.blocks[i].initLayer(layer);
         }
     }
 };
 
 /** @class */
-var block = {
+var Block = {
     lnFw: false,
     lnBw: false,
     layers: {},
@@ -163,7 +164,7 @@ var block = {
      */
     addNote: function(pitch, layer, start, end, duration) {
         var pgcd, i, ghost = duration !== undefined && duration <= 0;
-        if(!end) {
+        if (!end) {
             end = start+1;
         } else if(layer < 0) {
             layer = -layer;
@@ -183,16 +184,16 @@ var block = {
             start: start
         };
         
-        if(!(layer in this.layers)) {
+        if (!(layer in this.layers)) {
             this.initLayer(layer);
         }
         
-        this.layers[layer][start].push(utils.inherits(note, {
+        this.layers[layer][start].push(utils.inherits(Note, {
             pitch: pitch,
             duration: ghost ? -duration : duration
         }));
-        for(i = start+1, duration-- ; i < end ; i++, duration--) {
-            this.layers[layer][i].push(utils.inherits(note, {
+        for (i = start+1, duration-- ; i < end ; i++, duration--) {
+            this.layers[layer][i].push(utils.inherits(Note, {
                 pitch: pitch,
                 duration: -duration
             }));
@@ -205,18 +206,18 @@ var block = {
      * @param {number} layer
      */
     initLayer: function(layer) {
-        if(!this.hasOwnProperty('layers')) {
+        if (!this.hasOwnProperty('layers')) {
             this.layers = {};
         }
         this.layers[layer] = [];
-        for(var i = 0 ; i < layer ; i++) {
+        for (var i = 0 ; i < layer ; i++) {
             this.layers[layer][i] = [];
         }
     }
 };
 
 /** @class */
-var note = {
+var Note = {
     pitch: 0,
     duration: 1
 };
@@ -226,7 +227,7 @@ var note = {
  */
 
 struct.createSong = function(props) {
-    return utils.inherits(song, _.extend(props||{}, {tracks: [], pitches: {}}));
+    return utils.inherits(Song, _.extend(props||{}, {tracks: [], pitches: {}}));
 };
 
 struct.initialize = function(seqName) {
@@ -247,28 +248,31 @@ struct.subscribe("toolsExport", function(name) {
 
 
 function importSong(song) {
+	var curSong = {};
+	curSong.__proto__ = Song;
+	
 	_.each(song.data, function(val, key) {
 		curSong[key] = val;
 
 		if (key === 'tracks') {
 			_.each(val, function(trck) {
-				trck.__proto__ = track;
+				trck.__proto__ = Track;
 				
 				_.each(trck.blocks, function(blck) {
-						blck.__proto__ = block;
+						blck.__proto__ = Block;
 				});
 			});
 		}
 	});
+	//note.proto is not 
+	
+	return curSong;
 }
 
 struct.subscribe('structServerInit', function(song) {
-	console.log('structServerInit', song);
-	curSong = struct.createSong();
-	// curSong doit être une struct... donc il faut l'init...
-	// pourrait faire song.__proto__ = song dans importSong...
-	if (song)
-		importSong(curSong, song);
+	//console.log('structServerInit', song);
+	
+	curSong = (song) ? importSong(song) : struct.createSong();
 	
 	curTrack = curSong.tracks[0] || curSong.addTrack();
 

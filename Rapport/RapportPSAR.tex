@@ -39,6 +39,15 @@ La question des protocoles audio à utiliser sera aussi abordée.
 
 \section{Introduction}
 
+Nous avons proposé JaSMEd car il s'inscrit à la fois dans le domaine des applications réparties, et reflète nos orientations musicales dans la pratique de l'informatique. C'est dans un cadre internet en constante transformation que l'on a développé JaSMEd, une application client/serveur qui tire partie des nouvelles API d’HTML5.
+
+\medskip
+JaSMEd est un éditeur musical multi-utilisateur temps réel implémenté à partir des nouveaux standards du web qui tire sa spécificité de part son approche de composition polyrythmique\footnote{Superposition de plusieurs parties ayant chacune un rythme différent et dont les accents d'appui ne coïncident pas entre eux (Larousse de la Musique, Paris, t. 2, 1982, p. 1247).}. Actuellement il n'existe pas d'outils pour créer une polyrythmie musicale de manière collaborative. En général il n'y a pas de moyens simples permettant d'écrire ce genre de rythmes complexes, et encore moins sur internet où la majeure partie des applications musicales ne sont pas de véritables outils de composition. C'est en faisant ce constat que nous est apparue l'idée de développer JaSMEd. De part son approche de l'édition web collaborative, notre travail s'inscrit parfaitement dans le cadre du master Systèmes et Applications Répartis.\\
+Il faut préciser que notre application n’est encore qu’à sa première version, elle est fonctionnelle mais ne représente pas encore complètement l'ampleur du projet.
+
+\medskip
+Dans ce rapport nous nous efforcerons de donner au lecteur des informations et raccourcis qui sont le fruit de nos recherches et de nos propres expériences sur le sujet du web et de l’audio. Nous détaillerons dans un premier temps la conception de JaSMEd et ses idées directrices qui ont sous-tendu son développement. Puis nous aborderons l’implémentation de l’application avec les technologies utilisées et les solutions apportées pour aboutir au rendu souhaité.
+
 \section{État de l'art}
 
 
@@ -122,7 +131,7 @@ JaSMEd n’est fonctionnel que sur les navigateurs les plus récents et donc l�
 Underscore est une bibliothèque qui fournit des outils pour la programmation fonctionnelle (\texttt{map}, \texttt{reduce}, \texttt{filter}, etc...) ainsi que des extensions à JS pour manipuler les structures de données plus simplement (\texttt{Collection.size}, \texttt{max/min}, \texttt{Array.contains}). Elle est très utilisé car elle n’étend pas les objets natifs du JS (ce qui évite des problèmes de compatibilité) et utilise les méthodes "natives" si jamais celles-ci sont disponibles (map, filter etc... font partie de la spécification de l’ECMAScript 5\footnote{Standard ECMA-262, juin 2011: \url{http://ecma-international.org/ecma-262/5.1/}}). Elle est très utile pour améliorer la qualité et la lisibilité du code.
 
 \paragraph{Backbone}\url{http://backbonejs.org/}\\
-Backbone permet de structurer les applications web. Elle fournit des \texttt{Model}, des \texttt{Collection} ainsi que des \texttt{View} pour aboutir à une organisation MV*, différente du MVC dans son absence de Contrôleur à part entière. Les \texttt{Model} structurent les données (de la même manière qu’en MVC), les \texttt{Collection} sont de simples listes de \texttt{Model}, et ce sont les \texttt{View} qui, en plus de leur rôle habituel en MVC, intègre un contrôle de l’intéraction avec les données.\\
+Backbone permet de structurer les applications web. Elle fournit des \texttt{Model}, des \texttt{Collection} ainsi que des \texttt{View} pour aboutir à une organisation MV*, différente du MVC dans son absence de Contrôleur à part entière. Les \texttt{Model} structurent les données (de la même manière qu’en MVC), les \texttt{Collection} sont de simples listes de \texttt{Model}, et ce sont les \texttt{View} qui, en plus de leur rôle habituel en MVC, intègre un contrôle de l’interaction avec les données.\\
 Il y a une multitude de bibliothèques JS visant à aider à une structure MVC. Nous avons quelques temps analysés les différentes options telles que ember.js, spine.js, knockout.js, etc... mais nous avons choisi Backbone.js du fait de sa popularité, sa légèreté et sa documentation. Backbone est assez simple, et nous a permis de structurer notre code client d’une façon claire. De plus Backbone dépend d’Underscore et jQuery (ou Zepto ou Ender aux choix), deux bibliothèques que nous utilisons déjà.
 
 \paragraph{Audiolib}\url{http://audiolibjs.org/}\\

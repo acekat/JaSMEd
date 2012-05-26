@@ -3,13 +3,13 @@
 (function(player) {
 
 /**
-*  DEPENDENCIES
-*/
+ *  DEPENDENCIES
+ */
 var utils = jasmed.module('utils');
 
 /**
-*  PARAMS
-*/
+ *  PARAMS
+ */
 var channelCount = 2, // :) no more krakz yeah!
 	bufferSize = 4096, // why ???
 	sampleRate = 44100,
@@ -43,8 +43,8 @@ var channelCount = 2, // :) no more krakz yeah!
 	sustain = 0.5;
 
 /**
-*  FUNCTIONS
-*/
+ *  FUNCTIONS
+ */
 function audioCallback(buffer, channelCount) {
 	if (paused)
 		return;
@@ -178,8 +178,8 @@ function init(song) {
 };
 
 /**
-*  CONTROLS
-*/
+ *  CONTROLS
+ */
 function play() {
 	paused = false;
 };
@@ -205,8 +205,8 @@ function playerStop() {
 };
 
 /**
-*  SUBSCRIBES
-*/
+ *  SUBSCRIBES
+ */
 player.subscribe('playerViewPlay', function() {
 	if (stopped)
 		init(jasmed.module('struct').selectedSong);

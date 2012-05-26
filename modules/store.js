@@ -1,6 +1,16 @@
 var fs = require('fs');
 var _ = require('underscore');
 
+function checkStoreExistence(next) {
+	fs.stat('./store', function(err, stats) {
+		if (err || !stats.isDirectory()) {
+			fs.mkdir('store', function() {
+				next();
+			});
+		} else next();
+	});
+}
+
 function importSequencer(fileName, callback) {
 	var pathName = 'store/' + fileName;
 	
@@ -47,7 +57,19 @@ function list(callback) {
 }
 
 module.exports = {
-	list: list,
-	exportSeq: exportSequencer,
-	importSeq: importSequencer
+	list: function(callback) {
+		checkStoreExistence(function() {
+			list(callback);
+		});
+	},
+	exportSeq: function(fileName, data, callback) {
+		checkStoreExistence(function() {
+			exportSequencer(fileName, data, callback);
+		});
+	},
+	importSeq: function(fileName, callback) {
+		checkStoreExistence(function() {
+			importSequencer(fileName, callback);
+		});
+	}
 }

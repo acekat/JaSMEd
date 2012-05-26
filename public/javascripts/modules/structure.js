@@ -255,11 +255,11 @@ function importSong(song) {
 		curSong[key] = val;
 
 		if (key === 'tracks') {
-			_.each(val, function(trck) {
-				trck.__proto__ = Track;
+			_.each(val, function(track) {
+				track.__proto__ = Track;
 				
-				_.each(trck.blocks, function(blck) {
-						blck.__proto__ = Block;
+				_.each(track.blocks, function(block) {
+						block.__proto__ = Block;
 				});
 			});
 		}

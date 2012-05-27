@@ -1,8 +1,9 @@
 \documentclass[12pt,a4paper]{article}
 
-\usepackage[french]{babel}
-\usepackage[utf8]{inputenc}
+\usepackage[latin1]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[french]{babel}
 
 \usepackage[final]{pdfpages}
 \usepackage{fullpage}
@@ -11,23 +12,87 @@
 \usepackage{url}
 \usepackage{graphicx}
 
+% BEGIN Javascipt
+\usepackage{listings}
+\usepackage{color}
+% Solarized
+\definecolor{base03}{RGB}{0,43,54}		% brblack
+\definecolor{base02}{RGB}{7,54,66}		% black
+\definecolor{base01}{RGB}{88,110,117}	% brgreen
+\definecolor{base00}{RGB}{101,123,131}	% bryellow
+\definecolor{base0}{RGB}{131,148,150}	% brblue
+\definecolor{base1}{RGB}{147,161,161}	% brcyan
+\definecolor{base2}{RGB}{238,232,213}	% white
+\definecolor{base3}{RGB}{253,246,227}	% brwhite
+\definecolor{yellow}{RGB}{181,137,0}	% yellow
+\definecolor{orange}{RGB}{203,75,22}	% brred
+\definecolor{red}{RGB}{220,50,47}		% red
+\definecolor{magenta}{RGB}{211,54,130}	% magenta
+\definecolor{violet}{RGB}{108,113,196}	% brmagenta
+\definecolor{blue}{RGB}{38,139,210}		% blue
+\definecolor{cyan}{RGB}{42,161,152}		% cyan
+\definecolor{green}{RGB}{133,153,0}		% green
+
+\lstdefinelanguage{JavaScript}{
+	keywords=[1]{typeof, return, export, implements, import, try, catch, throw, if, else, for, in, while, do, switch, case, break},
+	keywords=[2]{function, class, new, var, boolean, this},
+	keywords=[3]{null, true, false, undefined},
+	sensitive=false,
+	comment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	morestring=[b]',
+	morestring=[b]"
+}
+
+\lstdefinestyle{SolarizedLight}{
+	language=Javascript,
+	basicstyle=\footnotesize\ttfamily,
+	keywordstyle=[1]\color{yellow}\bfseries,
+	keywordstyle=[2]\color{blue}\bfseries,
+	keywordstyle=[3]\color{orange}\bfseries,
+	commentstyle=\color{base0}\itshape,
+	stringstyle=\color{cyan},
+	backgroundcolor=\color{base2}
+}
+
+\lstset{
+	language=Javascript,				% language of the code
+	style=SolarizedLight,				% style of the code
+	% numbers=left,						% where to put the line-numbers
+	% numberstyle=\tiny\color{gray},	% the style that is used for the line-numbers
+	% stepnumber=2,						% the step between two line-numbers. If it's 1, each line will be numbered
+	% numbersep=5pt,					% how far the line-numbers are from the code
+	showspaces=false,					% show spaces adding particular underscores
+	showstringspaces=false,				% underline spaces within strings
+	showtabs=false,						% show tabs within strings adding particular underscores
+	tabsize=2,							% sets default tabsize to 2 spaces
+	captionpos=b,						% sets the caption-position to bottom
+	breaklines=true,					% sets automatic line breaking
+	breakatwhitespace=false,			% sets if automatic breaks should only happen at whitespace
+	escapeinside={\%*}{*)},				% if you want to add a comment within your code
+	morekeywords={*,...}				% if you want to add more keywords to the set
+	extendedchars=false
+}
+% END Javascipt
+
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 \newcommand{\jasmed}{\texttt{JaSMEd}}
 
 \begin{document}
 
-\input{./couverture.tex}
+\medskip
 
+\input{./couverture.tex}
 
 \begin{center}
 {\huge \bfseries Sujet}\\[1.5cm]
 \end{center}
-{\Large \bfseries Editeur musical collaboratif en JavaScript}
+{\Large \bfseries Éditeur musical collaboratif en JavaScript}
 
 \bigskip
-La nouvelle interface WebSocket permet dâ€™utiliser les navigateurs pour implÃ©menter facilement en JavaScript des applications collaboratives et interactives. AjoutÃ©e Ã  la nouvelle interface WebAudio, on peut en particulier concevoir un Ã©diteur de pistes musicales affichÃ© par un navigateur Web standard, sur lequel opÃ¨re Ã  la fois lâ€™utilisateur du navigateur et ses correspondants.\\
-Le but du projet est de dÃ©velopper un tel Ã©diteur, en traitant en particulier les problÃ¨mes dâ€™accÃ¨s concurrents Ã  une mÃªme partie des pistes musicales Ã©ditÃ©es collaborativement. Se pose aussi la question de lâ€™archivage sur le serveur des diffÃ©rents Ã©tats de la partition, et la maniÃ¨re dâ€™y accÃ©der.\\
-La question des protocoles audio Ã  utiliser sera aussi abordÃ©e.
+La nouvelle interface WebSocket permet d'utiliser les navigateurs pour implémenter facilement en JavaScript des applications collaboratives et interactives. Ajoutée à la nouvelle interface WebAudio, on peut en particulier concevoir un éditeur de pistes musicales affiché par un navigateur Web standard, sur lequel opère à la fois l'utilisateur du navigateur et ses correspondants.\\
+Le but du projet est de développer un tel éditeur, en traitant en particulier les problèmes d'accès concurrents à une même partie des pistes musicales éditées collaborativement. Se pose aussi la question de l'archivage sur le serveur des différents états de la partition, et la manière d'y accéder.\\
+La question des protocoles audio à utiliser sera aussi abordée.
 
 \vfill
 
@@ -37,144 +102,250 @@ La question des protocoles audio Ã  utiliser sera aussi abordÃ©e.
 
 \pagebreak
 
+
 \section{Introduction}
 
-Nous avons proposÃ© JaSMEd car il s'inscrit Ã  la fois dans le domaine des applications rÃ©parties, et reflÃ¨te nos orientations musicales dans la pratique de l'informatique. C'est dans un cadre internet en constante transformation que l'on a dÃ©veloppÃ© JaSMEd, une application client/serveur qui tire partie des nouvelles API dâ€™HTML5.
+Nous avons proposé ce projet car il s'inscrit à la fois dans le domaine des applications réparties, et reflète nos orientations musicales dans la pratique de l'informatique. C'est dans un cadre internet en constante transformation que l'on a développé JaSMEd, une application client/serveur qui tire partie des nouvelles API d'HTML5.
 
 \medskip
-JaSMEd est un Ã©diteur musical multi-utilisateur temps rÃ©el implÃ©mentÃ© Ã  partir des nouveaux standards du web qui tire sa spÃ©cificitÃ© de part son approche de composition polyrythmique\footnote{Superposition de plusieurs parties ayant chacune un rythme diffÃ©rent et dont les accents d'appui ne coÃ¯ncident pas entre eux (Larousse de la Musique, Paris, t. 2, 1982, p. 1247).}. Actuellement il n'existe pas d'outils pour crÃ©er une polyrythmie musicale de maniÃ¨re collaborative. En gÃ©nÃ©ral il n'y a pas de moyens simples permettant d'Ã©crire ce genre de rythmes complexes, et encore moins sur internet oÃ¹ la majeure partie des applications musicales ne sont pas de vÃ©ritables outils de composition. C'est en faisant ce constat que nous est apparue l'idÃ©e de dÃ©velopper JaSMEd. De part son approche de l'Ã©dition web collaborative, notre travail s'inscrit parfaitement dans le cadre du master SystÃ¨mes et Applications RÃ©partis.\\
-Il faut prÃ©ciser que notre application nâ€™est encore quâ€™Ã  sa premiÃ¨re version, elle est fonctionnelle mais ne reprÃ©sente pas encore complÃ¨tement l'ampleur du projet.
+JaSMEd est un éditeur musical multi-utilisateur temps réel implémenté à partir des nouveaux standards du web qui tire sa spécificité de par son approche de composition polyrythmique\footnote{Superposition de plusieurs parties ayant chacune un rythme différent et dont les accents d'appui ne coïncident pas entre eux (Larousse de la Musique, Paris, t. 2, 1982, p. 1247).} et son ouverture harmonique. Actuellement il n'existe pas d'outils pour créer des musiques complexes de manière collaborative. En général il n'y a pas de moyens simples permettant d'écrire ce genre de rythmes complexes, et encore moins sur internet où la majeure partie des applications musicales ne sont pas de véritables outils de composition. C'est en faisant ce constat que nous est apparue l'idée de développer JaSMEd. De plus, par son approche de l'édition web collaborative notre travail s'inscrit parfaitement dans le cadre du master Systèmes et Applications Répartis.\\
 
 \medskip
-Dans ce rapport nous nous efforcerons de donner au lecteur des informations et raccourcis qui sont le fruit de nos recherches et de nos propres expÃ©riences sur le sujet du web et de lâ€™audio. Nous dÃ©taillerons dans un premier temps la conception de JaSMEd et ses idÃ©es directrices qui ont sous-tendu son dÃ©veloppement. Puis nous aborderons lâ€™implÃ©mentation de lâ€™application avec les technologies utilisÃ©es et les solutions apportÃ©es pour aboutir au rendu souhaitÃ©.
+Il faut préciser que notre application n'est encore qu'à sa première version, elle est fonctionnelle mais ne représente pas encore complètement l'ampleur du projet.\\
+Tout au long de ce rapport nous nous efforcerons de donner au lecteur des informations et raccourcis qui sont le fruit de nos recherches et de nos propres expériences sur le sujet du web et de l'audio.
 
-\section{Ã‰tat de l'art}
+\medskip
+Dans le chapitre conception nous détaillerons qu'elles sont idées directrices qui ont sous-tendu le développement de Jasmed, alors que dans la partie implémentation nous verrons comment nous avons surmonté ces problèmes, et présenterons par la même occasion les technologies employées.
+
+
+\section{État de l'art}
+
+Le HTML est le langage principal du World Wide Web, le W3C\footnote{World Wide Web Consortium} est actuellement en train de travailler la 5\up{ème} révision majeure de celui-ci (HTML5). Il est important de noter que cette version est toujours à l'état d'ébauche\footnote{\url{http://www.w3.org/TR/html5/index.html}} et ne cesse d'évoluer.\\
+HTML5 fournit une flopée de nouvelles API, notamment la balise <audio> qui permet de fournir un lecteur audio simple, et enfin de se passer des vieux lecteurs et codecs lourds et privés (Windows media player, realPlayer, quicktime). Malheureusement ce n'est pas suffisant pour un traitement de l'audio plus poussé, c'est ainsi que des librairies audio ont fait leur apparition.
+
+\medskip
+Les navigateurs Firefox et Google Chrome ont ainsi développé leur propre API audio, permettant de véritablement traiter le signal numérique sur nos navigateurs : WebAudio pour Google Chrome et Audio Data Api pour Firefox.\\
+Ces API ont été crées dans le but d'offrir au web game developer un vrai environnement sonore pour la conception de jeu sur le web, dans la synergie avec la sortie du WebGL.\\
+WebAudio est un peu plus poussée que Firefox, de même elle bénéficie d'un plus grand engouement dans la communauté web. D'après les listes de diffusion du working draft du W3C, l'API de Google serait même candidate à une standardisation imminente.
+
+\medskip
+Il existe déjà beaucoup de librairies javascript qui abstraient ces API et permettent de construire des applications audio sur le web plus facilement\footnote{\url{https://wiki.mozilla.org/Audio_Data_API#JavaScript_Audio_Libraries}}. Certaines, comme audiolib.js ou audionode.js, permettent d'abstraire les différences entre les 2 API concurrentes et ainsi grandement faciliter la portabilité entre navigateurs.\\
+Une quantité de nouvelles applications web musicales sont apparues sur la toile avec l'arrivée d'HTML5. La majeure partie de ces applications ont un aspect ludique (ou se bornent à être de simples gadgets), et ne sont pas vraiment utiles à des compositeurs/musiciens. On en a recensé un échantillon :
+\begin{itemize} 
+	\item jeux sonores
+	\item séquenceurs musicaux\\
+\url{http://chromium.googlecode.com/svn/trunk/samples/audio/shiny-drum-machine.html}
+\url{http://www.technitone.com/#}
+	\item visualisateur spectral temps réel (WebGL + WebAudio)\\
+\url{http://chromium.googlecode.com/svn/trunk/samples/audio/visualizer-gl.html}
+\end{itemize}
+
+\medskip
+Si on regarde les logiciels d'édition musicale les plus utilisés, ils se prêtent plus facilement à composer des tempos binaires que ne permettent pas de créer facilement des musiques polyrythmiques ou non tempérées. Les plus connus d'entre eux : Ableton Live, Garage Band, Finale, Sibelius, Logic. Pour créer des rythmes atypiques avec ces logiciels il faut hacker (bidouiller) leurs fonctionnalités, et c'est loin d'être pratique, voire parfois impossible.\\
+Il existe cependant quelques logiciels qui échappent à la règle, et fournissent des outils au compositeur désireux d'écrire et jouer des tempos polyrythmiques : \url{http://harmonyseq.wordpress.com}
+
+\medskip
+Notre projet s'inscrit donc au coeur des avancées actuelles du web dans le domaine musical, et il propose une vision d'édition polyrythmique et harmoniquement ouverte qui est peu répandue dans les logiciels audio.
 
 
 \section{Conception}
 
-Avant de nous lancer dans lâ€™implÃ©mentation de lâ€™application nous avons longuement rÃ©flÃ©chis Ã  une conception efficace du problÃ¨me car nous le savions complexe. Nous voulions une application dont la prise en main soit facile, qui soit performante et innovante, et enfin qui puisse Ãªtre facilement amÃ©liorÃ©e par la suite.\\
-Nous dÃ©crivons ici les trois grands axes de rÃ©flexion qui nous ont permis de dÃ©marrer lâ€™application sur de bonnes bases.
+Avant de nous lancer dans l'implémentation de l'application nous avons longuement réfléchis à une conception efficace du problème, car nous le savions complexe. Nous voulions une application dont la prise en main soit facile, qui soit performante et innovante, et enfin qui puisse être facilement améliorée par la suite.\\
+Nous décrivons ici les trois grands axes de réflexion qui nous ont permis de démarrer l'application sur de bonnes bases.
 
-\subsection{Structures}
+\subsection{Édition}
 
-\subsubsection{Musicale}
-
-\subsubsection{Visuelle}
-
-Pour ce qui concerne le rendu graphique de lâ€™application, il est intÃ©ressant de sÃ©parer la vue des donnÃ©es, Ã  la maniÃ¨re dâ€™une architecture MVC. Une fois la vue correctement liÃ©e au changement des modÃ¨les, on ne sâ€™occupe plus que de la modification des donnÃ©es et la vue suit automatiquement. De plus ceci a un avantage dans la rÃ©utilisation du code des modÃ¨les cÃ´tÃ© serveur comme nous le verront dans la section archivage.\\
-La structure des donnÃ©es de lâ€™affichage est en quelque sorte conditionnÃ©e par les possibilitÃ©s du couple HTML5/CSS3. Cependant celui-ci a beaucoup Ã©voluÃ© dans ses derniÃ¨res versions respectives, et nous permet dâ€™obtenir le rendu que nous souhaitions. Lâ€™Ã©diteur est alors composÃ© de plusieurs blocs, chacun contenant une pile de calques avec un unique calque Ã©ditable par bloc. Les blocs peuvent Ãªtre ajoutÃ©s ou supprimÃ©s, afin de faire varier la taille de la grille dâ€™Ã©dition. Un calque est un tableau oÃ¹ chaque ligne reprÃ©sente une hauteur et une case une division dans le temps. Les calques sont caractÃ©risÃ©s par leur nombre de subdivision, on peut en crÃ©er de nouveau ou Ã©changer leur ordre dans la pile, le calque du dessus est celui Ã©ditable. Câ€™est Ã  travers les calques Ã©ditables de chaque bloc que lâ€™on peut faire des sÃ©lections de subdivisions afin dâ€™activer ou dÃ©sactiver des notes.
+Un des points les plus important que nous avons voulu apporter à JaSMEd est l'ouverture musicale, se voulant contrastante avec la plupart des outils d'édition musicale actuels. En ce sens, il doit être possible d'écrire tout type de musique, tant d'un point de vue harmonique que rythmique.\\
+Parallèlement, l'idée était de se détacher des notations solfégiques usuelles pour s'orienter vers une écriture musicale plus ludique et intuitive, accessible à tous, sans posséder les connaissances analytiques occidentales qui font notamment le carcan des logiciels de gravure musicale.
 
 \bigskip
-Lâ€™usage de cette reprÃ©sentation novatrice sous forme de calques incarnant chacun une division du bloc en temps Ã©gaux permet dâ€™apprÃ©hender le rythme, et surtout la polyrythmie, sous un aspect simpliste voire ludique, exempt de toute rÃ©fÃ©rence solfÃ©gique culturelle. De cette maniÃ¨re, il est ainsi possible de reprÃ©senter tout type de musique rythmique, quelque soit sa structure. Nous nous somme volontairement Ã©loignÃ© des usages occidentaux (mesures, signature rythmique) pour offrir un maximum de libertÃ©.\\
-Afin de permettre des Ã©carts vers des divisions inÃ©gales, principalement Ã  des fins dâ€™interprÃ©tation musicale, la crÃ©ation dâ€™un outil appropriÃ©e est envisagÃ©e.
+Pour plus de facilitées, nous avons tout d'abord pensé à utiliser des outils préexistants.\\
+Le MIDI est le plus ancien, déjà éprouvé, il sert à la fois de protocole d'échange et de format de stockage. Mais nous nous sommes rapidement aperçus qu'un format de stockage séquentiel ne convenait pas à un éditeur musical, permettant lui d'intervenir à tout endroit d'un morceau. De plus, rythmiquement et harmoniquement, le protocole MIDI restreint la musique à des choses relativement simples. Explorer des rythmes complexes ou des gammes non tempérées rend l'utilisation du MIDI ardue et difficilement exploitable.\\
+Une autre option aurait été d'utiliser le protocole OSC, ayant récemment émergé dans ce domaine. Or, ce protocole n'est pas en fait directement appliqué à la musique, et il ne vient pas avec un format de stockage associé.\\
+Dans un soucis de compatibilité, nous avons tout de même gardé l'encodage de la hauteur du protocole MIDI, à savoir 69 pour le La 440, et un incrément équivaut à un demi-ton. L'évolution est de pouvoir utiliser des hauteurs décimales, voire négatives, ce que le MIDI ne permet pas.\\
+De plus, il est prévu d'ajouter une fonction qui exportera les morceaux édités avec Jasmed en MIDI, bien que les conventions d'utilisation de ce format diffèrent d'un logiciel à l'autre, remettant en cause son interopérabilité.\\
+Nous avons donc décidé d'implémenter une structure propriétaire en JS, laissant ainsi le champ libre à toute création. Le transfert et le stockage de cette structure à travers le réseau en est de plus simplifié.
+
+\medskip
+Nous interagissons avec la structure musicale au moyen d'une zone d'édition, que l'on appelle l'éditeur. Celui-ci est composé de plusieurs pistes, qui représentent chacune un instrument dans le morceau. Chaque piste est elle même composée de plusieurs blocs. Nous nous sommes émancipé de la signature rythmique et avons imaginé une division en blocs : un bloc s'apparente à une mesure avec une signature et une vitesse d'exécution adapté. Tous les blocs ont une durée identique. Les blocs peuvent être ajoutés ou supprimés, afin de faire varier la taille de la grille d'édition et par la même occasion la durée du morceau.\\
+Chaque bloc contient une pile de calques. L'usage de cette représentation novatrice sous forme de calques incarnant chacun une division du bloc en temps égaux permet d'appréhender le rythme, et surtout la polyrythmie, sous un aspect simpliste voire ludique, exempt de toute référence solfégique culturelle.\\
+Les calques sont caractérisés par leur nombre de subdivision égales, on peut en créer de nouveau ou échanger leur ordre dans la pile, sachant que seul le calque du dessus est éditable. 
+
+\bigskip
+De cette manière, il est ainsi possible de représenter tout type de musique rythmique, quelque soit sa structure. Nous nous sommes volontairement éloignés des usages occidentaux (mesures, signature rythmique) pour offrir un maximum de liberté.
+Afin de permettre des écarts vers des divisions inégales, principalement à des fins d'interprétation musicale, la création d'un outil approprié est envisagée.
 
 \subsection{Collaboration}
 
-Un point innovant du projet et qui justifie lâ€™utilisation de technologies rÃ©centes, est la collaboration temps rÃ©el entre plusieurs client. Le choix de dÃ©velopper lâ€™application dans un navigateur web peut paraÃ®tre restrictif Ã  premiÃ¨re vue, mais il apporte une plus grande facilitÃ© de dÃ©veloppement pour son aspect collaboratif.\\
-En effet, le nouveau protocole WebSocket\footnote{RFC6455, dÃ©cembre 2011: \url{http://tools.ietf.org/html/rfc6455}} permet de faire communiquer le navigateur web du client et le serveur web de maniÃ¨re bi-directionnelle et full-duplex, ce qui est alors indispensable pour rÃ©percuter les changements dâ€™un client Ã  lâ€™autre dans un lapse de temps raisonnable. Ainsi toute modification locale apportÃ©e Ã  lâ€™Ã©diteur par un client est envoyÃ©e au serveur, qui Ã  son tour broadcast lâ€™information aux autres clients.\\
-Seulement cette synchronisation introduit diffÃ©rents problÃ¨mes dont voici une analyse.
+Un point innovant du projet et qui justifie l'utilisation de technologies récentes, est la collaboration temps réel entre plusieurs clients. Le choix de développer l'application dans un navigateur web peut paraître restrictif à première vue, mais il apporte une plus grande facilité de développement pour son aspect collaboratif.\\
+En effet, le nouveau protocole WebSocket\footnote{RFC6455, décembre 2011: \url{http://tools.ietf.org/html/rfc6455}} permet de faire communiquer le navigateur web du client et le serveur web de manière bi-directionelle et full-duplex, ce qui est alors indispensable pour répercuter les changements d'un client à l'autre dans un laps de temps raisonnable. Ainsi toute modification locale apportée à l'éditeur par un client est envoyée au serveur, qui à son tour diffuse l'information aux autres clients.\\
+Seulement cette synchronisation introduit différents problèmes dont voici une analyse.
 
-\subsubsection{Concurrence}
+\subsubsection{Cohérence musicale}
 
 \subsubsection{Archivage}
 
-Permettre Ã  un client de se joindre Ã  lâ€™Ã©laboration dâ€™un morceau en cours de route, implique quâ€™une version synchronisÃ© du morceau peut Ãªtre rÃ©cupÃ©rÃ©e Ã  tout moment sur le serveur. Il faut donc garder une copie des donnÃ©es sur le serveur et les mettre Ã  jour au mÃªme moment oÃ¹ le serveur reÃ§ois des modifications de la part dâ€™un client.\\
-Pour cela nous pouvons utiliser sur le serveur les deux structures de donnÃ©es (musicale et visuelle) prÃ©sentes cÃ´tÃ© client. Elles seront alors maintenues synchronisÃ©es de la mÃªme maniÃ¨re que celles des clients, Ã  lâ€™aide des messages Ã©changÃ©s entre ces derniers. Puis Ã  la connexion dâ€™un nouveau client, ou bien lorsquâ€™un client souhaitera recharger son application, le serveur pourra exporter le contenu des deux structures, afin que le client puisse initialiser ses structures locales dans le mÃªme Ã©tat que celles du serveur. Il faut alors ajouter des fonctions dâ€™importation et dâ€™exportation du contenu des deux structures. Le fait dâ€™utiliser le mÃªme langage cÃ´tÃ© serveur et cÃ´tÃ© client, est ici un avantage, car il permet la rÃ©utilisation du code.
-
-\subsection{ModularitÃ©}
+Permettre à un client de se joindre à l'élaboration d'un morceau en cours de route, implique qu'une version synchronisé du morceau peut être récupérée à tout moment sur le serveur. Il faut donc garder une copie des données sur le serveur et les mettre à jour au même moment où le serveur reçois des modifications de la part d'un client.\\
+Pour cela nous pouvons utiliser sur le serveur les deux structures de données (musicale et visuelle) présentes côté client. Elles seront alors maintenues synchronisées de la même manière que celles des clients, à l'aide des messages échangés entre ces derniers. Puis à la connexion d'un nouveau client, ou bien lorsqu'un client souhaitera recharger son application, le serveur pourra exporter le contenu des deux structures, afin que le client puisse initialiser ses structures locales dans le même état que celles du serveur. Il faut alors ajouter des fonctions d'importation et d'exportation du contenu des deux structures. Le fait d'utiliser le même langage côté serveur et côté client, est ici un avantage, car il permet la réutilisation du code.
 
 
-\section{ImplÃ©mentation}
+\section{Implémentation}
 
-\subsection{Technologies utilisÃ©es}
+\subsection{Technologies utilisées}
 
-\subsubsection{Confort de dÃ©veloppement}
+\subsubsection{Confort de développement}
 
-Une part importante de la rÃ©ussite dâ€™un projet en Ã©quipe rÃ©side dans la collaboration entre les membres de lâ€™Ã©quipe. Câ€™est pour cela que nous avons tenu dÃ¨s le dÃ©but Ã  mettre en place des outils pour faciliter cette collaboration.\\
-Nous avons commencÃ© par partager des Google Docs, afin de fixer les choix aussi bien de conception que dâ€™implÃ©mentation, de maniÃ¨re Ã  avoir des documents de rÃ©fÃ©rence. Y est rÃ©pertoriÃ© toute la documentation qui nous a aidÃ© au dÃ©veloppement de lâ€™application, mais aussi les diffÃ©rents modules qui composent lâ€™application et les messages Ã©changÃ©s entre eux.\\
-Ensuite, durant notre documentation, nous avons remarquÃ© que beaucoup de projets open-source que nous utilisons ont un dÃ©pÃ´t GitHub pour faire participer la communautÃ© au dÃ©veloppement. Câ€™est alors un moyen facile pour nous de mettre en commun le dÃ©veloppement de lâ€™application, dans un premier temps entre les membres de lâ€™Ã©quipe du projet, mais aussi par la suite Ã  toute autre personne souhaitant participer au projet.\\
-Nous avons alors dÃ©couvert Git pour la gestion des versions en local, qui sâ€™avÃ¨re Ãªtre un outils presque indispensable dans le dÃ©veloppement dâ€™une application telle que JaSMEd.\\
-Le code source de JaSMEd est donc disponible sur le dÃ©pÃ´t GitHub Ã  lâ€™adresse suivante: \url{https://github.com/Acekat/JaSMEd}. Nous avons pris le partie de commenter et rÃ©diger notre code en anglais, afin de permettre au plus grand nombre de participer au projet.
+Une part importante de la réussite d'un projet en équipe réside dans la collaboration entre les membres de l'équipe. C'est pour cela que nous avons tenu dès le début à mettre en place des outils pour faciliter cette collaboration.\\
+Nous avons commencé par partager des Google Docs, afin de fixer les choix aussi bien de conception que d'implémentation, de manière à avoir des documents de référence. Y est répertorié toute la documentation qui nous a aidé au développement de l'application, mais aussi les différents modules qui composent l'application et les messages échangés entre eux.\\
+Ensuite, durant notre documentation, nous avons remarqué que beaucoup de projets open-source que nous utilisons ont un dépôt GitHub pour faire participer la communauté au développement. C'est alors un moyen facile pour nous de mettre en commun le développement de l'application, dans un premier temps entre les membres de l'équipe du projet, mais aussi par la suite à toute autre personne souhaitant participer au projet.\\
+Nous avons alors découvert Git pour la gestion des versions en local, qui s'avère être un outils presque indispensable dans le développement d'une application telle que JaSMEd.\\
+Le code source de JaSMEd est donc disponible sur le dépôt GitHub à l'adresse suivante: \url{https://github.com/Acekat/JaSMEd}. Nous avons pris le partie de commenter et rédiger notre code en anglais, afin de permettre au plus grand nombre de participer au projet.
 
-\subsubsection{JavaScript et ses bibliothÃ¨ques}
+\subsubsection{JavaScript et ses bibliothèques}
 
-Toutes les bibliothÃ¨ques que nous avons utilisÃ©es, aussi bien du cÃ´tÃ© client que du cÃ´tÃ© serveur, sont Ã©crites en JavaScript. Câ€™est pourquoi nous prÃ©sentons dâ€™abord le langage dâ€™une maniÃ¨re gÃ©nÃ©rale, avant de dÃ©tailler chacune des bibliothÃ¨ques utilisÃ©es.
+Toutes les bibliothèques que nous avons utilisées, aussi bien du côté client que du côté serveur, sont écrites en JavaScript. C'est pourquoi nous présentons d'abord le langage d'une manière générale, avant de détailler chacune des bibliothèques utilisées.
 
 \paragraph{JavaScript}~\\
-Le JavaScript (JS) dont le nom exact est ECMAScript est un langage de haut niveau, dynamique, non typÃ© et interprÃ©tÃ©. Il est standardisÃ© par lâ€™ECMA Internationnal et est lâ€™unique\footnote{Dart et NaCl Ã©xistent aussi maintenant.} langage de programmation proposÃ© par les navigateurs web.\\
-Ces derniÃ¨res annÃ©es il a bÃ©nÃ©ficiÃ© dâ€™interprÃ©teurs de plus en plus rapides et performants et rÃ©cemment sa popularitÃ© sâ€™est encore accrue grÃ¢ce Ã  une technologie prometteuse nommÃ©e node.js qui permet dâ€™utiliser le langage pour dÃ©velopper entre autres des serveurs web trÃ¨s facilement.\\
-Câ€™est pour cela que nous avons choisi de construire JaSMEd exclusivement en JavaScript.\\
-Il a cependant fallu apprendre les spÃ©cificitÃ©s du langage, telles que les closures, lâ€™hÃ©ritage prototypal (pas de classes... tout est une instance), ou lâ€™aspect dynamique de \texttt{this} entre autres. Le langage prÃ©sente quand mÃªme quelques aspects peu pratiques, notamment le fait quâ€™il nâ€™y ait pas de modularitÃ© nativement, soit un seul espace dâ€™exÃ©cution (pas de paquetage comme en Java) ce qui implique des conflits potentiels de variables globales.\\
-Les livres \emph{JavaScript: The Good Parts}~\cite{Crockford} et \emph{JavaScript: The Definitive Guide}~\cite{Flanagan} sont les â€œbiblesâ€ du javascript et nous ont permis de comprendre mieux le langage et dâ€™apprÃ©hender ses spÃ©cificitÃ©s et les dÃ©fauts.
+Le JavaScript (JS) dont le nom exact est ECMAScript est un langage de haut niveau, dynamique, non typé et interprété. Il est standardisé par l'ECMA Internationnal et est l'unique\footnote{Dart et NaCl éxistent aussi maintenant.} langage de programmation proposé par les navigateurs web.\\
+Ces dernières années il a bénéficié d'interpréteurs de plus en plus rapides et performants et récemment sa popularité s'est encore accrue grâce à une technologie prometteuse nommée node.js qui permet d'utiliser le langage pour développer entre autres des serveurs web très facilement.\\
+C'est pour cela que nous avons choisi de construire JaSMEd exclusivement en JavaScript. 
+Il a cependant fallu apprendre les spécificités du langage, telles que les closures, l'héritage prototypal (pas de classes... tout est une instance), ou l'aspect dynamique de \texttt{this} entre autres. Le langage présente quand même quelques aspects peu pratiques, notamment l'absence native de modularité, soit un seul espace d'exécution (pas de paquetage comme en Java) ce qui implique des conflits potentiels de variables globales.\\
+Les livres \emph{JavaScript: The Good Parts}~\cite{Crockford} et \emph{JavaScript: The Definitive Guide}~\cite{Flanagan} sont les "bibles" du javascript et nous ont permis de comprendre mieux le langage et d'appréhender ses spécificités et défauts.
 
 \paragraph{Node.js}\url{http://nodejs.org/}\\
-Node.js est un framework Ã©vÃ¨nementiel pour la machine virtuelle JavaScript V8. Nous lâ€™avons utilisÃ© pour dÃ©velopper le serveur de JaSMEd.
-La philosophie de Node est que toute opÃ©ration dâ€™entrÃ©e/sortie doit Ãªtre asynchrone, câ€™est Ã  dire doit prendre en paramÃ¨tre une fonction de rappel.\\
-Node incorpore un systÃ¨me de module qui suit la spÃ©cification CommonJS (et permet donc l'exÃ©cution de code JS dans des contextes diffÃ©rents si dÃ©sirÃ©). Il propose par dÃ©faut des modules qui gÃ¨rent les protocoles fondamentaux tels que le HTTP ou le DNS ce qui le rend trÃ¨s intÃ©ressant pour dÃ©velopper des serveurs. En effet lâ€™aspect asynchrone tend Ã  le rendre plus rÃ©actif que le modÃ¨le bloquant (tel que le serveur apache, mÃªme si dans la derniÃ¨re version celui-ci propose Ã©galement un modÃ¨le asynchrone...) et donc plus adaptÃ© pour des applications temps rÃ©el.\\
-Node est fourni avec un systÃ¨me de gestion de module nommÃ© npm (similaire Ã  rubyGems) qui permet aux dÃ©veloppeurs de publier leurs modules node aisÃ©ment.\\
-Il y a de plus en plus de dÃ©veloppeurs qui sâ€™intÃ©ressent Ã  Node et donc de plus en plus de modules intÃ©ressant sont disponibles. Notre application est construite Ã  lâ€™aide de deux modules qui ont largement contribuÃ© Ã  la popularitÃ© croissante de node du fait de leurs simplicitÃ©, robustesse et qualitÃ©s: Express et Socket.io.
+Node.js est un framework évènementiel pour la machine virtuelle JavaScript V8. Nous l'avons utilisé pour développer le serveur de JaSMEd.
+La philosophie de Node est que toute opération d'entrée/sortie doit être asynchrone, c'est à dire doit prendre en paramètre une fonction de rappel.\\
+Node incorpore un système de module qui suit la spécification CommonJS (et permet donc l'exécution de code JS dans des contextes différents si désiré). Il propose par défaut des modules qui gèrent les protocoles fondamentaux tels que le HTTP ou le DNS, ce qui le rend très intéressant pour développer des serveurs. En effet l'aspect asynchrone tend à le rendre plus réactif que le modèle bloquant (tel que le serveur apache, même si dans la dernière version celui-ci propose également un modèle asynchrone...) et donc plus adapté pour des applications temps réel.\\
+Node est fourni avec un système de gestion de module nommé npm (similaire à rubyGems) qui permet aux développeurs de publier leurs modules node aisément.\\
+Il y a de plus en plus de développeurs qui s'intéressent à Node et donc de plus en plus de modules intéressant sont disponibles. Notre application est construite à l'aide de deux modules qui ont largement contribué à la popularité croissante de node du fait de leur simplicité, robustesse et qualité : Express et Socket.io.
 
 \paragraph{Express}\url{http://expressjs.com/}
 
 \paragraph{Socket.io}\url{http://socket.io/}\\
-Socket.io est un module de node.js facilitant la communication client/serveur â€œtempsrÃ©elâ€ et ayant pour but de fonctionner sur tous les navigateurs. Il est donc prÃ©sent du cÃ´tÃ© client et du cÃ´tÃ© serveur. Il permet dâ€™abstraire le moyen de communication qui sera utilisÃ©. Pour cela, il dÃ©tecte les technologies disponibles sur les clients et utilise celle qui est considÃ©rÃ©e comme la meilleure en rapiditÃ© de communication. Câ€™est-Ã -dire en prioritÃ© le protocole WebSocket si celui-ci est supportÃ©; si ce nâ€™est pas le cas il utilise lâ€™AJAX (polling XHR); si il ne supporte pas lâ€™AJAX il utilisera les sockets Flash, et caetera.\\
-Câ€™est une bibliothÃ¨que bien documentÃ© et trÃ¨s robuste seulement, aprÃ¨s rÃ©flexion il se trouve que ce nâ€™est pas la meilleure solution pour JaSMEd. En effet JaSMEd fonctionne exclusivement sur les navigateurs modernes et ces derniers disposent tous du protocole WebSocket. Il serait donc plus adaptÃ© dâ€™utiliser le module ws, qui est considÃ©rÃ© comme le plus rapide car il nâ€™utilise que le protocole WebSocket.
+Socket.io est un module de node.js facilitant la communication client/serveur "temps réel" et ayant pour but de fonctionner sur tous les navigateurs. Il est donc présent du côté client et du côté serveur. Il permet d'abstraire le moyen de communication qui sera utilisé. Pour cela, il détecte les technologies disponibles sur les clients et utilise celle qui est considérée comme la meilleure en terme de rapidité de communication. C'est-à-dire en priorité le protocole WebSocket si celui-ci est supporté; si ce n'est pas le cas il utilise l'AJAX (polling XHR); si il ne supporte pas l'AJAX il utilisera les sockets Flash, et caetera.\\
+C'est une bibliothèque bien documenté et très robuste, seulement, après réflexion il se trouve que ce n'est pas la meilleure solution pour JaSMEd. En effet JaSMEd fonctionne exclusivement sur les navigateurs modernes et ces derniers disposent tous du protocole WebSocket. Il serait donc plus adapté d'utiliser le module ws, qui est considéré comme le plus rapide car il n'utilise que le protocole WebSocket.
 
 \paragraph{jQuery}\url{http://jquery.com/}\\
-jQuery est une bibliothÃ¨que qui abstrait la plupart des actions/possibilitÃ©s offertes par les navigateurs web comme la manipulation du DOM, la gestion dâ€™Ã©vÃ¨nements, les animations et les interactions AJAX.\\
-Il existe de nombreuses bibliothÃ¨ques similaires mais nous avons optÃ© pour celle-ci dans un premier temps car elle est la mieux documentÃ©, la plus populaire et la plus performante. Seulement celle-ci prÃ©sente quelques inconvÃ©nients, surtout sa taille consÃ©quente (32 Ko pour la version minifiÃ©e) â€” qui vient du fait que jQuery est compatible avec nombreux navigateurs anciens (IE < 9, Firefox < 4, Safari < 5) â€” et son aspet monolithique (jQuery propose Ã©normement de fonctionnalitÃ©es, nous ne tirons pas partie de toutes celles-ci).\\
-Ã€ plusieurs reprise nous avons pensÃ© Ã  opter pour une bibliothÃ¨que plus rÃ©cente et donc plus adaptÃ©. Notamment Ender mais surtout Zepto, qui a Ã©tÃ© conÃ§ue pour les navigateurs rÃ©cents et propose une API trÃ¨s proche de celle de jQuery mais plus modulaire (Ajax, Ã©vÃ¨nements, effets/animations sont des modules).\\
-JaSMEd nâ€™est fonctionnel que sur les navigateurs les plus rÃ©cents et donc lâ€™utilisation de Zepto semble beaucoup plus adaptÃ©e. Câ€™est d'ailleurs une des modifications prÃ©vues Ã  court terme.
+jQuery est une bibliothèque qui abstrait la plupart des actions/possibilités offertes par les navigateurs web comme la manipulation du DOM, la gestion d'évènements, les animations et les interactions AJAX.\\
+Il existe de nombreuses bibliothèques similaires mais nous avons opté pour celle-ci dans un premier temps car elle est la mieux documenté, la plus populaire et la plus performante. Seulement celle-ci présente quelques inconvénients, surtout sa taille conséquente (32 Ko pour la version minifiée) --- qui vient du fait que jQuery est compatible avec nombreux navigateurs anciens (IE < 9, Firefox < 4, Safari < 5) --- et son aspet monolithique (jQuery propose énormement de fonctionnalitées, nous ne tirons pas partie de toutes celles-ci).\\
+À plusieurs reprise nous avons pensé à opter pour une bibliothèque plus récente et donc plus adapté. Notamment Ender mais surtout Zepto, qui a été conçue pour les navigateurs récents et propose une API très proche de celle de jQuery mais plus modulaire (Ajax, évènements, effets/animations sont des modules).\\
+JaSMEd n'est fonctionnel que sur les navigateurs les plus récents et donc l'utilisation de Zepto semble beaucoup plus adaptée. C'est d'ailleurs une des modifications prévues à court terme.
 
 \paragraph{Underscore}\url{http://underscorejs.org/}\\
-Underscore est une bibliothÃ¨que qui fournit des outils pour la programmation fonctionnelle (\texttt{map}, \texttt{reduce}, \texttt{filter}, etc...) ainsi que des extensions Ã  JS pour manipuler les structures de donnÃ©es plus simplement (\texttt{Collection.size}, \texttt{max/min}, \texttt{Array.contains}). Elle est trÃ¨s utilisÃ© car elle nâ€™Ã©tend pas les objets natifs du JS (ce qui Ã©vite des problÃ¨mes de compatibilitÃ©) et utilise les mÃ©thodes "natives" si jamais celles-ci sont disponibles (map, filter etc... font partie de la spÃ©cification de lâ€™ECMAScript 5\footnote{Standard ECMA-262, juin 2011: \url{http://ecma-international.org/ecma-262/5.1/}}). Elle est trÃ¨s utile pour amÃ©liorer la qualitÃ© et la lisibilitÃ© du code.
+Underscore est une bibliothèque qui fournit des outils pour la programmation fonctionnelle (\texttt{map}, \texttt{reduce}, \texttt{filter}, etc...) ainsi que des extensions à JS pour manipuler les structures de données plus simplement (\texttt{Collection.size}, \texttt{max/min}, \texttt{Array.contains}). Elle est très utilisé car elle n'étend pas les objets natifs du JS (ce qui évite des problèmes de compatibilité) et utilise les méthodes "natives" si jamais celles-ci sont disponibles (\texttt{map}, \texttt{filter} etc... font partie de la spécification de l'ECMAScript 5\footnote{Standard ECMA-262, juin 2011: \url{http://ecma-international.org/ecma-262/5.1/}}). Elle est très utile pour améliorer la qualité et la lisibilité du code.
 
 \paragraph{Backbone}\url{http://backbonejs.org/}\\
-Backbone permet de structurer les applications web. Elle fournit des \texttt{Model}, des \texttt{Collection} ainsi que des \texttt{View} pour aboutir Ã  une organisation MV*, diffÃ©rente du MVC dans son absence de ContrÃ´leur Ã  part entiÃ¨re. Les \texttt{Model} structurent les donnÃ©es (de la mÃªme maniÃ¨re quâ€™en MVC), les \texttt{Collection} sont de simples listes de \texttt{Model}, et ce sont les \texttt{View} qui, en plus de leur rÃ´le habituel en MVC, intÃ¨gre un contrÃ´le de lâ€™interaction avec les donnÃ©es.\\
-Il y a une multitude de bibliothÃ¨ques JS visant Ã  aider Ã  une structure MVC. Nous avons quelques temps analysÃ©s les diffÃ©rentes options telles que ember.js, spine.js, knockout.js, etc... mais nous avons choisi Backbone.js du fait de sa popularitÃ©, sa lÃ©gÃ¨retÃ© et sa documentation. Backbone est assez simple, et nous a permis de structurer notre code client dâ€™une faÃ§on claire. De plus Backbone dÃ©pend dâ€™Underscore et jQuery (ou Zepto ou Ender aux choix), deux bibliothÃ¨ques que nous utilisons dÃ©jÃ .
+Backbone permet de structurer les applications web. Elle fournit des \texttt{Model}, des \texttt{Collection} ainsi que des \texttt{View} pour aboutir à une organisation MV*, différente du MVC dans son absence de Contrôleur à part entière. Les \texttt{Model} structurent les données (de la même manière qu'en MVC), les \texttt{Collection} sont de simples listes de \texttt{Model}, et ce sont les \texttt{View} qui, en plus de leur rôle habituel en MVC, intègre un contrôle de l'interaction avec les données.\\
+Il y a une multitude de bibliothèques JS visant à aider à une structure MVC. Nous avons quelques temps analysés les différentes options telles que ember.js, spine.js, knockout.js, etc... mais nous avons choisi Backbone.js du fait de sa popularité, sa légèreté et sa documentation. Backbone est assez simple, et nous a permis de structurer notre code client d'une façon claire. De plus Backbone dépend d'Underscore et jQuery (ou Zepto ou Ender aux choix), deux bibliothèques que nous utilisons déjà.
 
 \paragraph{Audiolib}\url{http://audiolibjs.org/}\\
-Audiolib fournit entre-autres une API permettant la synthÃ¨se et la lecture de son dans un navigateur web en abstrayant les diffÃ©rences entre les API audio expÃ©rimentaux de Google et Mozilla (webAudio API et AudioData API respectivement). La bibliothÃ¨que est en gÃ©nÃ©ral assez bien documentÃ©e Ã  quelques exceptions prÃ¨s mais peu de projets lâ€™utilisent, donc nous nâ€™avions pas Ã©normÃ©ment dâ€™exemples pour nous inspirer.\\
-Nous avons optÃ© pour cette bibliothÃ¨que car elle permet Ã  JaSMEd de fonctionner Ã  la fois sur les derniÃ¨re versions de Google Chrome et de Firefox. Cependant â€” mÃªme si cela voudrait dire se restreindre seulement Ã  Google Chrome â€” nous avions hÃ©sitÃ© Ã  nâ€™utiliser que le webAudio API car celui-ci est assez bien documentÃ© et est utilisÃ© par plusieurs projets open source. (la prochaine version du navigateur Safari supportera le webAudio API)\\
-De plus, dÃ©but mai le groupe de travail W3C de lâ€™audio a dÃ©cidÃ© de ne poursuivre la standardisation que de lâ€™API webAudio proposÃ© par Google\footnote{\emph{â€œ<olivier> RESOLVED: our new charter will document the focus on the web audio API as our audio processing specâ€} sur \url{http://www.w3.org/2012/05/09-audio-minutes.html#item01}}. Nous envisageons donc de remplacer Audiolib par lâ€™usage direct du webAudio API dans le futur, dâ€™autant plus que son systÃ¨me de routage/mixage de multiples sources semble plus adaptÃ© Ã  notre application.
+Audiolib fournit entre-autres une API permettant la synthèse et la lecture de son dans un navigateur web en abstrayant les différences entre les API audio expérimentaux de Google et Mozilla (webAudio API et AudioData API respectivement). La bibliothèque est en général assez bien documentée à quelques exceptions près mais peu de projets l'utilisent, donc nous n'avions pas énormément d'exemples pour nous inspirer.
+Nous avons opté pour cette bibliothèque car elle permet à JaSMEd de fonctionner à la fois sur les dernière versions de Google Chrome et de Firefox. Cependant --- même si cela voudrait dire se restreindre seulement à Google Chrome --- nous avions hésité à n'utiliser que le webAudio API car celui-ci est assez bien documenté et est utilisé par plusieurs projets open source. (la prochaine version du navigateur Safari supportera le webAudio API)
+De plus, début mai le groupe de travail W3C de l'audio a décidé de ne poursuivre la standardisation que de l'API webAudio proposé par Google\footnote{\emph{\"<olivier> RESOLVED: our new charter will document the focus on the web audio API as our audio processing spec\"} sur \url{http://www.w3.org/2012/05/09-audio-minutes.html#item01}}. Nous envisageons donc de remplacer Audiolib par l'usage direct du webAudio API dans le futur, d'autant plus que son système de routage/mixage de multiples sources semble plus adapté à notre application.
 
 \bigskip
-Pour conclure on peut dire que nous avons opter dans un premier temps pour les bibliothÃ¨ques les plus populaires et mieux documentÃ©s dans la majoritÃ© des cas. Cela Ã©tant surtout pour nous Ã©viter de mauvaises surprises (bugs inattendus dans la librairie, fonctionnalitÃ©s non adaptÃ©s...) mais Ã©galement car les membres du groupes avaient dÃ©jÃ  de lâ€™expÃ©rience avec plusieurs de ces bibliothÃ¨ques. MÃªme si â€” comme expliquÃ© prÃ©cÃ©demment â€” ce ne sont pas toujours les choix les mieux adaptÃ©s en termes de performance, ce sont les choix les plus simples/sains pour dÃ©velopper/expÃ©rimenter avec notre application.
+Pour conclure on peut dire que nous avons opter dans un premier temps pour les bibliothèques les plus populaires et mieux documentés dans la majorité des cas. Le but étant surtout d'éviter les mauvaises surprises (bugs inattendus dans la librairie, fonctionnalités non-adaptées...), et également car certains membres du groupe avaient déjà de l'expérience avec plusieurs de ces bibliothèques. Même si --- comme expliqué précédemment --- ce ne sont pas toujours les choix les mieux adaptés en termes de performance, ils étaient les plus simples/sains pour expérimenter/développer notre application jusqu'à maintenant.
 
 \subsection{Architecture}
+
+\paragraph{Modularité}~\\
+Pour s'assurer que l'application soit extensible avec un minimum de réécriture de code nous avons essayé de concevoir l'application de la façon la plus modulaire possible. Cela présente d'autant plus d'intérêt dans un contexte de travail en groupe car chacun peut travailler sur un module indépendamment des autres.\\
+Pour faire cela proprement en JS nous nous sommes d'abord inspiré de quelques articles et présentations rédigés par de talentueux développeurs. Les plus importants étant: la présentation de Nicholas Zakas~\cite{Zakas}, ancien ingénieur responsable du front-end chez Yahoo! et deux articles~\cite{Addy}~\cite{Osmani} d'Addy Osmani, Developer Programs Engineer chez Google et membre de l'équipe jQuery.
+
+\medskip
+Le JavaScript ne présente aucune manière native de créer des modules\footnote{Prévu dans la prochaine spécification de l'ECMAScript: \url{http://wiki.ecmascript.org/doku.php?id=harmony:modules}}, c'est-à-dire des espaces d'exécution avec des variables privées et une interface publique. Cela dit il existe aujourd'hui le groupe de travail CommonJS, créé en 2009 dans l'optique de proposer des API standards pour le JS. Une des spécifications à l'état de brouillon, mais très utilisée aujourd'hui, est celle des modules CommonJS\footnote{\url{http://www.commonjs.org/specs/modules/1.0/.}}. Cette spécification est très populaire pour des projets côté serveur et elle est implémentée entre autres par node.js. Pour ce qui est du serveur nous avons décidé de suivre cette spécification pour développer les modules.
+
+\medskip
+Cependant côté client, il n'existe pas encore de consensus sur la façon d'implémenter les modules car ils présentent des enjeux différents que sur le serveur. Une des critiques récurrentes de CommonJS est qu'elle ne permet pas le chargement asynchrone de modules. C'est de là qu'est né AMD\footnote{\url{https://github.com/amdjs/amdjs-api/wiki/AMD}} (Asynchronous Module Definition) qui est l'option la plus utilisé pour organiser des modules côté client, souvent grâce à l'aide de la librairie Require.js\footnote{\url{http://requirejs.org/}}. Bien que cette dernière solution semble être la meilleure façon actuelle d'organiser le code côté client en modules, nous avons préféré n'utiliser aucune bibliothèque dans un premier temps et implémenter nous-mêmes le concept de module.
+En JavaScript, le seul moyen de créer une nouvelle portée de variables se fait à l'aide d'une fonction. Donc en couplant les closures et les fonctions immédiatement invoqués (IIFE), on peut créer un espace d'adressage virtuellement "privé".
+Exemple:\\
+\begin{lstlisting}
+// portée de variable externe
+var module = {};
+
+(function(arg) {
+  // nouvelle portée de variable
+  var x; 				// privé
+  arg.hello = 'hello'; 	// publique -> accessible en dehors de la fonction.
+}(module)); //fonction immédiatement invoquée
+
+module.x; 		// n'existe pas
+module.hello; 	// existe
+\end{lstlisting}
+
+\medskip
+De cette manière là nous pouvons aussi inclure un module dans un autre en cas de dépendance forte.
+
+\paragraph{Communication inter-modules}~\\
+Afin d'éviter d'inclure automatiquement un module dans un autre pour chaque dépendance, nous avons préféré introduire un système de \emph{publish/subscribe}, pour garder l'aspect de modules indépendants. Chaque module hérite donc des méthodes \texttt{publish} et \texttt{subscribe}, il lui suffit de s'abonner aux messages dont il a besoin, et de publier ceux nécessaires aux autres modules.\\
+Il reste cependant quelques modules qui interagissent entre eux sans forcément utiliser les méthodes de publication/abonnement ou d'inclusion. Il y a la vue et le modèle de l'éditeur, ceux-ci sont liés par la bibliothèque Backbone.js. Les modèles déclenchent un évènement pour différentes modifications des données, comme l'ajout d'un calque dans un bloc, le changement d'attribut d'un calque ou d'un bloc, ou bien même un évènement totalement personnalisé. Cet évènement est ensuite récupéré par la vue, qui effectue des changements en conséquence (manipulation du DOM, contrôle des données). On obtient ainsi une architecture MV* comme décrite dans la conception.
+
+\paragraph{Organisation du code client}~\\
+\emph{editorModels}: module de construction et de maintenance de la structure visuelle. Il contient les modèles Backbone représentants les données graphiques de l'éditeur.\\[0.4cm]
+\emph{structure}: module de construction et de maintenance de la structure musicale.\\[0.4cm]
+\emph{player}: permet la lecture du morceau grâce à la bibliothèque audiolib. Ce module est programmé pour jouer un morceau donc l'information est stocké par la structure exclusivement.\\[0.4cm]
+\emph{communicator}: module de communication avec le serveur. Il écoute et émet sur la socket lié au serveur et récupère ainsi les messages broadcastés par ce dernier et lui fait suivre les messages locaux.\\[0.4cm]
+\emph{editorViews, playerView, instrumentView et toolsView}: contiennent les vues Backbone servants à l'affichage de l'application et son interaction avec l'utilisateur.
+
+\paragraph{Lecture de la structure musicale}~\\
+Les modules Lecteur et Structure sont implémentés de manière très proche. En effet, la structure a été pensée pour être lue, et ce qui la différencie des modèles de l'éditeur. Le lecteur va donc lire directement la structure JS remplie par le module Structure.\\
+La synthèse du son dans la librairie AudioLib se fait en envoyant des tableaux d'échantillons qui vont remplir le buffer du synthétiseur du navigateur. Ces échantillons sont générés par des oscillateurs, puis passent à travers différents filtres. Le remplissage des échantillons s'effectue dans une fonction de callback ne gardant pas trace du nombre d'échantillons produits. Pour pouvoir lire la structure musicale, on garde donc en mémoire l'endroit exact en nombre d'échantillons d'où la bufferisation en est.
+
+Organisation de la structure :
+\begin{lstlisting}
+var song = {
+	title,		// titre du morceau
+	tempo, 		// temps d'un bloc en secondes
+	blocks, 		// nombre de blocs du morceau
+	pitches : {		// liste des hauteurs utilisées dans le morceau
+	pitch,		// nombre d'occurrences d'une hauteur
+	...
+	},
+	tracks : [{		// liste des pistes du morceau
+		name,			// nom de la piste
+		blocks : [{		// liste des blocs d'une piste
+			layers : {		// liste des calques d'un bloc
+				nbDiv : [[{		// notes actives par colonne
+					pitch,
+					duration
+				}, ...], ...],
+			...} // layers
+		}, ...] // blocks
+	}, ...] // tracks
+};
+\end{lstlisting}
 
 
 \section{Avancement}
 
-\subsection{Limitations actuelles de lâ€™application}
+\subsection{Limitations actuelles de l'application}
 
-\subsection{DÃ©tails techniques}
+\subsection{Détails techniques}
 
 
 \section{Manuel d'utilisation}
 
-Ce manuel prÃ©sente les possibilitÃ©s offertes Ã  l'utilisateur dans la version actuelle de JaSMEd.
+Ce manuel présente les possibilités offertes à l'utilisateur dans la version actuelle de JaSMEd.
 
 \paragraph{Authentification}~\\
-Avant de pouvoir accÃ©der Ã  lâ€™Ã©diteur, il faut s'authentifier. Les utilisateurs autorisÃ©s Ã  se connecter sont pour lâ€™instant codÃ© directement dans le fichier \emph{authentification.js}. Nous nâ€™avons pas encore implÃ©mentÃ© la crÃ©ation de nouveaux utilisateurs, car ce nâ€™est pas lâ€™objectif premier de lâ€™application. Cependant, le dÃ©veloppement dâ€™un systÃ¨me de session nous a permis de nous familiariser avec des modules de node.js comme Express.\\
-Une fois authentifiÃ©, on accÃ¨de Ã  lâ€™Ã©diteur soit en chargeant un morceau prÃ©-enregistrÃ©, soit en partant de zÃ©ro avec un nouveau morceau.
+Avant de pouvoir accéder à l'éditeur, il faut s'authentifier. Les utilisateurs autorisés à se connecter sont pour l'instant codé directement dans le fichier \emph{authentification.js}. Nous n'avons pas encore implémenté la création de nouveaux utilisateurs, car ce n'est pas l'objectif premier de l'application.\\
+Une fois authentifié, on accède à l'éditeur soit en chargeant un morceau pré-enregistré, soit en partant de zéro avec un nouveau morceau.
 
-\paragraph{Ã‰dition}~\\
-La partie Ã©dition reprÃ©sente une partition musicale Ã  Ã©diter, proposant de sÃ©lectionner une note en fonction de sa hauteur, sa durÃ©e, et sa position. Il est possible de naviguer verticalement le long des octaves du piano Ã  lâ€™aide de la barre de dÃ©filement mais aussi horizontalement sur lâ€™axe du temps en plaÃ§ant la souris aux extrÃ©mitÃ©s gauche et droite de la grille.\\
-Lâ€™ajout dâ€™un nouveau bloc se fait Ã  lâ€™aide du bouton \emph{add block}.\\
-Pour ajouter un nouveau calque Ã  un bloc il suffit de prÃ©ciser le nombre de subdivision souhaitÃ© dans le champs de texte au dessus de chaque bloc puis de valider avec \emph{EntrÃ©e}. Si le calque existe dÃ©jÃ  dans le bloc, aucun calque nâ€™est crÃ©Ã©, mais celui dÃ©signÃ© par le nombre de subdivision devient alors Ã©ditable. Pour changer de calque Ã©ditable dans un bloc, il suffit de cliquer sur le bouton symbolisant le calque voulu. Un seul calque par bloc est Ã©ditable.\\
-Pour crÃ©er une note, on peut sÃ©lectionner une seul cellule dâ€™un calque, ou faire une sÃ©lection de plusieurs cellules. Pour cela, il faut cliquer sur la cellule de dÃ©but et glisser la souris jusquâ€™Ã  la cellule de fin de la note avant de relÃ¢cher le clique. La sÃ©lection nâ€™est pas visible directement, car pour lâ€™instant seules les notes activÃ©es sont affichÃ©es.\\
+\paragraph{Édition}~\\
+La partie édition représente une partition musicale à éditer, proposant de sélectionner une note en fonction de sa hauteur, sa durée, et sa position. Il est possible de naviguer verticalement le long des octaves du piano à l'aide de la barre de défilement mais aussi horizontalement sur l'axe du temps en plaçant la souris aux extrémités gauche et droite de la grille.\\
+L'ajout d'un nouveau bloc se fait à l'aide du bouton \emph{add block}.\\
+Pour ajouter un nouveau calque à un bloc il suffit de préciser le nombre de subdivision souhaité dans le champs de texte au dessus de chaque bloc puis de valider avec \emph{Entrée}. Si le calque existe déjà dans le bloc, aucun calque n'est créé, mais celui désigné par le nombre de subdivision devient alors éditable. Pour changer de calque éditable dans un bloc, il suffit de cliquer sur le bouton symbolisant le calque voulu. Un seul calque par bloc est éditable.\\
+Pour créer une note, on peut sélectionner une seul cellule d'un calque, ou faire une sélection de plusieurs cellules. Pour cela, il faut cliquer sur la cellule de début et glisser la souris jusqu'à la cellule de fin de la note avant de relâcher le bouton. La sélection n'est pas visible directement, car pour l'instant seules les notes activées sont affichées.\\
 On ne peut pas encore supprimer de notes.\\
-L'utilisateur peut aussi exporter son morceau sur le serveur en spÃ©cifiant un nom sans accents ni caractÃ¨re â€œ.â€ dans le champ \emph{export as}.\\
-On peut agrandir ou rÃ©trÃ©cir la largeur des blocs dans la zone d'Ã©dition Ã  lâ€™aide des boutons \emph{zoom in} et \emph{zoom out}.
+L'utilisateur peut aussi exporter son morceau sur le serveur en spécifiant un nom sans accents ni caractère "." dans le champ \emph{export as}.\\
+On peut agrandir ou rétrécir la largeur des blocs dans la zone d'édition à l'aide des boutons \emph{zoom in} et \emph{zoom out}.
 
 \paragraph{Lecture}~\\
-La lecture du morceau se fait Ã  lâ€™aide du bouton \emph{play}. Une fois lancÃ©, ce dernier se transforme en bouton \emph{pause}, pour arrÃªter puis reprendre la lecture en cours. Un bouton \emph{stop} est aussi disponible pour rÃ©initialiser la lecture.\\
-\emph{Remarque:} un temps de latence entre lâ€™appuie du bouton \emph{play} et la lecture effective du morceau est Ã  noter.
+La lecture du morceau se fait à l'aide du bouton \emph{play}. Une fois lancé, ce dernier se transforme en bouton \emph{pause}, pour arrêter puis reprendre la lecture en cours. Un bouton \emph{stop} est aussi disponible pour réinitialiser la lecture.\\
+\emph{Remarque:} un temps de latence entre l'appuie du bouton \emph{play} et la lecture effective du morceau est à noter.
 
 \paragraph{Instrumentation}~\\
-Le panneau dâ€™instrumentation permet de choisir le type de l'oscillateur qui jouera la piste lors de la lecture, ainsi que de modifier l'intensitÃ© du \emph{sustain} de l'enveloppe ADSR en dÃ©plaÃ§ant le curseur.
+Le panneau d'instrumentation permet de choisir le type de l'oscillateur qui jouera la piste lors de la lecture, ainsi que de modifier l'intensité du \emph{sustain} de l'enveloppe ADSR en déplaçant le curseur.
 
 
 \section{Conclusion}
@@ -197,6 +368,27 @@ Le panneau dâ€™instrumentation permet de choisir le type de l'oscillateur qui jo
 
 \medskip
 
+\bibitem{Zakas}
+	Présentation de Nicholas Zakas: 
+	\emph{Scalable JavaScript Application Architecture} - 
+	\url{http://www.youtube.com/watch?v=vXjVFPosQHw}
+
+\medskip
+
+\bibitem{Addy}
+	Article d'Addy Osmani: 
+	\emph{Patterns For Large-Scale JavaScript Application Architecture} - 
+	\url{http://addyosmani.com/largescalejavascript/}
+
+\medskip
+
+\bibitem{Osmani}
+	Article d'Addy Osmani: 
+	\emph{Writing Modular JavaScript With AMD, CommonJS \& ES Harmony} - 
+	\url{http://addyosmani.com/writing-modular-js/}
+
+\medskip
+
 \bibitem{audiolib}
 	Official.fm Labs,
 	\emph{Audio Library Application Programming Interface}.\\
@@ -208,9 +400,9 @@ Le panneau dâ€™instrumentation permet de choisir le type de l'oscillateur qui jo
 
 \end{document}
 
-pb et difficultÃ©s:
+pb et difficultés:
 -MIDI (chap conception)
--largeur de bloc ->affichage non-cohÃ©rent, curseur de lecture
--sample dÃ©calage
--app scalable -> modulaire/gestion centralisÃ©, MV*
+-largeur de bloc ->affichage non-cohérent, curseur de lecture
+-sample décalage
+-app scalable -> modulaire/gestion centralisé, MV*
 -latence d'initialisation lecture

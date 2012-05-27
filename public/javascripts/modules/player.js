@@ -215,10 +215,12 @@ player.subscribe('playerViewPlay', function() {
 		init(jasmed.module('struct').selectedSong);
 
 	play();
+	player.publish('playerResume', blocknum); // hack for cursorResume...
 });
 
 player.subscribe('playerViewPause', function() {
 	pause();
+	player.publish('playerPause', blocknum); // hack for cursorPause...
 });
 
 player.subscribe('playerViewStop', function() {

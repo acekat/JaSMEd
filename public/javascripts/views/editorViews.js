@@ -15,7 +15,9 @@ var nbOctave = 7;
 var pitches = ['B', 'A#', 'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C'];
 
 /*cursor business*/
+var tempo = 4; //seconds per block
 var cursorInitialPos = 40; //cursor starts at 40px
+var vendorPrefixes = ['-webkit-', '-moz-'];
 
 
 /**
@@ -530,6 +532,9 @@ var EditorView = Backbone.View.extend({
 		// Bound events
 		this.collection.on("add", this.addBlock);
 		gridWin.on("scroll", this.syncScroll);
+		
+		//cache cursor selector
+		this.$cursor = this.$el.find('.cursor');
 	},
 
 	/**
@@ -581,17 +586,18 @@ var EditorView = Backbone.View.extend({
 		gridWinDim.top = gridWin.offset().top;
 	},
 	
+	/**
+	 *  CURSOR
+	 */
+	//called when player reaches new block
 	moveCursor: function(blockNum) {
-		var cursorEl = $(this.el).find('.cursor');
+		var cursorEl = this.$cursor;
+		this.removeCustomTransitionDuration(); //remove pause hack
 		
-		//boulce qui cherche et add up tous les width précédents... (cohérence avec le zoom)
-		var range = _.first(this.collection.models, blockNum + 1);
-		var width = _.reduce(range, function(memo, block) {
-			return memo + block.get('width');
-		}, 0);
-		var offset = cursorInitialPos + width;
+		//lookup + add-up all previous widths... (for zoom coherence)
+		var offset = this.cursorTotalWidth(blockNum);
 		
-		//annuler la transition et la recommencer... très jumpy
+		//force transition STOP... very jumpy...
 		//cursorEl.removeClass('translate');
 		//cursorEl.css({left: cursorEl.position().left});		
 		cursorEl.addClass('translate');
@@ -599,11 +605,69 @@ var EditorView = Backbone.View.extend({
 	},
 	
 	resetCursor: function() {
-		var cursorEl = $(this.el).find('.cursor');
+		var cursorEl = this.$cursor;
+		this.removeCustomTransitionDuration(); //remove pause hack
 		cursorEl.removeClass('translate');
 		cursorEl.css({left: cursorInitialPos});
+	},
+	
+	//when pause is clicked i need block on which it paused...
+	//info is nowhere except player so i hacked this with a msg...
+	pauseCursor: function(blockNum) {
+		var cursorEl = this.$cursor;
+		var curPos = cursorEl.position().left; //curent cursor position
+		
+		//stop transition.
+		cursorEl.removeClass('translate');
+		cursorEl.css({left: curPos}); //FORCE the stop. otherwise will continue...
+
+		var destination = this.cursorTotalWidth(blockNum);
+		var pixelsLeft = destination - curPos; //pixels left to destination
+		var curBlockWidth = this.collection.getBlock(blockNum + 1).get('width'); //width of block which is over the cursor
+		var timeLeft = tempo * pixelsLeft / curBlockWidth; //time left to get to destination
+		
+		this.addCustomTransitionDuration(timeLeft);
+	},
+	
+	resumeCursor: function(blockNum) {
+		var cursorEl = this.$cursor;
+		var destination = this.cursorTotalWidth(blockNum);
+		cursorEl.addClass('translate');
+		cursorEl.css({left: destination}); //remind him the destination
+	},
+	
+	//lookup + add-up all previous widths... (for zoom coherence)
+	cursorTotalWidth: function(blockNum) {
+		var range = _.first(this.collection.models, blockNum + 1);
+		var totalWidth = _.reduce(range, function(memo, block) {
+			return memo + block.get('width');
+		}, 0);
+
+		return cursorInitialPos + totalWidth;
+	},
+	
+	addCustomTransitionDuration: function(time) {
+		this.handleCustomTransitionDuration(time);
+	},
+	
+	removeCustomTransitionDuration: function() {
+		this.handleCustomTransitionDuration();
+	},
+	
+	handleCustomTransitionDuration: function(time) {
+		var cursorEl = this.$cursor;
+		var res = {};
+		var t = (time) ? time + 's' : '';
+
+		_.each(vendorPrefixes, function(prefix) {
+			res[prefix + 'transition-duration'] = t;
+		});
+		res['transition-duration'] = t;
+
+		cursorEl.css(res);
 	}
 });
+
 
 /**
  *  SUBSCRIBES
@@ -635,6 +699,15 @@ editorViews.subscribe('playerNextBlock', function(blockNum) {
 
 editorViews.subscribe('playerViewStop', function() {
 	editorView.resetCursor();
+});
+
+//hack for cursorPause (?not really a hack...)
+editorViews.subscribe('playerPause', function(blockNum) {
+	editorView.pauseCursor(blockNum);
+});
+
+editorViews.subscribe('playerResume', function(blockNum) {
+	editorView.resumeCursor(blockNum);
 });
 
 

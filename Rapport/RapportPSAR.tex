@@ -50,9 +50,9 @@
 	keywordstyle=[1]\color{yellow}\bfseries,
 	keywordstyle=[2]\color{blue}\bfseries,
 	keywordstyle=[3]\color{orange}\bfseries,
-	commentstyle=\color{base0}\itshape,
+	commentstyle=\color{base0},
 	stringstyle=\color{cyan},
-	backgroundcolor=\color{base2}
+	backgroundcolor=\color{base3}
 }
 
 \lstset{
@@ -66,12 +66,13 @@
 	showstringspaces=false,				% underline spaces within strings
 	showtabs=false,						% show tabs within strings adding particular underscores
 	tabsize=2,							% sets default tabsize to 2 spaces
-	captionpos=b,						% sets the caption-position to bottom
 	breaklines=true,					% sets automatic line breaking
 	breakatwhitespace=false,			% sets if automatic breaks should only happen at whitespace
 	escapeinside={\%*}{*)},				% if you want to add a comment within your code
-	morekeywords={*,...}				% if you want to add more keywords to the set
-	extendedchars=false
+	morekeywords={*,...},				% if you want to add more keywords to the set
+	captionpos=t,						% sets the caption-position to bottom
+	frame=shadowbox,
+	rulesepcolor=\color{base1}
 }
 % END Javascipt
 
@@ -95,8 +96,6 @@ Le but du projet est de développer un tel éditeur, en traitant en particulier le
 La question des protocoles audio à utiliser sera aussi abordée.
 
 \vfill
-
-\pagebreak
 
 \tableofcontents
 
@@ -219,7 +218,9 @@ Node incorpore un système de module qui suit la spécification CommonJS (et perme
 Node est fourni avec un système de gestion de module nommé npm (similaire à rubyGems) qui permet aux développeurs de publier leurs modules node aisément.\\
 Il y a de plus en plus de développeurs qui s'intéressent à Node et donc de plus en plus de modules intéressant sont disponibles. Notre application est construite à l'aide de deux modules qui ont largement contribué à la popularité croissante de node du fait de leur simplicité, robustesse et qualité : Express et Socket.io.
 
-\paragraph{Express}\url{http://expressjs.com/}
+\paragraph{Express}\url{http://expressjs.com/}\\
+Express est un framework web minimaliste pour node.js, basé sur Connect. Connect est un framework serveur HTTP composé de plusieurs plug-ins --- appelés middlewares --- simplifiant l'utilisation de node.js pour construire une application web. Parmis ces middlewares on retrouve entre autres un logger, un parseur d'URL, un parseur de cookie, un gestionnaire de session, etc. Express est donc bâti sur Connect et permet de développer des serveur web RESTfull notamment en simplifiant la gestion des verbes HTTP (méthodes GET, POST, PUT et DELETE), le parsing de requêtes, et la génération d'HTML via des templates.
+Simple d'utilisation et bien documenté, Express nous a permis de construire le serveur sans trop de difficultés et de bien séparer le code des vues à l'aide de templates HTML.
 
 \paragraph{Socket.io}\url{http://socket.io/}\\
 Socket.io est un module de node.js facilitant la communication client/serveur "temps réel" et ayant pour but de fonctionner sur tous les navigateurs. Il est donc présent du côté client et du côté serveur. Il permet d'abstraire le moyen de communication qui sera utilisé. Pour cela, il détecte les technologies disponibles sur les clients et utilise celle qui est considérée comme la meilleure en terme de rapidité de communication. C'est-à-dire en priorité le protocole WebSocket si celui-ci est supporté; si ce n'est pas le cas il utilise l'AJAX (polling XHR); si il ne supporte pas l'AJAX il utilisera les sockets Flash, et caetera.\\
@@ -248,7 +249,16 @@ Pour conclure on peut dire que nous avons opter dans un premier temps pour les b
 
 \subsection{Architecture}
 
-\paragraph{Modularité}~\\
+\subsubsection{Modularité}
+
+\paragraph{Organisation côté client}~\\
+\emph{editorModels}: module de construction et de maintenance de la structure visuelle. Il contient les modèles Backbone représentants les données graphiques de l'éditeur.\\[0.4cm]
+\emph{structure}: module de construction et de maintenance de la structure musicale.\\[0.4cm]
+\emph{player}: permet la lecture du morceau grâce à la bibliothèque audiolib. Ce module est programmé pour jouer un morceau donc l'information est stocké par la structure exclusivement.\\[0.4cm]
+\emph{communicator}: module de communication avec le serveur. Il écoute et émet sur la socket lié au serveur et récupère ainsi les messages broadcastés par ce dernier et lui fait suivre les messages locaux.\\[0.4cm]
+\emph{editorViews, playerView, instrumentView et toolsView}: contiennent les vues Backbone servants à l'affichage de l'application et son interaction avec l'utilisateur.
+
+\paragraph{JavaScript et la modularité}~\\
 Pour s'assurer que l'application soit extensible avec un minimum de réécriture de code nous avons essayé de concevoir l'application de la façon la plus modulaire possible. Cela présente d'autant plus d'intérêt dans un contexte de travail en groupe car chacun peut travailler sur un module indépendamment des autres.\\
 Pour faire cela proprement en JS nous nous sommes d'abord inspiré de quelques articles et présentations rédigés par de talentueux développeurs. Les plus importants étant: la présentation de Nicholas Zakas~\cite{Zakas}, ancien ingénieur responsable du front-end chez Yahoo! et deux articles~\cite{Addy}~\cite{Osmani} d'Addy Osmani, Developer Programs Engineer chez Google et membre de l'équipe jQuery.
 
@@ -257,16 +267,16 @@ Le JavaScript ne présente aucune manière native de créer des modules\footnote{Pr
 
 \medskip
 Cependant côté client, il n'existe pas encore de consensus sur la façon d'implémenter les modules car ils présentent des enjeux différents que sur le serveur. Une des critiques récurrentes de CommonJS est qu'elle ne permet pas le chargement asynchrone de modules. C'est de là qu'est né AMD\footnote{\url{https://github.com/amdjs/amdjs-api/wiki/AMD}} (Asynchronous Module Definition) qui est l'option la plus utilisé pour organiser des modules côté client, souvent grâce à l'aide de la librairie Require.js\footnote{\url{http://requirejs.org/}}. Bien que cette dernière solution semble être la meilleure façon actuelle d'organiser le code côté client en modules, nous avons préféré n'utiliser aucune bibliothèque dans un premier temps et implémenter nous-mêmes le concept de module.
-En JavaScript, le seul moyen de créer une nouvelle portée de variables se fait à l'aide d'une fonction. Donc en couplant les closures et les fonctions immédiatement invoqués (IIFE), on peut créer un espace d'adressage virtuellement "privé".
-Exemple:\\
+En JavaScript, le seul moyen de créer une nouvelle portée de variables se fait à l'aide d'une fonction. Donc en couplant les closures et les fonctions immédiatement invoqués (IIFE), on peut créer un espace d'adressage virtuellement "privé".\\
+Exemple:
 \begin{lstlisting}
 // portée de variable externe
 var module = {};
 
 (function(arg) {
   // nouvelle portée de variable
-  var x; 				// privé
-  arg.hello = 'hello'; 	// publique -> accessible en dehors de la fonction.
+  var x; 				// portée restreinte au champs de la fonction
+  arg.hello = 'hello'; 	// accessible en dehors de la fonction
 }(module)); //fonction immédiatement invoquée
 
 module.x; 		// n'existe pas
@@ -280,17 +290,24 @@ De cette manière là nous pouvons aussi inclure un module dans un autre en cas de
 Afin d'éviter d'inclure automatiquement un module dans un autre pour chaque dépendance, nous avons préféré introduire un système de \emph{publish/subscribe}, pour garder l'aspect de modules indépendants. Chaque module hérite donc des méthodes \texttt{publish} et \texttt{subscribe}, il lui suffit de s'abonner aux messages dont il a besoin, et de publier ceux nécessaires aux autres modules.\\
 Il reste cependant quelques modules qui interagissent entre eux sans forcément utiliser les méthodes de publication/abonnement ou d'inclusion. Il y a la vue et le modèle de l'éditeur, ceux-ci sont liés par la bibliothèque Backbone.js. Les modèles déclenchent un évènement pour différentes modifications des données, comme l'ajout d'un calque dans un bloc, le changement d'attribut d'un calque ou d'un bloc, ou bien même un évènement totalement personnalisé. Cet évènement est ensuite récupéré par la vue, qui effectue des changements en conséquence (manipulation du DOM, contrôle des données). On obtient ainsi une architecture MV* comme décrite dans la conception.
 
-\paragraph{Organisation du code client}~\\
-\emph{editorModels}: module de construction et de maintenance de la structure visuelle. Il contient les modèles Backbone représentants les données graphiques de l'éditeur.\\[0.4cm]
-\emph{structure}: module de construction et de maintenance de la structure musicale.\\[0.4cm]
-\emph{player}: permet la lecture du morceau grâce à la bibliothèque audiolib. Ce module est programmé pour jouer un morceau donc l'information est stocké par la structure exclusivement.\\[0.4cm]
-\emph{communicator}: module de communication avec le serveur. Il écoute et émet sur la socket lié au serveur et récupère ainsi les messages broadcastés par ce dernier et lui fait suivre les messages locaux.\\[0.4cm]
-\emph{editorViews, playerView, instrumentView et toolsView}: contiennent les vues Backbone servants à l'affichage de l'application et son interaction avec l'utilisateur.
+\subsubsection{Structures visuelle et musicale}
 
-\paragraph{Lecture de la structure musicale}~\\
+L'application a été séparée en deux parties distinctes que sont l'affichage et la lecture du son. Ceci pour des raisons de performances, car la structure optimale pour l'affichage ne l'est pas pour la lecture du son et inversement. Nous avons pu ainsi nous partager le travail aisément.
+
+\paragraph{Structure visuelle}~\\
+Pour ce qui concerne le rendu graphique de l'application, il est intéressant de séparer la vue des données, à la manière d'une architecture MVC. Une fois les vues correctement liée au changement des modèles, on ne s'occupe plus que de la modification des données et les vues suivent automatiquement. De plus ceci a un avantage dans la réutilisation du code des modèles côté serveur comme nous l'avons vu dans la section archivage.
+
+\medskip
+La structure des données de l'affichage est en quelque sorte conditionnée par les possibilités du couple HTML5/CSS3. Cependant celui-ci a beaucoup évolué dans ses dernières versions respectives, et nous permet d'obtenir le rendu que nous souhaitions.\\
+L'éditeur est alors représenté par un Model Backbone, ceci pour pouvoir l'exporter ou l'importer aisément. Ce Model contient une Collection de blocs, qui symbolise la grille d'édition dans sa totalité. Un bloc est un Model de la Collection précédente, il contient toutes les informations relatives à chaque bloc, comme sa largeur ou son ordre dans la grille. Il inclut lui même aussi une Collection qui sont les claques d'un bloc. C'est une Collection de Model calque, où chaque calque est caractérisé par le bloc auquel il appartient et le nombre de subdivision qu'il contient. On y trouve aussi les informations pour savoir si le calque est éditable --- au dessus des autres calques --- ou encore les cellules activées. C'est à travers les calques éditables de chaque bloc que l'on peut faire des sélections de cellules afin d'activer ou désactiver des notes.\\
+Au niveau du squelette HTML de l'éditeur, celui-ci est essentiellement composé de de balises div. C'est grâce au CSS que nous réussissons à obtenir le rendu souhaité. En jouant avec a propriété display, nous pouvons aligner les blocs horizontalement, les uns à la suite des autres, mais aussi donner une apparence de tableau aux calques. L'empilement des calques est possible avec la propriété position, et par un jeux sur l'attribut class des balises nous parvenons à faire intéragir le tout ensemble.
+
+\medskip
+L'aspect graphique de l'éditeur va continuer à évoluer, puisque nous ne nous sommes pas beaucoup attardé dessus pour le moment, ceci n'étant pas une priorité du projet. Cependant les bases sont présentes et suffisantes pour une utilisation de toutes les fonctionnalités actuelles de l'application.
+
+\paragraph{Structure musicale}~\\
 Les modules Lecteur et Structure sont implémentés de manière très proche. En effet, la structure a été pensée pour être lue, et ce qui la différencie des modèles de l'éditeur. Le lecteur va donc lire directement la structure JS remplie par le module Structure.\\
-La synthèse du son dans la librairie AudioLib se fait en envoyant des tableaux d'échantillons qui vont remplir le buffer du synthétiseur du navigateur. Ces échantillons sont générés par des oscillateurs, puis passent à travers différents filtres. Le remplissage des échantillons s'effectue dans une fonction de callback ne gardant pas trace du nombre d'échantillons produits. Pour pouvoir lire la structure musicale, on garde donc en mémoire l'endroit exact en nombre d'échantillons d'où la bufferisation en est.
-
+La synthèse du son dans la librairie AudioLib se fait en envoyant des tableaux d'échantillons qui vont remplir le buffer du synthétiseur du navigateur. Ces échantillons sont générés par des oscillateurs, puis passent à travers différents filtres. Le remplissage des échantillons s'effectue dans une fonction de callback ne gardant pas trace du nombre d'échantillons produits. Pour pouvoir lire la structure musicale, on garde donc en mémoire l'endroit exact en nombre d'échantillons d'où la bufferisation en est.\\
 Organisation de la structure :
 \begin{lstlisting}
 var song = {
@@ -318,7 +335,7 @@ var song = {
 
 \section{Avancement}
 
-\subsection{Limitations actuelles de l'application}
+\subsection{Limitations actuelles et améliorations}
 
 \subsection{Détails techniques}
 

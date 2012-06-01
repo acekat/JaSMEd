@@ -30,7 +30,7 @@ var channelCount = 2, // :) no more krakz yeah!
 				fadeout: numero du sample dans la note auquel le fadeout doit démarrer
 			}],
 			notelength: durée en samples d'une note du layer (floor),
-			reste: nombre de samples manquant au notes par rapport au block (reste de la division euclidienne),
+			remainder: nombre de samples manquant au notes par rapport au block (reste de la division euclidienne),
 			count: index de la note suivante
 		}
 	}*/
@@ -96,8 +96,8 @@ function loadLayer(n) {
 	exlength = layer.notes.length;
 
 	layer.loadlimit = samplenum + layer.notelength;
-	if (layer.reste) {
-		layer.reste--;
+	if (layer.remainder) {
+		layer.remainder--;
 		layer.loadlimit++;
 	}
 
@@ -147,7 +147,7 @@ function loadBlock() {
 			};
 		}
 		layers[n].count = 0;
-		layers[n].reste = blocklength%n;
+		layers[n].remainder = blocklength%n;
 		loadLayer(n);
 	}
 	

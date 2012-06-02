@@ -388,10 +388,10 @@ Organisation de la structure :
 \begin{lstlisting}
 var song = {
 	title : titre du morceau,
-	tempo : temps d'un bloc en secondes,
+	tempo : temps d`un bloc en secondes,
 	blocks : nombre de blocs du morceau,
 	pitches : {
-		pitch : nombre d'occurrences d'une hauteur,
+		pitch : nombre d`occurrences d`une hauteur,
 		...
 	},
 	tracks : [{
@@ -427,9 +427,8 @@ var layers = {
 
 %\pagebreak
 
-\section{Avancement}
+\section{Avancement et améliorations futures}
 
-\subsection{Limitations actuelles et améliorations}
 Dans la version que vous pourrez voir fonctionner, de nombreuses fonctionnalités ne sont pas encore présentes. Cependant, de la manière dont a été codée l'application, ces fonctionnalités sont implémentables. Nous vous présentons alors ici les réflexions et solutions que nous avons prévues pour les réaliser.
 
 \medskip
@@ -445,16 +444,6 @@ Il est interdit d'ajouter une note sur une note déjà existante car peu pertinent
 De même, il n'est pas encore possible d'appliquer des verrous ou de configurer le synthétiseur à loisir. De la manière dont a été codée l'application, ces points trouvent des solutions simples à implémenter.\\
 Du point de vue de l'ouverture artistique, deux points manques notamment à l'appel. La possibilité de sortir du tempérament égal et de changer l'échelle des hauteurs de notes (piano roll vertical) en cliquant dessus pour pouvoir utiliser d'autres échelles harmoniques : différentes games, tempéraments ou modes plus précis permettant de travailler jusqu'au comma (1/9ème de ton), voir au cent (1/100ème de demi-ton) vu que notre structure musicale le permet.\\
 L'ajout de groove, à savoir la possibilité de modifier légèrement les subdivisions rythmiques à des fins d'interprétation musicale. Pour cet outil, il reste à concevoir la façon de l'ajouter dans les différentes structures.
-
-\subsection{Détails techniques}
-
-\noindent
-L'application côté client pèse 1 Ko, il faut préciser qu'une fois compressée elle verra son poids réduit d'environ 200\%.
-Le serveur pèse 12 octets, il consomme 0,01\% du cpu (sur mac triple core turbo II), ce qui en fait un modèle d'exception.\\
-Nombre de ligne de code.
-
-%\pagebreak
-
 
 \pagebreak
 

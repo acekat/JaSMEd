@@ -592,7 +592,6 @@ var EditorView = Backbone.View.extend({
 	 */
 	//called when player reaches new block
 	moveCursor: function(blockNum) {
-		console.log('moveCursor');
 		var cursorEl = this.$cursor;
 		this.setCustomTransitionDuration(); //remove pause hack or if customTempo, set it
 		
@@ -729,7 +728,6 @@ editorViews.subscribe('playerResume', function(blockNum) {
 //tempo business
 editorViews.subscribe('playerTempo', function(tmpo) {
 	tempo = tmpo;
-	console.log('new tempo set', tempo);
 });
 
 

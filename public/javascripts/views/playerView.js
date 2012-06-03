@@ -48,15 +48,15 @@ var PlayerView = Backbone.View.extend({
 			return;
 		}
 				
-		if (1 <= val && val <= 10)
-			this.updateTempoSlide(val);
-		else if (val <= 0) {
+		if (val <= 0) {
 			warn.show();
 			return;
 		}	else if (val < 1)
 			tempoEl.addClass('verySlow');
 		else if (val > 10)
 			tempoEl.addClass('veryFast');
+			
+		this.updateTempoSlide(val);
 		
 		playerView.publish('playerViewTempo', val);
 		//console.log('tempoText', val);

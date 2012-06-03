@@ -19,7 +19,12 @@ var channelCount = 2, // :) no more krakz yeah!
 	device,
 	tempo,
 	compress,
-	instrument,
+	instrument, /* = {
+        pitch: {
+            osc: oscillateur,
+            envelope: ADSR
+        }
+	}*/
 	track,
 	layers, /*= {
 		numero du layer: {
@@ -70,16 +75,16 @@ function audioCallback(buffer, channelCount) {
 
 			for (var j = 0 ; j < layer.notes.length ; j++) {
 				note = layer.notes[j];
-				generator = instrument[note.pitch];
+				if(!(generator = instrument[note.pitch])) continue;
 
-				generator.envelope.sustainTime = sustainTime;
-				if (++note.nsample === layer.notelength)
-				generator.envelope.state = 0;
+                generator.envelope.sustainTime = sustainTime;
+			    if (++note.nsample === layer.notelength)
+			        generator.envelope.state = 0;
 
-				generator.osc.generate();
-				generator.envelope.generate();
-				sample += generator.osc.getMix() * generator.envelope.getMix();
-				compBy++;
+			    generator.osc.generate();
+			    generator.envelope.generate();
+			    sample += generator.osc.getMix() * generator.envelope.getMix();
+			    compBy++;
 			}
 		}
 
@@ -166,12 +171,14 @@ function init(song) {
 	compress = audioLib.Compressor(sampleRate, 0, 0.5);
 	instrument = {};
 	for (var pitch in song.pitches) {
-		instrument[pitch] = { 
-			osc : audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch)),
-			envelope : audioLib.ADSREnvelope(sampleRate, 40, 20, sustain, 90, 0, null)
-		};
-		instrument[pitch].osc.waveShape = curWaveForm;
-		instrument[pitch].envelope.triggerGate(true);
+        if(song.pitches[pitch]) {
+		    instrument[pitch] = {
+			    osc : audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch)),
+			    envelope : audioLib.ADSREnvelope(sampleRate, 40, 20, sustain, 90, 0, null)
+		    };
+		    instrument[pitch].osc.waveShape = curWaveForm;
+		    instrument[pitch].envelope.triggerGate(true);
+        }
 	}
 	blocknum = -1;
 	layers = {};
@@ -211,6 +218,18 @@ function playerStop() {
 /**
  *  SUBSCRIBES
  */
+
+player.subscribe('newPitch', function(pitch) {
+    if(stopped) return;
+    
+    instrument[pitch] = {
+	    osc : audioLib.Oscillator(sampleRate, utils.midiToHertz(pitch)),
+		envelope : audioLib.ADSREnvelope(sampleRate, 40, 20, sustain, 90, 0, null)
+	};
+	instrument[pitch].osc.waveShape = curWaveForm;
+	instrument[pitch].envelope.triggerGate(true);
+});
+
 player.subscribe('playerViewPlay', function() {
 	if (stopped)
 		init(jasmed.module('struct').selectedSong);

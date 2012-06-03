@@ -9,8 +9,6 @@ var utils = jasmed.module('utils');
  *  INSTANCES
  */
 var curSong, curTrack;
-var demo; //where demo is stored (init once.. shouldn't change later)
-// all this is a fucking ugly hack to make demo work... will all disappear soon
 
 /**
  *  CONSTRUCTORS / CLASSES
@@ -81,6 +79,11 @@ var Track = {
      *           {number} duration} The layer and duration of the new note.
      */
     addNote: function(pitch, start, end) {
+        if(this.songPitches[pitch]) this.songPitches[pitch]++;
+        else {
+            this.songPitches[pitch] = 1;
+            struct.publish('newPitch', pitch);
+        }
         this.songPitches[pitch]++ || (this.songPitches[pitch] = 1);
         
         var startBlk = this.blocks[start.block];
@@ -232,15 +235,14 @@ struct.createSong = function(props) {
 
 struct.initialize = function(seqName) {
 	struct.publish('structInit', seqName);
-	//console.log('struct published structInit', seqName);
 };
 
 /**
  *  SUBSCRIBES
  */
 
-struct.subscribe("toolsExport", function(name) {
-	struct.publish("structExport", {
+struct.subscribe('toolsExport', function(name) {
+	struct.publish('structExport', {
 		name : name,
 		data : struct.selectedSong
 	});
@@ -271,18 +273,11 @@ function importSong(song) {
 }
 
 struct.subscribe('structServerInit', function(song) {
-	//console.log('structServerInit', song);
-	
 	curSong = (song) ? importSong(song) : struct.createSong();
 	
 	curTrack = curSong.tracks[0] || curSong.addTrack();
 
 	struct.selectedSong = curSong;
-	// console.log("selected", struct.selectedSong);
-	
-	// TO-DO: fix error on demo initialisation
-	// demo = jasmed.module('demo').render();
-	// console.log("demo", demo);
 });
 
 struct.subscribe('toolsNewBlock', function() {
@@ -309,9 +304,11 @@ struct.subscribe('serverSelection', function(selection) {      //TODO alléger l
     curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
 });
 
-struct.subscribe('playerViewTempo', function(tempo) {
-	curSong.tempo = tempo;
-	console.log('tempo changed!', tempo);
+struct.subscribe('playerViewTrack', function(track) {
+	if (track === 'demo')
+		struct.selectedSong = demo;
+	else if (track === 'grid')
+		struct.selectedSong = curSong;
 });
 
 })(jasmed.module('struct'));

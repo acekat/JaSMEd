@@ -17,7 +17,6 @@ var channelCount = 2, // :) no more krakz yeah!
 	trackNum = 0,
 	paused,
 	device,
-	tempo,
 	compress,
 	instrument, /* = {
         pitch: {
@@ -32,7 +31,7 @@ var channelCount = 2, // :) no more krakz yeah!
 			notes: [{
 				nsample: numero du sample dans la note,
 				pitch: pitch de la note,
-				fadeout: numero du sample dans la note auquel le fadeout doit démarrer
+				endsample: numero du sample de la note où elle doit se terminer
 			}],
 			notelength: durée en samples d'une note du layer (floor),
 			remainder: nombre de samples manquant au notes par rapport au block (reste de la division euclidienne),
@@ -71,16 +70,13 @@ function audioCallback(buffer, channelCount) {
 				loadLayer(n);
 			}
 
-			var sustainTime = Math.floor(tempo / n) - 150; //150 = attack + delay + release
-
 			for (var j = 0 ; j < layer.notes.length ; j++) {
 				note = layer.notes[j];
+                note.nsample++;
+                
 				if(!(generator = instrument[note.pitch])) continue;
 
-                generator.envelope.sustainTime = sustainTime;
-			    if (++note.nsample === layer.notelength)
-			        generator.envelope.state = 0;
-
+                generator.envelope.sustainTime = note.endsample/samplerate*1000;
 			    generator.osc.generate();
 			    generator.envelope.generate();
 			    sample += generator.osc.getMix() * generator.envelope.getMix();
@@ -113,7 +109,9 @@ function loadLayer(n) {
 			layer.notes.push({
 				pitch: chord[i].pitch,
 				nsample: 0,
+                endsample: Math.floor(chord[i].duration*blocklength/n)
 			});
+            instrument[chord[i].pitch].envelope.state = 0;
 		}
 		else if (chord[i].duration < 0) {
 			for (var j = 0 ; j < exlength ; j++) {
@@ -164,9 +162,8 @@ function loadBlock() {
 
 function init(song) {
 	track = song.tracks[trackNum];
+    player.publish('playerTempo', song.tempo);
 	blocklength = Math.round(song.tempo*sampleRate);
-	tempo = song.tempo * 1000; //tempo change only when stop/restart
-	player.publish('playerTempo', song.tempo);
 	blocks = song.blocks;
 	compress = audioLib.Compressor(sampleRate, 0, 0.5);
 	instrument = {};

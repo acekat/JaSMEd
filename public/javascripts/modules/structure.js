@@ -304,7 +304,7 @@ struct.subscribe('serverSelection', function(selection) {      //TODO alléger l
     curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
 });
 
-struct.subscribe('playerViewTrack', function(track) {
+struct.subscribe('playerViewTempo', function(tempo) {
 	curSong.tempo = tempo;
 });
 

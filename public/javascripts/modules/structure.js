@@ -305,10 +305,7 @@ struct.subscribe('serverSelection', function(selection) {      //TODO alléger l
 });
 
 struct.subscribe('playerViewTrack', function(track) {
-	if (track === 'demo')
-		struct.selectedSong = demo;
-	else if (track === 'grid')
-		struct.selectedSong = curSong;
+	curSong.tempo = tempo;
 });
 
 })(jasmed.module('struct'));

@@ -53,7 +53,7 @@ function audioCallback(buffer, channelCount) {
 	if (paused)
 		return;
 
-	var sample, compBy, fade, layer, note, generator;
+	var sample, compBy, layer, note, generator;
 
 	for (var i = 0 ; i < buffer.length ; i += channelCount, samplenum++) {
 		if (samplenum === blocklength) {
@@ -76,7 +76,7 @@ function audioCallback(buffer, channelCount) {
                 
 				if(!(generator = instrument[note.pitch])) continue;
 
-                generator.envelope.sustainTime = note.endsample/samplerate*1000;
+                generator.envelope.sustainTime = note.endsample/sampleRate*1000;
 			    generator.osc.generate();
 			    generator.envelope.generate();
 			    sample += generator.osc.getMix() * generator.envelope.getMix();

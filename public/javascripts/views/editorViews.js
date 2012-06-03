@@ -15,7 +15,8 @@ var nbOctave = 7;
 var pitches = ['B', 'A#', 'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C'];
 
 /*cursor business*/
-var tempo = 4; //seconds per block
+var defaultTempo = 4;
+var tempo = defaultTempo; //seconds per block
 var cursorInitialPos = 40; //cursor starts at 40px
 var vendorPrefixes = ['-webkit-', '-moz-'];
 
@@ -591,17 +592,19 @@ var EditorView = Backbone.View.extend({
 	 */
 	//called when player reaches new block
 	moveCursor: function(blockNum) {
+		console.log('moveCursor');
 		var cursorEl = this.$cursor;
-		this.removeCustomTransitionDuration(); //remove pause hack
+		this.setCustomTransitionDuration(); //remove pause hack or if customTempo, set it
 		
 		//lookup + add-up all previous widths... (for zoom coherence)
-		var offset = this.cursorTotalWidth(blockNum);
+		this.cursorDestination = this.cursorTotalWidth(blockNum);
+		//+ cache it in this.cursorDestination
 		
 		//force transition STOP... very jumpy...
 		//cursorEl.removeClass('translate');
 		//cursorEl.css({left: cursorEl.position().left});		
 		cursorEl.addClass('translate');
-		cursorEl.css({left: offset});
+		cursorEl.css({left: this.cursorDestination});
 	},
 	
 	resetCursor: function() {
@@ -621,7 +624,8 @@ var EditorView = Backbone.View.extend({
 		cursorEl.removeClass('translate');
 		cursorEl.css({left: curPos}); //FORCE the stop. otherwise will continue...
 
-		var destination = this.cursorTotalWidth(blockNum);
+		var destination = this.cursorDestination;
+		//count time left for transition.
 		var pixelsLeft = destination - curPos; //pixels left to destination
 		var curBlockWidth = this.collection.getBlock(blockNum + 1).get('width'); //width of block which is over the cursor
 		var timeLeft = tempo * pixelsLeft / curBlockWidth; //time left to get to destination
@@ -630,10 +634,15 @@ var EditorView = Backbone.View.extend({
 	},
 	
 	resumeCursor: function(blockNum) {
+		console.log('resumed cursor');
 		var cursorEl = this.$cursor;
-		var destination = this.cursorTotalWidth(blockNum);
+		var destination = this.cursorDestination;
 		cursorEl.addClass('translate');
 		cursorEl.css({left: destination}); //remind him the destination
+	},
+	
+	tempoChange: function(tempo) {
+		this.setCustomTransitionDuration(tempo);
 	},
 	
 	//lookup + add-up all previous widths... (for zoom coherence)
@@ -652,6 +661,13 @@ var EditorView = Backbone.View.extend({
 	
 	removeCustomTransitionDuration: function() {
 		this.handleCustomTransitionDuration();
+	},
+	
+	setCustomTransitionDuration: function() {
+		if (tempo === defaultTempo)
+			this.removeCustomTransitionDuration();
+		else
+			this.handleCustomTransitionDuration(tempo);
 	},
 	
 	handleCustomTransitionDuration: function(time) {
@@ -708,6 +724,12 @@ editorViews.subscribe('playerPause', function(blockNum) {
 
 editorViews.subscribe('playerResume', function(blockNum) {
 	editorView.resumeCursor(blockNum);
+});
+
+//tempo business
+editorViews.subscribe('playerTempo', function(tmpo) {
+	tempo = tmpo;
+	console.log('new tempo set', tempo);
 });
 
 

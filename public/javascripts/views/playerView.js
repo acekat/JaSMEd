@@ -5,6 +5,11 @@
  */
 var view;
 
+/*
+1 à 10... avec slide
+si on dépasse -> couleur rouge.
+*/
+
 
 /**
  *  Associated View to players Module.
@@ -23,14 +28,57 @@ var PlayerView = Backbone.View.extend({
 	},
 
 	events: {
-		'click .playerControls .playPause' : 'playPause',
-		'click .playerControls .stop' : 'stop',
-		'change .trackSelector input' : 'selectTrack'
+		'click .playPause' : 'playPause',
+		'click .stop' : 'stop',
+		'change .tempo input[name=tempoText]' : 'changeTempoText',
+		'change .tempo input[name=tempoSlide]' : 'changeTempoSlide'
 	},
-
-	selectTrack: function() {
-		var track = $(this.el).find('.trackSelector input:checked').val();
-		playerView.publish('playerViewTrack', track);
+	
+	changeTempoText: function() {
+		var tempoEl = this.$el.find('.tempo');
+		var val = tempoEl.find('input[name=tempoText]').val();
+		var warn = this.$el.find('.tempo .flash.warn');
+		warn.hide();
+		tempoEl.removeClass('verySlow veryFast');
+		
+		//check if a number..., -> otherwise warn the x out of him
+		val = parseFloat(val, 10);
+		if (typeof val == 'string') {
+			console.log('that ain\'t no number..');
+			return;
+		}
+				
+		if (1 <= val && val <= 10)
+			this.updateTempoSlide(val);
+		else if (val <= 0) {
+			warn.show();
+			return;
+		}	else if (val < 1)
+			tempoEl.addClass('verySlow');
+		else if (val > 10)
+			tempoEl.addClass('veryFast');
+		
+		playerView.publish('playerViewTempo', val);
+		//console.log('tempoText', val);
+	},
+	
+	changeTempoSlide: function() {
+		var tempoEl = this.$el.find('.tempo');
+		var val = tempoEl.find('input[name=tempoSlide]').val();
+		val = parseFloat(val, 10).toFixed(1);
+		this.updateTempoText(val);
+		tempoEl.removeClass('verySlow veryFast');
+		
+		playerView.publish('playerViewTempo', val);
+		//console.log('tempoSlide', val);
+	},
+	
+	updateTempoSlide: function(val) {
+		this.$el.find('.tempo input[name=tempoSlide]').val(val);
+	},
+	
+	updateTempoText: function(val) {
+		this.$el.find('.tempo input[name=tempoText]').val(val);
 	},
 	
 	playPause: function(ev) {
@@ -48,8 +96,8 @@ var PlayerView = Backbone.View.extend({
 		}	
 	},
 
-	stop: function(ev) {
-		var button = $(this.el).find('.playerControls .playPause');
+	stop: function() {
+		var button = this.$el.find('.playPause');
 		
 		playerView.publish('playerViewStop');
 		button.removeClass('playing');

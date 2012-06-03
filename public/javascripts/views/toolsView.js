@@ -30,7 +30,7 @@ var ToolsView = Backbone.View.extend({
 		"click .add-block" : "newBlock",
 		"click .zoom-in" : "zoomIn",
 		"click .zoom-out" : "zoomOut",
-		"click .export-as" : "exportAs"
+		"click .export .export-as" : "exportAs"
 	},
 
 	newBlock: function() {
@@ -45,9 +45,9 @@ var ToolsView = Backbone.View.extend({
 		toolsView.publish("toolsZoom", false);
 	},
 
-	exportAs: function(e) {
-		var warn = this.$(".flash.warn");
-		var name = this.$("#export-as").val();
+	exportAs: function() {
+		var name = this.$el.find('.export input').val();
+		var warn = this.$el.find('.flash.warn');
 
 		warn.hide();
 		

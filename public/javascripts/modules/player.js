@@ -160,7 +160,8 @@ function loadBlock() {
 function init(song) {
 	track = song.tracks[trackNum];
 	blocklength = Math.round(song.tempo*sampleRate);
-	tempo = song.tempo * 1000;
+	tempo = song.tempo * 1000; //tempo change only when stop/restart
+	player.publish('playerTempo', song.tempo);
 	blocks = song.blocks;
 	compress = audioLib.Compressor(sampleRate, 0, 0.5);
 	instrument = {};
@@ -213,9 +214,10 @@ function playerStop() {
 player.subscribe('playerViewPlay', function() {
 	if (stopped)
 		init(jasmed.module('struct').selectedSong);
+	else
+		player.publish('playerResume', blocknum); // hack for cursorResume...
 
 	play();
-	player.publish('playerResume', blocknum); // hack for cursorResume...
 });
 
 player.subscribe('playerViewPause', function() {

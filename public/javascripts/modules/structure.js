@@ -309,11 +309,9 @@ struct.subscribe('serverSelection', function(selection) {      //TODO alléger l
     curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
 });
 
-struct.subscribe('playerViewTrack', function(track) {
-	if (track === 'demo')
-		struct.selectedSong = demo;
-	else if (track === 'grid')
-		struct.selectedSong = curSong;
+struct.subscribe('playerViewTempo', function(tempo) {
+	curSong.tempo = tempo;
+	console.log('tempo changed!', tempo);
 });
 
 })(jasmed.module('struct'));

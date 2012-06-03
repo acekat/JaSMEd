@@ -109,6 +109,24 @@ footer
 	.warn
 		display: none
 
+.player
+	.tempo
+		&.verySlow
+			input[name=tempoText]
+				border-color: blue
+				&:focus
+					outline-color: blue
+		&.veryFast
+			input[name=tempoText]
+				border-color: red
+				&:focus
+					outline-color: red
+		&.verySlow, &.veryFast
+			input[name=tempoSlide]
+				opacity: 0.5
+				&:hover
+					opacity: 1
+
 // editor variables
 piano-win-width = 40px
 grid-win-height = 300px

@@ -1,6 +1,10 @@
 (function(communicator) {
 
-var socket = io.connect('http://localhost/');
+var path = window.location.pathname;
+var storePath = path.split('store/')[1];
+var namespace = (path === '/app') ? 'app' : storePath;
+
+var socket = io.connect('http://localhost/' + namespace);
 
 /**
  *  ON => PUBLISH

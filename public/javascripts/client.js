@@ -41,8 +41,12 @@ var jasmed = {
 
 // Single entry point into the application.
 $(function() {
-	var storePath = window.location.pathname.split('store/')[1];
-	console.log('storePath', storePath);
+	var path = window.location.pathname;
+	//var storePath = (path === 'app') ? path : path.split('store/')[1];
+	var storePath = path.split('store/')[1];
+	
+	//jasmed.module('communicator').initialize((storePath) ? storePath : path);
+	
 	//Modules
 	jasmed.module('editorModels').initialize(storePath);
 	jasmed.module('struct').initialize(storePath);

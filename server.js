@@ -1,5 +1,6 @@
 var express = require('express')
 	, http = require('http')
+	, _ = require('underscore')
 	, auth = require('./modules/authentification')
 	, utils = require('./modules/utils')
 	, store = require('./modules/store')
@@ -95,7 +96,27 @@ app.get('/store/:name', requireLogin, function(req, res) {
 /**
  * socket.io
  */
-io.sockets.on('connection', function (socket) {
+var namespaces = {}; //object that'l store all namespaces...
+
+function addNewNamespace(name) {
+	namespaces[name] = io.of('/' + name);
+	namespaces[name].on('connection', realTime);
+	console.log('added', name, 'namespace');
+}
+
+//main namespace
+addNewNamespace('app');
+
+//saved sequences namespaces
+store.list(function(files) {
+	_.each(files, function(fileName) {
+		addNewNamespace(fileName);
+	})
+});
+
+
+/**/
+function realTime(socket) {
 	var session = socket.handshake.session;
 
 	//do something better about that...
@@ -149,6 +170,13 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('editorModelsExport', function(seq) {
 		var seqPath = seq.name + '.models';
+		
+		//check if new namespace, if so add to namespaces...
+		store.list(function(files) {
+			if (!_.include(files, seq.name))
+				addNewNamespace(seq.name);
+		});
+		
 		console.log('seqPath', seqPath);
 		store.exportSeq(seqPath, seq.data, function(res) {
 			if (!res)
@@ -160,6 +188,13 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('structExport', function(seq) {
 		var seqPath = seq.name + '.struct';
+		
+		//check if new namespace, if so add to namespaces...
+		store.list(function(files) {
+			if (!_.include(files, seq.name))
+				addNewNamespace(seq.name);
+		});
+		
 		console.log('seqPath', seqPath);
 		store.exportSeq(seqPath, seq.data, function(res) {
 			if (!res)
@@ -179,7 +214,7 @@ io.sockets.on('connection', function (socket) {
 		socket.broadcast.emit('serverNewBlock');
 		//
 	});
-});
+}
 
 /**
 function structNewBlock() {

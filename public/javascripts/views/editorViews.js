@@ -592,6 +592,7 @@ var EditorView = Backbone.View.extend({
 	 */
 	//called when player reaches new block
 	moveCursor: function(blockNum) {
+		// console.log('moveCursor');
 		var cursorEl = this.$cursor;
 		this.setCustomTransitionDuration(); //remove pause hack or if customTempo, set it
 		
@@ -603,14 +604,32 @@ var EditorView = Backbone.View.extend({
 		//cursorEl.removeClass('translate');
 		//cursorEl.css({left: cursorEl.position().left});		
 		cursorEl.addClass('translate');
+		// console.log('added tranlate cursorEl class:', cursorEl.attr('class'), '\nstyle', cursorEl.attr('style'));
 		cursorEl.css({left: this.cursorDestination});
+		// console.log('LEFT BACK ON cursorEl class:', cursorEl.attr('class'), '\nstyle', cursorEl.attr('style'));
 	},
 	
-	resetCursor: function() {
+	resetCursor: function(repeat) {
 		var cursorEl = this.$cursor;
 		this.removeCustomTransitionDuration(); //remove pause hack
+		// console.log('cursorEl class:', cursorEl.attr('class'), 'style', cursorEl.attr('style'));
 		cursorEl.removeClass('translate');
+		if (repeat) {
+			var clone = $(document.createElement('div'));
+			clone.addClass('cursor');
+			// console.log('clone', clone);
+			cursorEl.remove();
+			var upper = $('#content .module.editor .grid-win .grid');
+			// console.log('upper', upper);
+			upper.prepend(clone);
+			//clone.appendTo(upper);
+			// console.log('upper after', upper);
+			cursorEl = clone;
+		}
+		// console.log('removed translate cursorEl class:', cursorEl.attr('class'), 'style', cursorEl.attr('style'));
+		//cursorEl.position({left: cursorInitialPos});
 		cursorEl.css({left: cursorInitialPos});
+		// console.log('did the left cursorEl class:', cursorEl.attr('class'), 'style', cursorEl.attr('style'));
 	},
 	
 	//when pause is clicked i need block on which it paused...
@@ -633,7 +652,7 @@ var EditorView = Backbone.View.extend({
 	},
 	
 	resumeCursor: function(blockNum) {
-		console.log('resumed cursor');
+		// console.log('resumed cursor');
 		var cursorEl = this.$cursor;
 		var destination = this.cursorDestination;
 		cursorEl.addClass('translate');
@@ -680,6 +699,11 @@ var EditorView = Backbone.View.extend({
 		res['transition-duration'] = t;
 
 		cursorEl.css(res);
+	},
+
+	focusCursor: function() {
+		var cursorLeft = parseFloat(this.$cursor.css("left"));
+		gridWin.scrollLeft(cursorLeft-300);
 	}
 });
 
@@ -708,6 +732,10 @@ editorViews.subscribe("toolsZoom", function(arg) {
 	editorView.zoom(arg);
 });
 
+editorViews.subscribe("toolsFocus", function() {
+	editorView.focusCursor();
+});
+
 editorViews.subscribe('playerNextBlock', function(blockNum) {
 	editorView.moveCursor(blockNum);
 });
@@ -728,6 +756,11 @@ editorViews.subscribe('playerResume', function(blockNum) {
 //tempo business
 editorViews.subscribe('playerTempo', function(tmpo) {
 	tempo = tmpo;
+});
+
+editorViews.subscribe('playerRepeat', function() {
+	console.log('repeat!');
+	editorView.resetCursor(true);
 });
 
 

@@ -173,8 +173,9 @@ pitch-style()
 
 	.piano-win
 		float: left
+		margin-bottom: 15px
 		width: piano-win-width
-		height: grid-win-height
+		height: grid-win-height - 15px
 		background: win-color
 		border: 1px solid
 		overflow: hidden
@@ -218,7 +219,7 @@ pitch-style()
 		height: grid-win-height
 		background: win-color
 		border: 1px solid
-		overflow-x: hidden
+		overflow-x: scroll
 		overflow-y: auto
 
 	.grid
@@ -231,19 +232,11 @@ pitch-style()
 		position: absolute
 		left: 0px
 		height: 100%
+		width: 1px
+		background: #DF013A
 		z-index: 10
 		&.translate
 			transition(4s)
-		.cursor-line
-			position: relative
-			height: 100%
-			width: 1px
-			background: #DF013A
-		.cursor-arrow
-			position: relative
-			left: -6px
-			arrow-up(6px, #3A3A3A)
-		
 
 	.block
 		display: inline-block

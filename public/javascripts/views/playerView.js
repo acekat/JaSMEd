@@ -31,7 +31,8 @@ var PlayerView = Backbone.View.extend({
 		'click .playPause' : 'playPause',
 		'click .stop' : 'stop',
 		'change .tempo input[name=tempoText]' : 'changeTempoText',
-		'change .tempo input[name=tempoSlide]' : 'changeTempoSlide'
+		'change .tempo input[name=tempoSlide]' : 'changeTempoSlide',
+		'change input[name=repeat]' : 'repeat'
 	},
 	
 	changeTempoText: function() {
@@ -103,6 +104,11 @@ var PlayerView = Backbone.View.extend({
 		button.removeClass('playing');
 		button.html('play');
 	},
+
+	repeat: function(ev) {
+		var on = $(ev.target).is(':checked');
+		playerView.publish('playerViewRepeat', on);
+	}
 });
 
 

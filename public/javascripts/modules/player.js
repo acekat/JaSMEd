@@ -43,6 +43,7 @@ var channelCount = 2, // :) no more krakz yeah!
 	blocks,
 	samplenum,
 	stopped = true,
+	repeat = false,
 	curWaveForm = 'sine',
 	sustain = 0.5;
 
@@ -128,7 +129,12 @@ function loadLayer(n) {
 
 function loadBlock() {
 	if (++blocknum == blocks) {
-		return false;
+		if(repeat) {
+			blocknum = 0;
+			player.publish('playerRepeat');
+		} else {
+			return false;
+		}
 	}
 
 	var toRead = track.blocks[blocknum].layers, exLayers = layers;
@@ -243,6 +249,10 @@ player.subscribe('playerViewPause', function() {
 
 player.subscribe('playerViewStop', function() {
 	stop();
+});
+
+player.subscribe('playerViewRepeat', function(bool) {
+	repeat = bool;
 });
 
 player.subscribe('instrumentViewWaveForm', function(wave) {

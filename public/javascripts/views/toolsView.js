@@ -30,6 +30,7 @@ var ToolsView = Backbone.View.extend({
 		"click .add-block" : "newBlock",
 		"click .zoom-in" : "zoomIn",
 		"click .zoom-out" : "zoomOut",
+		"click .focus" : "focusCursor",
 		"click .export .export-as" : "exportAs"
 	},
 
@@ -43,6 +44,10 @@ var ToolsView = Backbone.View.extend({
 
 	zoomOut: function() {
 		toolsView.publish("toolsZoom", false);
+	},
+
+	focusCursor: function() {
+		toolsView.publish("toolsFocus");
 	},
 
 	exportAs: function() {

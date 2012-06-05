@@ -37,25 +37,41 @@ var PlayerView = Backbone.View.extend({
 	changeTempoText: function() {
 		var tempoEl = this.$el.find('.tempo');
 		var val = tempoEl.find('input[name=tempoText]').val();
-		var warn = this.$el.find('.tempo .flash.warn');
+		var warn = tempoEl.find('.flash.warn');
+		
 		warn.hide();
 		tempoEl.removeClass('verySlow veryFast');
 		
 		//check if a number..., -> otherwise warn the x out of him
-		val = parseFloat(val, 10);
-		if (typeof val == 'string') {
-			console.log('that ain\'t no number..');
+		// val = parseFloat(val, 10);
+		// if (typeof val == 'string') {
+		// 	console.log('that ain\'t no number..');
+		// 	return;
+		// }
+				
+		// if (val <= 0) {
+		// 	warn.show();
+		// 	return;
+		// }	else if (val < 1)
+		// 	tempoEl.addClass('verySlow');
+		// else if (val > 10)
+		// 	tempoEl.addClass('veryFast');
+		
+		if (isNaN(val)) {
+			warn.filter(".notANumber").show();
 			return;
 		}
-				
+
+		val = parseFloat(val);		
+
 		if (val <= 0) {
-			warn.show();
+			warn.filter(".notPositive").show();
 			return;
-		}	else if (val < 1)
+		} else if (val < 1)
 			tempoEl.addClass('verySlow');
 		else if (val > 10)
 			tempoEl.addClass('veryFast');
-			
+
 		this.updateTempoSlide(val);
 		
 		playerView.publish('playerViewTempo', val);
@@ -65,7 +81,8 @@ var PlayerView = Backbone.View.extend({
 	changeTempoSlide: function() {
 		var tempoEl = this.$el.find('.tempo');
 		var val = tempoEl.find('input[name=tempoSlide]').val();
-		val = parseFloat(val, 10).toFixed(1);
+		
+		val = parseFloat(val).toFixed(1);
 		this.updateTempoText(val);
 		tempoEl.removeClass('verySlow veryFast');
 		
@@ -107,17 +124,18 @@ var PlayerView = Backbone.View.extend({
 
 
 /**
- *  Module initialization method
- */
-playerView.initialize = function() {
-	view = new PlayerView();
-};
-
-/**
  *  SUBSCRIBES
  */
 playerView.subscribe('playerStop', function() {
 	view.stop();
 });
+
+
+/**
+ *  Module initialization method
+ */
+playerView.initialize = function() {
+	view = new PlayerView();
+};
 
 })(jasmed.module('playerView'));

@@ -1,12 +1,10 @@
-button.playPause play
-button.stop stop
 .tempo
 	label(for="tempo") tempo (s/bloc): 
 	input(name="tempoText", id="tempo", type="text", value="4")
 	input(type="range", min="1", max="10", step="0.1", name="tempoSlide", value="4")
-	.flash.warn.negative
-		p negative tempo? REALLY??
-	.flash.warn.null
-		p erm.. 0 ??
+	.flash.warn.notPositive
+		p positive value please
 	.flash.warn.notANumber
 		p number please
+button.playPause play
+button.stop stop

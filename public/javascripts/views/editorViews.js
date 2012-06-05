@@ -17,7 +17,7 @@ var pitches = ['B', 'A#', 'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C'];
 /*cursor business*/
 var defaultTempo = 4;
 var tempo = defaultTempo; //seconds per block
-var cursorInitialPos = 40; //cursor starts at 40px
+var cursorInitialPos = 0;
 var vendorPrefixes = ['-webkit-', '-moz-'];
 
 
@@ -716,7 +716,7 @@ editorViews.subscribe('playerViewStop', function() {
 	editorView.resetCursor();
 });
 
-//hack for cursorPause (?not really a hack...)
+//hack for cursorPause (?not really a hack...) ?what code of yours is not a hack?
 editorViews.subscribe('playerPause', function(blockNum) {
 	editorView.pauseCursor(blockNum);
 });

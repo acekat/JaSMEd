@@ -119,6 +119,11 @@ playerView.subscribe('playerStop', function() {
 	view.stop();
 });
 
+playerView.subscribe('structTempo', function(tempo) {
+	view.updateTempoText(tempo);
+	view.updateTempoSlide(tempo);
+});
+
 
 /**
  *  Module initialization method

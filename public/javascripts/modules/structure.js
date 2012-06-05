@@ -256,6 +256,10 @@ function importSong(song) {
 	_.each(song.data, function(val, key) {
 		if (key !== 'pitches')
 			curSong[key] = val; //hack pour la ref
+		
+		//update playerViewTempo.
+		if (key === 'tempo' && val !== Song.tempo)
+			struct.publish('structTempo', val);
 
 		if (key === 'tracks') {
 			_.each(val, function(track) {

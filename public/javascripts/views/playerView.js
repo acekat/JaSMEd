@@ -42,21 +42,6 @@ var PlayerView = Backbone.View.extend({
 		warn.hide();
 		tempoEl.removeClass('verySlow veryFast');
 		
-		//check if a number..., -> otherwise warn the x out of him
-		// val = parseFloat(val, 10);
-		// if (typeof val == 'string') {
-		// 	console.log('that ain\'t no number..');
-		// 	return;
-		// }
-				
-		// if (val <= 0) {
-		// 	warn.show();
-		// 	return;
-		// }	else if (val < 1)
-		// 	tempoEl.addClass('verySlow');
-		// else if (val > 10)
-		// 	tempoEl.addClass('veryFast');
-		
 		if (isNaN(val)) {
 			warn.filter(".notANumber").show();
 			return;
@@ -75,7 +60,6 @@ var PlayerView = Backbone.View.extend({
 		this.updateTempoSlide(val);
 		
 		playerView.publish('playerViewTempo', val);
-		//console.log('tempoText', val);
 	},
 	
 	changeTempoSlide: function() {
@@ -87,7 +71,6 @@ var PlayerView = Backbone.View.extend({
 		tempoEl.removeClass('verySlow veryFast');
 		
 		playerView.publish('playerViewTempo', val);
-		//console.log('tempoSlide', val);
 	},
 	
 	updateTempoSlide: function(val) {

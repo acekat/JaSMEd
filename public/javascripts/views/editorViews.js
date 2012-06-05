@@ -716,7 +716,7 @@ editorViews.subscribe('playerViewStop', function() {
 	editorView.resetCursor();
 });
 
-//hack for cursorPause (?not really a hack...) ?what code of yours is not a hack?
+//hack for cursorPause (?not really a hack...) ?what code of yours is not a hack? => FUCK YOU :)
 editorViews.subscribe('playerPause', function(blockNum) {
 	editorView.pauseCursor(blockNum);
 });

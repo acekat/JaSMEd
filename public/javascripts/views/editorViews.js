@@ -592,8 +592,8 @@ var EditorView = Backbone.View.extend({
 	 */
 	//called when player reaches new block
 	moveCursor: function(blockNum) {
-		// console.log('moveCursor');
 		var cursorEl = this.$cursor;
+		//console.log('\ncursorEl 1 class:', cursorEl.attr('class'), '\nstyle', cursorEl.attr('style'));
 		this.setCustomTransitionDuration(); //remove pause hack or if customTempo, set it
 		
 		//lookup + add-up all previous widths... (for zoom coherence)
@@ -604,32 +604,24 @@ var EditorView = Backbone.View.extend({
 		//cursorEl.removeClass('translate');
 		//cursorEl.css({left: cursorEl.position().left});		
 		cursorEl.addClass('translate');
-		// console.log('added tranlate cursorEl class:', cursorEl.attr('class'), '\nstyle', cursorEl.attr('style'));
 		cursorEl.css({left: this.cursorDestination});
-		// console.log('LEFT BACK ON cursorEl class:', cursorEl.attr('class'), '\nstyle', cursorEl.attr('style'));
 	},
 	
 	resetCursor: function(repeat) {
 		var cursorEl = this.$cursor;
 		this.removeCustomTransitionDuration(); //remove pause hack
-		// console.log('cursorEl class:', cursorEl.attr('class'), 'style', cursorEl.attr('style'));
 		cursorEl.removeClass('translate');
+		
 		if (repeat) {
 			var clone = $(document.createElement('div'));
 			clone.addClass('cursor');
-			// console.log('clone', clone);
 			cursorEl.remove();
-			var upper = $('#content .module.editor .grid-win .grid');
-			// console.log('upper', upper);
+			var upper = $('#content .module.editor .grid-win .grid').prepend(clone);
 			upper.prepend(clone);
-			//clone.appendTo(upper);
-			// console.log('upper after', upper);
-			cursorEl = clone;
+			this.$cursor = cursorEl = clone;
 		}
-		// console.log('removed translate cursorEl class:', cursorEl.attr('class'), 'style', cursorEl.attr('style'));
-		//cursorEl.position({left: cursorInitialPos});
+		
 		cursorEl.css({left: cursorInitialPos});
-		// console.log('did the left cursorEl class:', cursorEl.attr('class'), 'style', cursorEl.attr('style'));
 	},
 	
 	//when pause is clicked i need block on which it paused...

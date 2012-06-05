@@ -77,7 +77,7 @@ function audioCallback(buffer, channelCount) {
                 
 				if(!(generator = instrument[note.pitch])) continue;
 
-                generator.envelope.sustainTime = note.endsample/sampleRate*1000;
+                generator.envelope.sustainTime = note.endsample/sampleRate*1000 - 150;
 			    generator.osc.generate();
 			    generator.envelope.generate();
 			    sample += generator.osc.getMix() * generator.envelope.getMix();

@@ -40,8 +40,17 @@ L'application est ensuite accessible dans Chrome à l'adresse `http://localhost:
 ### Authentification
 
 Pour utiliser JaSMEd il faut disposer de comptes. Actuellement il n'y a pas de moyen de créer un compte JaSMEd. Cependant, on dispose de 6 comptes par défault:
-thibaud, grizix, jaimito, acekat, berthou, esj
-Le mot de passe est le même pour tous les identifiants: pwd
+	
+	thibaud
+	grizix
+	jaimito
+	acekat
+	berthou
+	esj
+	
+Le mot de passe est le même pour tous les identifiants:
+	
+	pwd
 
 
 ## GIT

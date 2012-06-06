@@ -1,6 +1,6 @@
 {
 	"name": "JaSMEd",
-	"version": "0.0.3",
+	"version": "0.1",
 	"private": true,
 	"author": "PSAR team purple",
 	"contributors": [
@@ -19,7 +19,6 @@
 		"jade": "~0.26.0",
 		"socket.io": "~0.9.6",
 		"stylus": "~0.27.0",
-		"redis": "~0.7.2",
 		"connect-redis": "~1.3.0"
 	},
 	"devDependencies": {

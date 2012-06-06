@@ -29,9 +29,11 @@ P.S.: si redis server est dans votre PATH, on peut démarrer le serveur redis av
 
 Pour faire tourner le serveur, exécutez la commande:
 
+	npm start
+
+En mode développement, il est possible de lancer le serveur de telle sorte que les modifications soit prises en compte sans qu'il n'y ait besoin de relancer le serveur manuellement.
+
 	./bin/devserver
-	
-Plus besoin de relancer le serveur quand des modifications sont apportées.
 
 L'application est ensuite accessible dans Chrome à l'adresse `http://localhost:3000`
 

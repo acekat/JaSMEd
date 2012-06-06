@@ -9,9 +9,8 @@ block content
 	if (session.login)
 		p Welcome #{session.login}!
 
-	p
-		a(href='/app') THIS
-		|  is what all the fuss is about.
+	p main 
+		a(href='/app') ROOM
 
 	if files && files.length
 		p some saved sequences:

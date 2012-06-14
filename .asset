@@ -1,0 +1,4 @@
+{
+	"out": "public/javascripts/vendor",
+	"compress": true
+}

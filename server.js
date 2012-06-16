@@ -97,6 +97,7 @@ app.get('/store/:name', requireLogin, function(req, res) {
  * socket.io
  */
 var namespaces = {}; //object that'l store all namespaces...
+var connections = {}; //object to store connect count (if user has multiple tabs)
 
 function addNewNamespace(name) {
 	namespaces[name] = io.of('/' + name);
@@ -118,7 +119,47 @@ store.list(function(files) {
 /**/
 function realTime(socket) {
 	var session = socket.handshake.session;
+	var sessionID = socket.handshake.sessionID;
+	
+	/* connexion management -> put in separte functions later */
+	
+	/**
+	 * CONNECTION
+	 */
+	if (typeof connections[sessionID] == 'undefined')
+		connections[sessionID] = { tabCount: 0 }; // first connection
+		
+	// add connection to pool
+	connections[sessionID][socket.id] = socket;
+	connections[sessionID].tabCount++;
+	console.log(session.login, 'connecetd with', sessionID, 'connect count:', connections[sessionID].tabCount);
+	
+	/**
+	 * DISCONNECTION
+	 */
+	socket.on('disconnect', function() {
+		var user = connections[sessionID];
 
+		if (user.tabCount && user[socket.id]) {
+			// Forget this socket
+			user.tabCount--;
+			delete user[socket.id];
+			console.log(session.login, 'disconnected with', sessionID, 'connect count:', user.tabCount);
+		}
+
+		// No more active sockets for this user
+		if (user.tabCount === 0) {
+			delete connections[sessionID];
+			console.log(session.login, 'gone forreal');
+			//socket.broadcast.emit('bye', session.login, Date.now());
+		}
+	});
+	
+	
+	/**
+	 * APP
+	 */
+	
 	//do something better about that...
 	socket.emit('serverLogin', session.login);
 	

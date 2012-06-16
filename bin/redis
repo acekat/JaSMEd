@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-
-redis-server ./bin/redis.conf

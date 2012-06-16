@@ -20,7 +20,7 @@
 		"socket.io": "~0.9.6",
 		"stylus": "~0.27.0",
 		"connect-redis": "~1.3.0",
-		"asset": "~0.4.11"
+		"asset": "git://github.com/athibaud/asset.git#master"
 	},
 	"devDependencies": {
 		"node-dev": "~0.2.2"

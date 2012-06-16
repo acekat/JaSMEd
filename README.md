@@ -1,54 +1,50 @@
 ## JaSMEd
 
-### Configuration requise
+### Configuration & Dependencies
 
-Le serveur de JaSMEd tourne sur [node.js](http://nodejs.org/) *(>= v0.6.12)*.
-Vous trouverez [ici](https://github.com/joyent/node/wiki/Installation) un guide d'installation.
+JaSMEd's back-end runs on [node.js](https://github.com/joyent/node/wiki/Installation) *(>= v0.6.12)* and uses [Redis](http://redis.io/topics/quickstart) for session storage.
+Both need to be installed in order to run the JaSMEd server.
 
-Le client n'est pleinement compatible qu'avec une version récente de [Google Chrome](https://www.google.com/chrome) pour l'instant.
+Right now, JaSMEd is only fully compatible with a recent version of [Google Chrome](https://www.google.com/chrome).
+Other browsers implementing the webAudio spec should also work but we haven't tested them yet.
 
-### Dépendances
+### Running JaSMEd
 
-Une fois node.js installé et les sources de JaSMEd récupérées.
+First, clone a copy of the master repo
 
-Pour s'assurer que toutes les dépendances sont installées, exécutez la commande suivante à la source du projet:
+```bash
+git clone git://github.com/jquery/jquery.git#master
+```
 
-	npm install
+Enter the directory and make sure all dependencies are installed
 
-Pour démarrer la version actuelle de JaSMEd, il faut faire tourner un serveur Redis.
+```bash
+cd JaSMEd && npm install
+```
 
-Instructions pour l'installer et le démarrer: [Redis Quick Start](http://redis.io/topics/quickstart)
+Make sure a Redis server is running
 
-Grace à Redis, plus besoin de se ré-identifier au redémarrage du serveur.
+```bash
+/path/to/redis redis-server
+```
 
-P.S.: si redis server est dans votre PATH, on peut démarrer le serveur redis avec la commande:
+Start the server
 
-	./bin/redis
+```bash
+npm start
+```
 
-### Exécutable
-
-Pour faire tourner le serveur, exécutez la commande:
-
-	npm start
-
-En mode développement, il est possible de lancer le serveur de telle sorte que les modifications soit prises en compte sans qu'il n'y ait besoin de relancer le serveur manuellement.
-
-	./bin/devserver
-
-L'application est ensuite accessible dans Chrome à l'adresse `http://localhost:3000`
+The default port is 3000, so you can now try JaSMEd out at `http://localhost:3000`
 
 ### Authentification
 
-Pour utiliser JaSMEd il faut disposer de comptes. Actuellement il n'y a pas de moyen de créer un compte JaSMEd. Cependant, on dispose de 6 comptes par défault:
+JaSMEd is still in beta-alpha-you-name-it so currently the only way of signing-in is to use the default hard-coded accounts:
 	
-	thibaud
-	grizix
-	jaimito
-	acekat
-	berthou
-	esj
+-	thibaud
+-	grizix
+-	jaimito
+-	acekat
+-	berthou
+-	esj
 	
-Le mot de passe est le même pour tous les identifiants:
-	
-	pwd
-
+Password is `pwd` for all logins:

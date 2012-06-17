@@ -1,4 +1,4 @@
-## JaSMEd
+### JaSMEd
 
 ### Configuration & Dependencies
 
@@ -11,25 +11,22 @@ Other browsers implementing the webAudio spec should also work but we haven't te
 ### Running JaSMEd
 
 First, clone a copy of the master repo
-
 ```bash
 git clone -b master git://github.com/Acekat/JaSMEd.git
 ```
 
 Enter the directory and make sure all dependencies are installed
-
 ```bash
 cd JaSMEd && npm install
 ```
+_option `--unsafe-perm` may be needed if installation warns on post-install script_ 
 
 Make sure a Redis server is running
-
 ```bash
-/path/to/redis redis-server
+redis-server
 ```
 
-Start the server
-
+Start JaSMEd server
 ```bash
 npm start
 ```
@@ -39,12 +36,11 @@ The default port is 3000, so you can now try JaSMEd out at [localhost:3000](http
 ### Authentification
 
 JaSMEd is still in beta-alpha-you-name-it so currently the only way of signing-in is to use the default hard-coded accounts:
-	
--	thibaud
--	grizix
--	jaimito
--	acekat
--	berthou
--	esj
+- thibaud
+- grizix
+- jaimito
+- acekat
+- berthou
+- esj
 	
 Password is `pwd` for all logins.

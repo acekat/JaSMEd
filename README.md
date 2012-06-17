@@ -13,7 +13,7 @@ Other browsers implementing the webAudio spec should also work but we haven't te
 First, clone a copy of the master repo
 
 ```bash
-git clone git://github.com/jquery/jquery.git#master
+git clone -b master git://github.com/Acekat/JaSMEd.git
 ```
 
 Enter the directory and make sure all dependencies are installed
@@ -34,7 +34,7 @@ Start the server
 npm start
 ```
 
-The default port is 3000, so you can now try JaSMEd out at `http://localhost:3000`
+The default port is 3000, so you can now try JaSMEd out at [localhost:3000](http://localhost:3000).
 
 ### Authentification
 
@@ -47,4 +47,4 @@ JaSMEd is still in beta-alpha-you-name-it so currently the only way of signing-i
 -	berthou
 -	esj
 	
-Password is `pwd` for all logins:
+Password is `pwd` for all logins.

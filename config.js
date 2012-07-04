@@ -1,7 +1,8 @@
 var	connect = require('express/node_modules/connect')
 	, stylus = require('stylus')
-	, utils = connect.utils
-	,	cookieSecret = 'Connect 2. needs a secret!'
+	, utils = require('./modules/utils')
+	, nodeCookie = require('cookie')
+	,	cookieSecret = 'whambaamthankyoumaaammm!'
 	,	sessionKey = 'JaSMEd.sid';
 
 function expressConfig(app, express, sessionStore) {
@@ -19,8 +20,7 @@ function expressConfig(app, express, sessionStore) {
 		app.use(express.methodOverride());
 		app.use(express.cookieParser(cookieSecret));
 		app.use(express.session({
-			  secret: 'mama loves mambo'
-			, store: sessionStore
+			  store: sessionStore
 			, key: sessionKey
 		}));
 		// order matters: needs to be after stylus for it to recompile
@@ -41,14 +41,14 @@ function socketIOConfig(io, sessionStore) {
 				return callback('No cookie', false);
 
 			//data est ce qui sera exposé dans socket.handshake.session
-			var cookie = utils.parseCookie(data.headers.cookie);
-			var sid = cookie[sessionKey].split('.')[0];
-			var signedSid = utils.sign(sid, cookieSecret);
+			var cookie = nodeCookie.parse(data.headers.cookie);
+			var signedCookie = utils.parseSignedCookies(cookie, cookieSecret);
 
-			if (signedSid !== cookie[sessionKey])
-				return callback('SID don\'t match', false);
-
-			data.sessionID = sid;
+			data.sessionID = signedCookie[sessionKey];
+			
+			if (!data.sessionID)
+				return callback('SIDs don\'t match', false);
+			
 			data.sessionStore = sessionStore;
 
 			sessionStore.load(data.sessionID, function(err, session) {

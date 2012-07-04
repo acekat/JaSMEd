@@ -28,6 +28,5 @@
 	},
 	"scripts": {
 		"postinstall": "./node_modules/.bin/asset"
-	},
-	"engine": "node >= 0.6.12 && < node 0.7.0"
+	}
 }

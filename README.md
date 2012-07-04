@@ -2,7 +2,7 @@
 
 ### Configuration & Dependencies
 
-JaSMEd's back-end runs on [node.js](https://github.com/joyent/node/wiki/Installation) *(>= v0.6.12)* and uses [Redis](http://redis.io/topics/quickstart) for session storage.
+JaSMEd's back-end runs on [node.js](https://github.com/joyent/node/wiki/Installation) and uses [Redis](http://redis.io/topics/quickstart) for session storage.
 Both need to be installed in order to run the JaSMEd server.
 
 Right now, JaSMEd is only fully compatible with a recent version of [Google Chrome](https://www.google.com/chrome).

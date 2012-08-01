@@ -705,11 +705,11 @@ var EditorView = Backbone.View.extend({
  */
 
 /**
- *  Create new LayersView on editorModels demand
+ *  Create new LayersView on visualStruct demand
  *  @param  {{Backbone.Collection} layers,
  *           {Backbone.Model} block} models Collection and Block associated to the view
  */
-editorViews.subscribe("editorModelsNewLayers", function(models) {
+editorViews.subscribe("visualStructNewLayers", function(models) {
 	var layersView = new LayersView({
 		collection: models.layers,
 	});

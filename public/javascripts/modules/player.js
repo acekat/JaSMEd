@@ -235,7 +235,7 @@ player.subscribe('newPitch', function(pitch) {
 
 player.subscribe('playerViewPlay', function() {
 	if (stopped)
-		init(jasmed.module('struct').selectedSong);
+		init(jasmed.module('musicalStruct').selectedSong);
 	else
 		player.publish('playerResume', blocknum); // hack for cursorResume...
 

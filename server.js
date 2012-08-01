@@ -158,14 +158,14 @@ function realTime(socket) {
 	//do something better about that...
 	socket.emit('serverLogin', session.login);
 	
-	socket.on('editorModelsInit', function(seqName) {
-		console.log('editorModelsInit', seqName);
+	socket.on('visualStructInit', function(seqName) {
+		console.log('visualStructInit', seqName);
 		if (!seqName) {
 			socket.emit('serverInit');
 			return;
 		}
 		
-		var seqPath = seqName + '.models';
+		var seqPath = seqName + '.visual';
 		store.importSeq(seqPath, function(data) {
 			if (!data) {
 				console.log('error reading file');
@@ -181,31 +181,31 @@ function realTime(socket) {
 		});
 	});
 	
-	socket.on('structInit', function(seqName) {
-		console.log('structInit', seqName);
+	socket.on('musicalStructInit', function(seqName) {
+		console.log('musicalStructInit', seqName);
 		if (!seqName) {
-			socket.emit('structServerInit');
+			socket.emit('musicalStructServerInit');
 			return;
 		}
 		
-		var seqPath = seqName + '.struct';
+		var seqPath = seqName + '.musical';
 		store.importSeq(seqPath, function(data) {
 			if (!data) {
 				console.log('error reading file');
-				socket.emit('structServerInit'); //should send back an error to tell client file doesn't exist!!
+				socket.emit('musicalStructServerInit'); //should send back an error to tell client file doesn't exist!!
 				return;
 			}
 			
 			// console.log('about to emit back: ' + session.seqName + ' + ' + JSON.stringify(data));
-			socket.emit('structServerInit', {
+			socket.emit('musicalStructServerInit', {
 				name: seqName,
 				data: data
 			});
 		});
 	});
 	
-	socket.on('editorModelsExport', function(seq) {
-		var seqPath = session.login + '/' + seq.name + '.models';
+	socket.on('visualStructExport', function(seq) {
+		var seqPath = session.login + '/' + seq.name + '.visual';
 		
 		//check if new namespace, if so add to namespaces...
 		store.list(function(files) {
@@ -222,8 +222,8 @@ function realTime(socket) {
 		});
 	});
 	
-	socket.on('structExport', function(seq) {
-		var seqPath = session.login + '/' + seq.name + '.struct';
+	socket.on('musicalStructExport', function(seq) {
+		var seqPath = session.login + '/' + seq.name + '.musical';
 		
 		//check if new namespace, if so add to namespaces...
 		store.list(function(files) {
@@ -240,12 +240,12 @@ function realTime(socket) {
 		});
 	});
 
-	socket.on('structSelection', function(selection) {
+	socket.on('musicalStructSelection', function(selection) {
 		console.log(selection.user + ' toggled a selection.'); //msg a ameliorer
 		socket.broadcast.emit('serverSelection', selection);
 	});
 
-	socket.on('structNewBlock', function() {
+	socket.on('musicalStructNewBlock', function() {
 		console.log("serverNewBlock broadcasted.");
 		socket.broadcast.emit('serverNewBlock');
 		//
@@ -253,7 +253,7 @@ function realTime(socket) {
 }
 
 /**
-function structNewBlock() {
+function musicalStructNewBlock() {
 	var grid = editor.grid(name);
 	var width = grid.last().refWidth;
 	grid.add({
@@ -261,7 +261,7 @@ function structNewBlock() {
 	});
 };
 
-function structSelection(selection) {
+function musicalStructSelection(selection) {
 	editor.grid(name).selectRange(selection);
 };
 */

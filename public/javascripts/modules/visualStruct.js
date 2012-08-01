@@ -1,4 +1,4 @@
-(function(editorModels) {
+(function(visualStruct) {
 
 /**
  *  STRUCTURE
@@ -191,7 +191,7 @@ var Block = Backbone.Model.extend({
         this.layers = new Layers();
 
         // only on client-side
-        editorModels.publish("editorModelsNewLayers", {
+        visualStruct.publish("visualStructNewLayers", {
             layers : this.layers,
             block : this
         })
@@ -403,7 +403,7 @@ var Editor = Backbone.Model.extend({
  *  Initialize editor (response from server)
  *  @param  {object} grid object if exists, null otherwise
  */
-editorModels.subscribe("serverInit", function(seq) {
+visualStruct.subscribe("serverInit", function(seq) {
     if (!seq)
         return editor.newGrid();
         
@@ -414,8 +414,8 @@ editorModels.subscribe("serverInit", function(seq) {
 /**
  *  Export grid
  */
-editorModels.subscribe("toolsExport", function(name) {
-    editorModels.publish("editorModelsExport", {
+visualStruct.subscribe("toolsExport", function(name) {
+    visualStruct.publish("visualStructExport", {
         name : name,
         data : editor.xport()
     });
@@ -424,14 +424,14 @@ editorModels.subscribe("toolsExport", function(name) {
 /**
  *  Add new Block
  */
-editorModels.subscribe("structNewBlock", function() {
+visualStruct.subscribe("musicalStructNewBlock", function() {
     var width = editor.grid.last().refWidth;
     editor.grid.add({
         width : width
     });
 });
 
-editorModels.subscribe("serverNewBlock", function() {
+visualStruct.subscribe("serverNewBlock", function() {
     var width = editor.grid.last().refWidth;
     editor.grid.add({
         width : width
@@ -442,11 +442,11 @@ editorModels.subscribe("serverNewBlock", function() {
  *  Selection from structure
  *  @param  {object} selection object with the selection variables
  */
-editorModels.subscribe("structSelection", function(selection) {
+visualStruct.subscribe("musicalStructSelection", function(selection) {
     editor.grid.selectRange(selection);
 });
 
-editorModels.subscribe("serverSelection", function(selection) {
+visualStruct.subscribe("serverSelection", function(selection) {
     editor.grid.selectRange(selection);
 });
 
@@ -458,12 +458,12 @@ editorModels.subscribe("serverSelection", function(selection) {
 /**
  *  Module initialization method
  */
-editorModels.initialize = function(seqName) {
+visualStruct.initialize = function(seqName) {
 
     editor = new Editor();
     
-    editorModels.publish("editorModelsInit", seqName);
-    //console.log('editorModels published editorModelsInit', seqName);
+    visualStruct.publish("visualStructInit", seqName);
+    //console.log('visualStruct published visualStructInit', seqName);
 };
 
-})(jasmed.module("editorModels"));
+})(jasmed.module("visualStruct"));

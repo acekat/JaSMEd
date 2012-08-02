@@ -1,9 +1,21 @@
 var	connect = require('express/node_modules/connect')
 	, stylus = require('stylus')
+	, flash = require('connect-flash')
 	, utils = require('./modules/utils')
 	, nodeCookie = require('cookie')
 	,	cookieSecret = 'whambaamthankyoumaaammm!'
 	,	sessionKey = 'JaSMEd.sid';
+
+/** 
+ * expose locals to view before rendering
+ */
+function dynamicHelpers(req, res, next) {
+	res.locals({
+		session: req.session,
+		flash: req.flash()
+	});
+	next();
+}
 
 function expressConfig(app, express, sessionStore) {
 	app.configure(function() {
@@ -23,6 +35,8 @@ function expressConfig(app, express, sessionStore) {
 			  store: sessionStore
 			, key: sessionKey
 		}));
+		app.use(flash());
+		app.use(dynamicHelpers);
 		// order matters: needs to be after stylus for it to recompile
 		app.use(express.static(__dirname + '/public')); 
 	});

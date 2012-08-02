@@ -14,15 +14,6 @@ var io = require('socket.io').listen(server);
 require('./config')(app, express, io, sessionStore);
 
 /** 
- * expose locals to view before rendering
- */
-app.locals.use(function(req, res, done) {
-	res.locals.session = req.session;
-	res.locals.flashMessages = utils.flash(req);
-	done();
-});
-
-/** 
  * Middleware for limited access 
  */
 function requireLogin(req, res, next) {
@@ -31,7 +22,7 @@ function requireLogin(req, res, next) {
 		next();
 	} else {
 		// Otherwise, we redirect him to login form
-		utils.flash(req, 'warn', 'login needz yo!!');
+		req.flash('warn', 'login needz yo!!');
 		req.session.redir = req.path;
 		res.redirect('/login');
 	}
@@ -59,7 +50,7 @@ app.post('/login', function(req, res) {
 			delete req.session.redir;
 			res.redirect(redir);
 		} else {
-			utils.flash(req, 'warn', 'tough luck, login failed brother');
+			req.flash('warn', 'tough luck, login failed brother');
 			res.redirect('/login');
 		}
 	});

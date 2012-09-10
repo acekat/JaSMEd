@@ -205,7 +205,7 @@ function realTime(socket) {
 	});
 	
 	socket.on('editorModelsExport', function(seq) {
-		var seqPath = seq.name + '.models';
+		var seqPath = session.login + '/' + seq.name + '.models';
 		
 		//check if new namespace, if so add to namespaces...
 		store.list(function(files) {
@@ -223,7 +223,7 @@ function realTime(socket) {
 	});
 	
 	socket.on('structExport', function(seq) {
-		var seqPath = seq.name + '.struct';
+		var seqPath = session.login + '/' + seq.name + '.struct';
 		
 		//check if new namespace, if so add to namespaces...
 		store.list(function(files) {

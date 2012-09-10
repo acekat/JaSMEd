@@ -56,7 +56,7 @@ function list(callback) {
 					return dir + '/' + fileName.split('.')[0];
 				});
 
-				filesList.push(_.uniq(filteredFiles));
+				filesList = filesList.concat(_.uniq(filteredFiles));
 
 				callback();
 			});

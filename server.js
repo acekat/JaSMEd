@@ -80,8 +80,12 @@ app.get('/app', requireLogin, function(req, res) {
 	res.render('app');
 });
 
-app.get('/store/:name', requireLogin, function(req, res) {
-	res.render('app');
+var users = ['thibaud', 'jaimito', 'grizix', 'acekat', 'berthou', 'esj'];
+
+_.each(users, function(user) {
+	app.get('/store/' + user + '/:name', requireLogin, function(req, res) {
+		res.render('app');
+	});
 });
 
 /**

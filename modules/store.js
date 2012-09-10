@@ -1,15 +1,6 @@
 var fs = require('fs');
+var async = require('async');
 var _ = require('underscore');
-
-function checkStoreExistence(next) {
-	fs.stat('./store', function(err, stats) {
-		if (err || !stats.isDirectory()) {
-			fs.mkdir('store', function() {
-				next();
-			});
-		} else next();
-	});
-}
 
 function importSequencer(fileName, callback) {
 	var pathName = 'store/' + fileName;
@@ -32,6 +23,7 @@ function exportSequencer(fileName, data, callback) {
 	
 	fs.writeFile(pathName, serializedData, function(err) {
 		if (err) {
+			console.log(err);
 			callback(null);
 			return;
 		}
@@ -41,35 +33,43 @@ function exportSequencer(fileName, data, callback) {
 }
 
 function list(callback) {
-	fs.readdir('./store', function(err, files) {
+	fs.readdir('./store', function(err, directories) {
 		if (err) {
-			console.log('problem reading directory');
+			console.log('problem reading store directory');
 			callback(null);
 			return;
 		}
-		
-		var filteredFiles = _.map(files, function(fileName) {
-			return fileName.split('.')[0];
+
+		var filesList = [];
+
+		function readStoreDir(dir, callback) {
+			fs.readdir('./store/' + dir, function(err, files) {
+				if (err) {
+					console.log('problem reading store/%s directory', dir);
+					callback(err);
+					return;
+				}
+
+				if (_.isEmpty(files)) return callback();
+
+				var filteredFiles = _.map(files, function(fileName) {
+					return dir + '/' + fileName.split('.')[0];
+				});
+
+				filesList.push(_.uniq(filteredFiles));
+
+				callback();
+			});
+		}
+
+		async.forEach(directories, readStoreDir, function(err) {
+			callback(filesList);
 		});
-		
-		callback(_.uniq(filteredFiles));
 	});
 }
 
 module.exports = {
-	list: function(callback) {
-		checkStoreExistence(function() {
-			list(callback);
-		});
-	},
-	exportSeq: function(fileName, data, callback) {
-		checkStoreExistence(function() {
-			exportSequencer(fileName, data, callback);
-		});
-	},
-	importSeq: function(fileName, callback) {
-		checkStoreExistence(function() {
-			importSequencer(fileName, callback);
-		});
-	}
+	list: list,
+	exportSeq: exportSequencer,
+	importSeq: importSequencer
 }

@@ -48,8 +48,8 @@ $(function() {
 	//jasmed.module('communicator').initialize((storePath) ? storePath : path);
 	
 	//Modules
-	jasmed.module('editorModels').initialize(storePath);
-	jasmed.module('struct').initialize(storePath);
+	jasmed.module('visualStruct').initialize(storePath);
+	jasmed.module('musicalStruct').initialize(storePath);
 	//envoi ici un message au lieu de initialize... pour init les deux...
 	
 	//Views

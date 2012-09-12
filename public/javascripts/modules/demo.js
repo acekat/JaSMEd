@@ -1,5 +1,5 @@
 (function(demo) {
-var struct = jasmed.module('struct');
+var musicalStruct = jasmed.module('musicalStruct');
 
 var song = [
     [
@@ -26,7 +26,7 @@ var song = [
 ], i, j, k;
 
 function render() {
-	var beat = struct.createSong({
+	var beat = musicalStruct.createSong({
 	    title: "Jack by beat",
 	    tempo: 0.5,
 	    blocks: 27
@@ -129,7 +129,7 @@ function render() {
 	});
 
 
-	var block = struct.createSong();
+	var block = musicalStruct.createSong();
 
 	var black = block.addTrack("Jako", 4);
 

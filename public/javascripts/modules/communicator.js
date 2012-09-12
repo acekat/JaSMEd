@@ -40,8 +40,8 @@ socket.on('serverInit', function(seq) {
 	communicator.publish('serverInit', seq);
 });
 
-socket.on('structServerInit', function(seq) {
-	communicator.publish('structServerInit', seq);
+socket.on('musicalStructServerInit', function(seq) {
+	communicator.publish('musicalStructServerInit', seq);
 });
 
 
@@ -49,30 +49,30 @@ socket.on('structServerInit', function(seq) {
  *  SUBSCRIBE => EMIT
  */
 
-communicator.subscribe('structSelection', function(selection) {
-	socket.emit('structSelection', selection);
+communicator.subscribe('musicalStructSelection', function(selection) {
+	socket.emit('musicalStructSelection', selection);
 });
 
-communicator.subscribe('structNewBlock', function() {
-	socket.emit('structNewBlock');
+communicator.subscribe('musicalStructNewBlock', function() {
+	socket.emit('musicalStructNewBlock');
 });
 
-communicator.subscribe('editorModelsExport', function(seq) {
-	socket.emit('editorModelsExport', seq);
+communicator.subscribe('visualStructExport', function(seq) {
+	socket.emit('visualStructExport', seq);
 });
 
-communicator.subscribe('structExport', function(seq) {
-	socket.emit('structExport', seq);
+communicator.subscribe('musicalStructExport', function(seq) {
+	socket.emit('musicalStructExport', seq);
 });
 
-communicator.subscribe('editorModelsInit', function(seqName) {
-	socket.emit('editorModelsInit', seqName);
-	//console.log('socket emited editorModelsInit', seqName);
+communicator.subscribe('visualStructInit', function(seqName) {
+	socket.emit('visualStructInit', seqName);
+	//console.log('socket emited visualStructInit', seqName);
 });
 
-communicator.subscribe('structInit', function(seqName) {
-	socket.emit('structInit', seqName);
-	//console.log('socket emited editorModelsInit', seqName);
+communicator.subscribe('musicalStructInit', function(seqName) {
+	socket.emit('musicalStructInit', seqName);
+	//console.log('socket emited visualStructInit', seqName);
 });
 
 })(jasmed.module('communicator'));

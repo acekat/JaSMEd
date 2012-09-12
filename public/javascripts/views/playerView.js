@@ -119,7 +119,7 @@ playerView.subscribe('playerStop', function() {
 	view.stop();
 });
 
-playerView.subscribe('structTempo', function(tempo) {
+playerView.subscribe('musicalStructTempo', function(tempo) {
 	view.updateTempoText(tempo);
 	view.updateTempoSlide(tempo);
 });

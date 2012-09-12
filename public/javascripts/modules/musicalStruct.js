@@ -1,4 +1,4 @@
-(function(struct) {
+(function(musicalStruct) {
 
 /**
  *  DEPENDENCIES
@@ -82,7 +82,7 @@ var Track = {
         if(this.songPitches[pitch]) this.songPitches[pitch]++;
         else {
             this.songPitches[pitch] = 1;
-            struct.publish('newPitch', pitch);
+            musicalStruct.publish('newPitch', pitch);
         }
         this.songPitches[pitch]++ || (this.songPitches[pitch] = 1);
         
@@ -229,22 +229,22 @@ var Note = {
  *  PUBLIC API
  */
 
-struct.createSong = function(props) {
+musicalStruct.createSong = function(props) {
     return utils.inherits(Song, _.extend(props||{}, {tracks: [], pitches: {}}));
 };
 
-struct.initialize = function(seqName) {
-	struct.publish('structInit', seqName);
+musicalStruct.initialize = function(seqName) {
+	musicalStruct.publish('musicalStructInit', seqName);
 };
 
 /**
  *  SUBSCRIBES
  */
 
-struct.subscribe('toolsExport', function(name) {
-	struct.publish('structExport', {
+musicalStruct.subscribe('toolsExport', function(name) {
+	musicalStruct.publish('musicalStructExport', {
 		name : name,
-		data : struct.selectedSong
+		data : musicalStruct.selectedSong
 	});
 });
 
@@ -259,7 +259,7 @@ function importSong(song) {
 		
 		//update playerViewTempo.
 		if (key === 'tempo' && val !== Song.tempo)
-			struct.publish('structTempo', val);
+			musicalStruct.publish('musicalStructTempo', val);
 
 		if (key === 'tracks') {
 			_.each(val, function(track) {
@@ -276,24 +276,24 @@ function importSong(song) {
 	return curSong;
 }
 
-struct.subscribe('structServerInit', function(song) {
-	curSong = (song) ? importSong(song) : struct.createSong();
+musicalStruct.subscribe('musicalStructServerInit', function(song) {
+	curSong = (song) ? importSong(song) : musicalStruct.createSong();
 	
 	curTrack = curSong.tracks[0] || curSong.addTrack();
 
-	struct.selectedSong = curSong;
+	musicalStruct.selectedSong = curSong;
 });
 
-struct.subscribe('toolsNewBlock', function() {
+musicalStruct.subscribe('toolsNewBlock', function() {
     curSong.addBlocks();
-    struct.publish('structNewBlock');
+    musicalStruct.publish('musicalStructNewBlock');
 });
 
-struct.subscribe('serverNewBlock', function() {
+musicalStruct.subscribe('serverNewBlock', function() {
     curSong.addBlocks();
 });
 
-struct.subscribe('editorViewsSelection', function(selection) {
+musicalStruct.subscribe('editorViewsSelection', function(selection) {
     selection.startCell.start = selection.startCell.cell - 1;
     selection.endCell.end = selection.endCell.cell;
     var result = curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
@@ -301,15 +301,15 @@ struct.subscribe('editorViewsSelection', function(selection) {
     selection.startCell.start = result.start;
     selection.startCell.cell = result.start + 1;
     selection.endCell.end = selection.endCell.cell = (result.start + result.duration - 1)%result.layer + 1;
-    struct.publish('structSelection', selection);
+    musicalStruct.publish('musicalStructSelection', selection);
 });
 
-struct.subscribe('serverSelection', function(selection) {      //TODO alléger la modification des clients distants
+musicalStruct.subscribe('serverSelection', function(selection) {      //TODO alléger la modification des clients distants
     curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
 });
 
-struct.subscribe('playerViewTempo', function(tempo) {
+musicalStruct.subscribe('playerViewTempo', function(tempo) {
 	curSong.tempo = tempo;
 });
 
-})(jasmed.module('struct'));
+})(jasmed.module('musicalStruct'));

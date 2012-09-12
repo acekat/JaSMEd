@@ -1,55 +1,6 @@
 (function(visualStruct) {
 
 /**
- *  STRUCTURE
- *
- *  Editor (Model)
- *      |--- Song (Collection)
- *      |       |--- Track (Model) _older Editor_
- *      |       |       |--- Grid (Collection)
- *      |       |       |       |--- Block (Model)
- *      |       |       |       |       |--- Layers (Collection)
- *      |       |       |       |       |       |--- Layer (Model)
- *      |       |       |       |       |       |... 1 to N
- *      |       |       |       |       |_______|--- Layer (Model)
- *      |       |       |       |_______|
- *      |       |       |       |
- *      |       |       |       |... 0 to N
- *      |       |       |       |
- *      |       |       |       |--- Block (Model)
- *      |       |       |       |       |--- Layers (Collection)
- *      |       |       |       |       |       |--- Layer (Model)
- *      |       |       |       |       |       |... 1 to N
- *      |       |       |       |       |_______|--- Layer (Model)
- *      |       |       |       |_______|
- *      |       |       |_______|
- *      |       |_______|
- *      |       |
- *      |       |... 1 to N
- *      |       |
- *      |       |--- Track (Model)
- *      |       |       |--- Grid (Collection)
- *      |       |       |       |--- Block (Model)
- *      |       |       |       |       |--- Layers (Collection)
- *      |       |       |       |       |       |--- Layer (Model)
- *      |       |       |       |       |       |... 1 to N
- *      |       |       |       |       |_______|--- Layer (Model)
- *      |       |       |       |_______|
- *      |       |       |       |
- *      |       |       |       |... 0 to N
- *      |       |       |       |
- *      |       |       |       |--- Block (Model)
- *      |       |       |       |       |--- Layers (Collection)
- *      |       |       |       |       |       |--- Layer (Model)
- *      |       |       |       |       |       |... 1 to N
- *      |       |       |       |       |_______|--- Layer (Model)
- *      |       |       |       |_______|
- *      |       |       |_______|
- *      |       |_______|
- *      |_______|
- *  ____|
-
-/**
  *  INSTANCES
  */
 var editor;

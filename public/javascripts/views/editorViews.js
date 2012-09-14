@@ -285,7 +285,7 @@ var LayersView = Backbone.View.extend({
 	 *  div associated to the View.
 	 *  @type {String}
 	 */
-	el : ".block",
+	el : ".layers",
 
 	/** @constructs */
 	initialize : function() {
@@ -322,10 +322,11 @@ var LayersView = Backbone.View.extend({
 		this.layerViews.push(layerView);
 
 		// insert in the DOM the rendered View
+		var layersDOM = $('.b-'+this.block.get("order")).children(".layers"); 
 		if (layer.get("editable"))
-			$('.b-'+this.block.get("order")).append(layerView.render().el);
+			layersDOM.append(layerView.render().el);
 		else
-			$('.b-'+this.block.get("order")).prepend(layerView.render().el);
+			layersDOM.prepend(layerView.render().el);
 	},
 
 	/**
@@ -368,14 +369,14 @@ var BlockView = Backbone.View.extend({
 	 *  Class attribute of the div associated to the View.
 	 *  @type {String}
 	 */
-	className : "block-layer-info",
+	className : "block",
 
 	/** @constructs */
 	initialize : function() {
 		this.grid = this.model.collection;
 
 		// function that render Underscore templating
-		this.layerInfoTemplate = _.template($("#layer-info-template").html());
+		this.blockTemplate = _.template($("#block-template").html());
 
 		// correct gridWinDim.top
 		gridWinDim.top = gridWin.offset().top;
@@ -386,7 +387,7 @@ var BlockView = Backbone.View.extend({
 
 		// Bound events
 		this.model.on("change:width", this.resize, this);
-		this.model.layers.on("change add", this.actualize, this);
+		// this.model.layers.on("change add", this.actualize, this);
 	},
 
 	/**
@@ -405,10 +406,10 @@ var BlockView = Backbone.View.extend({
 	render : function() {
 		var block = this.model;
 		$(this.el)
-			.html(this.layerInfoTemplate({ 
+			.html(this.blockTemplate({ 
 				layers : block.layers.models
 			}))
-			.addClass('bli-'+block.get("order"))
+			.addClass('b-'+block.get("order"))
 			.css({"width" : block.refWidth+'px'});
 
 		return this;
@@ -430,7 +431,8 @@ var BlockView = Backbone.View.extend({
 	 *  Actualize the View.
 	 */
 	actualize : function() {
-		$(this.el).html(this.layerInfoTemplate({
+		// TO-DO : can't rerender everything anymore, find another way to actualize tabs
+		$(this.el).html(this.blockTemplate({
 			layers : this.model.layers.models
 		}));
 
@@ -503,7 +505,7 @@ var EditorView = Backbone.View.extend({
 	 *  div associated to the View.
 	 *  @type {String}
 	 */
-	el : ".editor",
+	el : ".grid",
 
 	/** @constructs */
 	initialize : function() {
@@ -556,10 +558,10 @@ var EditorView = Backbone.View.extend({
 		});
 
 		// insert in the DOM the rendered View
-		$(".layer-info").append(blockView.render().el);
+		$(".grid-inner").append(blockView.render().el);
 
 		// adapt block width according to subdivisions of the layer
-		blockView.model.resize(true, 0);
+		// blockView.model.resize(true, 0);
 	},
 
 	/**
@@ -567,8 +569,10 @@ var EditorView = Backbone.View.extend({
 	 *  @param  {object} e event object fired
 	 */
 	syncScroll: function(e) {
-		$(".piano-win").scrollTop(e.target.scrollTop);
-		$(".layer-info-win").scrollLeft(e.target.scrollLeft);
+		$(".piano").scrollTop(e.target.scrollTop);
+
+		// TO-DO: move the .layers-tabs to keep on top
+		// $(".layer-info-win").scrollLeft(e.target.scrollLeft);
 	},
 
 	/**
@@ -616,7 +620,7 @@ var EditorView = Backbone.View.extend({
 			var clone = $(document.createElement('div'));
 			clone.addClass('cursor');
 			cursorEl.remove();
-			var upper = $('#content .module.editor .grid-win .grid').prepend(clone);
+			var upper = $('#content .module.grid .grid-win .grid-inner').prepend(clone);
 			upper.prepend(clone);
 			this.$cursor = cursorEl = clone;
 		}

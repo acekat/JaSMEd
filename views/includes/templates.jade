@@ -12,8 +12,8 @@ script#layer-template(type="text/template")
 		<% }; %>
 
 
-script#layer-info-template(type="text/template")
-	ul.layer-list
+script#block-template(type="text/template")
+	ul.layers-tabs
 		<% _.each(layers, function(layer) { %>
 		<% var selected = layer.get("editable") ? " selected" : ""; %>
 		li
@@ -21,3 +21,4 @@ script#layer-info-template(type="text/template")
 		<% }); %>
 		li
 			input.add-layer(type="text", placeholder=" +")
+	.layers

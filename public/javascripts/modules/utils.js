@@ -1,4 +1,4 @@
-(function(utils) {
+var utils = module.exports;
 
 /**
  * Return the frequency associated with a MIDI pitch.
@@ -47,5 +47,3 @@ utils.ppcm = function(a, b) {
 utils.inherits = function(parent, props) {
     return _.extend(Object.create(parent), props);
 };
-
-})(jasmed.module("utils"));

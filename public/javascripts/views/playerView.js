@@ -1,4 +1,11 @@
-(function(playerView) {
+var playerView = {};
+
+/**
+ *  DEPENDENCIES
+ */
+var Backbone = require('Backbone');
+var $ = require('jquery');
+require('../modules/mediator').installTo(playerView);
 
 /**
  *  Global variables
@@ -128,8 +135,13 @@ playerView.subscribe('musicalStructTempo', function(tempo) {
 /**
  *  Module initialization method
  */
-playerView.initialize = function() {
+function initialize() {
 	view = new PlayerView();
 };
 
-})(jasmed.module('playerView'));
+/**
+ *  PUBLIC API
+ */
+module.exports = {
+	initialize: initialize
+}

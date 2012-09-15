@@ -1,10 +1,24 @@
-(function(communicator) {
+var communicator = {};
+
+/**
+ *  DEPENDENCIES
+ */
+var io = require('socket.io');
+require('./mediator').installTo(communicator);
 
 var path = window.location.pathname;
+var user;
 var storePath = path.split('store/')[1];
 var namespace = (path === '/app') ? 'app' : storePath;
 
 var socket = io.connect('http://localhost/' + namespace);
+
+/**
+ *  FUNCTIONS
+ */
+function getUser() {
+	return user;
+}
 
 /**
  *  ON => PUBLISH
@@ -25,7 +39,7 @@ socket.on('error', function(reason) {
 
 socket.on('serverLogin', function(login) {
 	console.log('login: ' + login);
-	jasmed.user = login;
+	user = login;
 });
 
 socket.on('serverSelection', function(selection) {
@@ -75,4 +89,10 @@ communicator.subscribe('musicalStructInit', function(seqName) {
 	//console.log('socket emited visualStructInit', seqName);
 });
 
-})(jasmed.module('communicator'));
+
+/**
+ *  PUBLIC API
+ */
+module.exports = {
+	getUser: getUser
+}

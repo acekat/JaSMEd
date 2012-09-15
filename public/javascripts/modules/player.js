@@ -1,11 +1,12 @@
 // TODO loadBlock & loadLayer : layers = {} !=!=!=! [] !!!
 
-(function(player) {
+var player = {};
 
 /**
  *  DEPENDENCIES
  */
-var utils = jasmed.module('utils');
+var utils = require('./utils');
+require('./mediator').installTo(player);
 
 /**
  *  PARAMS
@@ -235,7 +236,7 @@ player.subscribe('newPitch', function(pitch) {
 
 player.subscribe('playerViewPlay', function() {
 	if (stopped)
-		init(jasmed.module('musicalStruct').selectedSong);
+		init(require('./musicalStruct').selectedSong);
 	else
 		player.publish('playerResume', blocknum); // hack for cursorResume...
 
@@ -262,5 +263,3 @@ player.subscribe('instrumentViewWaveForm', function(wave) {
 player.subscribe('instrumentViewSustain', function(value) {
 	sustain = value;
 });
-
-})(jasmed.module('player'));

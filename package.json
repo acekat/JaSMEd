@@ -22,7 +22,6 @@
 		"stylus": "~0.29.0",
 		"connect-redis": "~1.4.4",
 		"connect-flash": "~0.1.0",
-		"cookie": "~0.0.4",
 		"asset": "git://github.com/athibaud/asset.git#master"
 	},
 	"devDependencies": {

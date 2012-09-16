@@ -2,7 +2,6 @@ var express = require('express')
 	, http = require('http')
 	, _ = require('underscore')
 	, auth = require('./modules/authentification')
-	, utils = require('./modules/utils')
 	, store = require('./modules/store')
 	, sessionStore;
 

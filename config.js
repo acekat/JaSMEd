@@ -1,10 +1,9 @@
 var	connect = require('express/node_modules/connect')
 	, stylus = require('stylus')
 	, flash = require('connect-flash')
-	, utils = require('./modules/utils')
-	, nodeCookie = require('cookie')
-	,	cookieSecret = 'whambaamthankyoumaaammm!'
-	,	sessionKey = 'JaSMEd.sid';
+	,	sessionSecret = 'whambaamthankyoumaaammm!'
+	,	sessionKey = 'JaSMEd.sid'
+	, cookieParser = connect.cookieParser(sessionSecret)
 
 /** 
  * expose locals to view before rendering
@@ -30,10 +29,11 @@ function expressConfig(app, express, sessionStore) {
 		}));
 		app.use(express.bodyParser());
 		app.use(express.methodOverride());
-		app.use(express.cookieParser(cookieSecret));
+		app.use(express.cookieParser());
 		app.use(express.session({
 			  store: sessionStore
 			, key: sessionKey
+			, secret: sessionSecret
 		}));
 		app.use(flash());
 		app.use(dynamicHelpers);
@@ -50,28 +50,28 @@ function socketIOConfig(io, sessionStore) {
 	io.configure(function() {
 		io.set('log level', 1); // minimal logs...
 		io.set('transports', ['websocket']); // ONLY WEBSOCKET (faster ? could switch to ws)
-		io.set('authorization', function(data, callback) {
-			if (!data.headers.cookie)
+		io.set('authorization', function(handshakeData, callback) {
+			/* exposing session and sessionID to handshakeData so can be used by sio */
+			if (!handshakeData.headers.cookie)
 				return callback('No cookie', false);
 
-			//data est ce qui sera exposé dans socket.handshake.session
-			var cookie = nodeCookie.parse(data.headers.cookie);
-			var signedCookie = utils.parseSignedCookies(cookie, cookieSecret);
-
-			data.sessionID = signedCookie[sessionKey];
+			var sessionID;
 			
-			if (!data.sessionID)
-				return callback('SIDs don\'t match', false);
-			
-			data.sessionStore = sessionStore;
+			cookieParser(handshakeData, null, function(err) {
+				handshakeData.sessionID = sessionID = handshakeData.signedCookies[sessionKey];
+				
+				if (!sessionID)
+					return callback('SIDs don\'t match', false);
+					
+				sessionStore.get(sessionID, function(err, session) {
+					if (err || !session)
+						return callback('Error loading session', false);
 
-			sessionStore.load(data.sessionID, function(err, session) {
-				if (err || !session)
-					return callback('Error loading session', false);
-
-				data.session = session;
-				callback(null, true);
+					handshakeData.session = session;
+					callback(null, true);
+				});
 			});
+
 		});
 	});
 }

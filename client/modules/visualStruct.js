@@ -5,7 +5,7 @@ var visualStruct = {};
  */
 var Backbone = require('Backbone');
 var _ = require('underscore');
-require('./mediator').installTo(visualSctruct);
+require('./mediator').installTo(visualStruct);
 
 /**
  *  INSTANCES
@@ -275,7 +275,7 @@ var Editor = Backbone.Model.extend({
         this.grid = new Grid();
 
         // only on client-side
-        require('./editorViews').initialize(this.grid);
+        require('../views/editorViews').initialize(this.grid);
     },
     
     xport : function(opt) {
@@ -419,7 +419,6 @@ visualStruct.subscribe("serverSelection", function(selection) {
 function initialize(seqName) {
 	editor = new Editor();
 	visualStruct.publish("visualStructInit", seqName);
-	//console.log('visualStruct published visualStructInit', seqName);
 };
 
 /**
@@ -428,4 +427,3 @@ function initialize(seqName) {
 module.exports = {
 	initialize: initialize
 }
-

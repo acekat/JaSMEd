@@ -6,6 +6,7 @@ var player = {};
  *  DEPENDENCIES
  */
 var utils = require('./utils');
+var audioLib = require('audiolib');
 require('./mediator').installTo(player);
 
 /**
@@ -236,7 +237,7 @@ player.subscribe('newPitch', function(pitch) {
 
 player.subscribe('playerViewPlay', function() {
 	if (stopped)
-		init(require('./musicalStruct').selectedSong);
+		init(require('./musicalStruct').getSelectedSong());
 	else
 		player.publish('playerResume', blocknum); // hack for cursorResume...
 
@@ -263,3 +264,20 @@ player.subscribe('instrumentViewWaveForm', function(wave) {
 player.subscribe('instrumentViewSustain', function(value) {
 	sustain = value;
 });
+
+
+/**
+ *  INITIALIZATION
+ */
+
+/**
+ *  Module initialization method
+ */
+function initialize() { };
+
+/**
+ *  PUBLIC API
+ */
+module.exports = {
+	initialize: initialize
+}

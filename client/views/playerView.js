@@ -98,10 +98,10 @@ var PlayerView = Backbone.View.extend({
 			button.removeClass('playing');
 			button.html('play');
 		} else {
-			playerView.publish('playerViewPlay')
-			button.addClass('playing');;
+			playerView.publish('playerViewPlay');
+			button.addClass('playing');
 			button.html('pause');
-		}	
+		}
 	},
 
 	stop: function() {

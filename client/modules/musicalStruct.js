@@ -5,7 +5,7 @@ var musicalStruct = {};
  */
 var utils = require('./utils');
 var _ = require('underscore');
-require('./mediator').installTo(musicalSctruct);
+require('./mediator').installTo(musicalStruct);
 
 /**
  *  INSTANCES
@@ -288,9 +288,7 @@ function importSong(song) {
 
 musicalStruct.subscribe('musicalStructServerInit', function(song) {
 	curSong = (song) ? importSong(song) : createSong();
-	
 	curTrack = curSong.tracks[0] || curSong.addTrack();
-
 	selectedSong = curSong;
 });
 
@@ -327,7 +325,9 @@ musicalStruct.subscribe('playerViewTempo', function(tempo) {
  *  PUBLIC API
  */
 module.exports = {
-	selectedSong: selectedSong,
+	initialize: initialize,
 	createSong: createSong,
-	initialize: initialize
+	getSelectedSong: function() {
+		return selectedSong;
+	}
 }

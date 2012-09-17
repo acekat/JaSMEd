@@ -204,39 +204,11 @@ function realTime(socket) {
 	});
 	
 	socket.on('visualStructExport', function(seq) {
-		var seqPath = session.login + '/' + seq.name + '.visual';
-		
-		//check if new namespace, if so add to namespaces...
-		store.list(function(files) {
-			if (!_.include(files, seq.name))
-				addNewNamespace(seq.name);
-		});
-		
-		console.log('seqPath', seqPath);
-		store.exportSeq(seqPath, seq.data, function(res) {
-			if (!res)
-				console.log(session.login + ' error trying to save sequencer');
-			else
-				console.log(session.login + ' saved current sequencer as ' + seqPath);
-		});
+	  structureExport(seq, '.visual');
 	});
 	
 	socket.on('musicalStructExport', function(seq) {
-		var seqPath = session.login + '/' + seq.name + '.musical';
-		
-		//check if new namespace, if so add to namespaces...
-		store.list(function(files) {
-			if (!_.include(files, seq.name))
-				addNewNamespace(seq.name);
-		});
-		
-		console.log('seqPath', seqPath);
-		store.exportSeq(seqPath, seq.data, function(res) {
-			if (!res)
-				console.log(session.login + ' error trying to save sequencer');
-			else
-				console.log(session.login + ' saved current sequencer as ' + seqPath);
-		});
+		structureExport(seq, '.musical');
 	});
 
 	socket.on('musicalStructSelection', function(selection) {
@@ -247,8 +219,25 @@ function realTime(socket) {
 	socket.on('musicalStructNewBlock', function() {
 		console.log("serverNewBlock broadcasted.");
 		socket.broadcast.emit('serverNewBlock');
-		//
 	});
+	
+	function structureExport(seq, suffix) {
+    var seqName = session.login + '/' + seq.name
+      , seqPath = seqName + suffix;
+
+  	//check if new namespace, if so add to namespaces...
+  	store.list(function(files) {
+  		if (!_.include(files, seqName))
+  			addNewNamespace(seqName);
+
+      store.exportSeq(seqPath, seq.data, function(res) {
+  			if (!res)
+  				console.log(session.login + ' error trying to save sequencer');
+  			else
+  				console.log(session.login + ' saved current sequencer as ' + seqPath);
+  		});
+  	});
+  }
 }
 
 /**

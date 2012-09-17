@@ -6,10 +6,8 @@ function importSequencer(fileName, callback) {
 	var pathName = 'store/' + fileName;
 	
 	fs.readFile(pathName, function(err, data) {
-		if (err) {
-			callback(null);
-			return;
-		}
+		if (err)
+		  return callback(null);
 		
 		var sequencer = JSON.parse(data);
 		
@@ -24,8 +22,7 @@ function exportSequencer(fileName, data, callback) {
 	fs.writeFile(pathName, serializedData, function(err) {
 		if (err) {
 			console.log(err);
-			callback(null);
-			return;
+			return callback(null);
 		}
 		
 		callback(true);
@@ -36,8 +33,7 @@ function list(callback) {
 	fs.readdir('./store', function(err, directories) {
 		if (err) {
 			console.log('problem reading store directory');
-			callback(null);
-			return;
+			return callback(null);
 		}
 
 		var filesList = [];
@@ -46,8 +42,7 @@ function list(callback) {
 			fs.readdir('./store/' + dir, function(err, files) {
 				if (err) {
 					console.log('problem reading store/%s directory', dir);
-					callback(err);
-					return;
+    			return callback(err);
 				}
 
 				if (_.isEmpty(files)) return callback();
@@ -72,4 +67,4 @@ module.exports = {
 	list: list,
 	exportSeq: exportSequencer,
 	importSeq: importSequencer
-}
+};

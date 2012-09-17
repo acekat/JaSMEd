@@ -1,8 +1,8 @@
-var	connect = require('express/node_modules/connect')
-	, stylus = require('stylus')
-	, flash = require('connect-flash')
-	,	sessionSecret = 'whambaamthankyoumaaammm!'
-	,	sessionKey = 'JaSMEd.sid'
+var connect = require('express/node_modules/connect')
+  , stylus = require('stylus')
+  , flash = require('connect-flash')
+	, sessionSecret = 'whambaamthankyoumaaammm!'
+	, sessionKey = 'JaSMEd.sid'
 	, cookieParser = connect.cookieParser(sessionSecret)
 
 /** 
@@ -24,14 +24,14 @@ function expressConfig(app, express, sessionStore) {
 		app.use(express.favicon());
 		app.use(express.logger('dev'));
 		app.use(stylus.middleware({
-			  src: __dirname + '/views'
+				src: __dirname + '/views'
 			, dest: __dirname + '/public'
 		}));
 		app.use(express.bodyParser());
 		app.use(express.methodOverride());
 		app.use(express.cookieParser());
 		app.use(express.session({
-			  store: sessionStore
+				store: sessionStore
 			, key: sessionKey
 			, secret: sessionSecret
 		}));

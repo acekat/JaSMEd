@@ -56,7 +56,7 @@ var LayerView = Backbone.View.extend({
 	 */
 	events : {
 		"mousedown .cell" : "startingCell",
-		"mousemove .cell" : "movingCell",
+		// "mousemove .cell" : "movingCell",
 		"mouseup .cell" : "endingCell"
 	},
 
@@ -350,7 +350,7 @@ var LayersView = Backbone.View.extend({
 		var view = this.getLayerView(layer);
 
 		if (layer.get("editable")) {
-			$(blockClass+' .editable').removeClass("editable");
+			$(layers+' .editable').removeClass("editable");
 			$(view.el).addClass("editable").appendTo(layers);
 		} else {
 			$(view.el).removeClass("editable").prependTo(layers);
@@ -570,9 +570,7 @@ var EditorView = Backbone.View.extend({
 	 */
 	syncScroll: function(e) {
 		$(".piano").scrollTop(e.target.scrollTop);
-
-		// TO-DO: move the .layers-tabs to keep on top
-		// $(".layer-info-win").scrollLeft(e.target.scrollLeft);
+		$(".layers-tabs").css('top', e.target.scrollTop);
 	},
 
 	/**

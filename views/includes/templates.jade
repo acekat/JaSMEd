@@ -13,7 +13,7 @@ script#layer-template(type="text/template")
 
 
 script#block-template(type="text/template")
-	ul.layers-tabs
+	ul.layers-tabs.cleafix
 		//- <%= this.layersTabsTemplate(layers) %>
 		<% _.each(layers, function(layer) { %>
 		<% var selected = layer.get("editable") ? " selected" : ""; %>

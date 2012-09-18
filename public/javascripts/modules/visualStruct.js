@@ -132,12 +132,6 @@ var Block = Backbone.Model.extend({
         // use a width of reference to prevent unlimited widening of a block
         this.refWidth = this.get("width");
 
-        // add new Block "anchor" to DOM
-        $(document.createElement('div'))
-            .addClass('block b-'+this.get("order"))
-            .css({"width" : this.refWidth+'px'})
-            .appendTo(".grid");
-
         // create new Layers and associated View
         this.layers = new Layers();
 
@@ -147,10 +141,12 @@ var Block = Backbone.Model.extend({
             block : this
         })
 
-        // add a first new Layer
-        this.layers.add({
-            block : this.get("order")
-        });
+        _.defer(_.bind(function() {
+            // add a first new Layer
+            this.layers.add({
+                block : this.get("order")
+            });
+        }, this));
     },
 
     /**
@@ -328,6 +324,10 @@ var Editor = Backbone.Model.extend({
 
     newGrid : function() {
         // Add 2 Blocks to begin
+        this.grid.add();
+        this.grid.add();
+        this.grid.add();
+        this.grid.add();
         this.grid.add();
         this.grid.add();
 

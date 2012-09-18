@@ -12,8 +12,19 @@ script#layer-template(type="text/template")
 		<% }; %>
 
 
-script#layer-info-template(type="text/template")
-	ul.layer-list
+script#block-template(type="text/template")
+	ul.layers-tabs.cleafix
+		//- <%= this.layersTabsTemplate(layers) %>
+		<% _.each(layers, function(layer) { %>
+		<% var selected = layer.get("editable") ? " selected" : ""; %>
+		li
+			<button class="edit-layer subi-<%= layer.get("sub") %><%= selected %>"><%= layer.get("sub") %></button>
+		<% }); %>
+		li
+			input.add-layer(type="text", placeholder=" +")
+	.layers
+
+script#layers-tabs-template(type="text/template")
 		<% _.each(layers, function(layer) { %>
 		<% var selected = layer.get("editable") ? " selected" : ""; %>
 		li

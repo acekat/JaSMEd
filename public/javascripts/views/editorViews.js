@@ -346,14 +346,14 @@ var LayersView = Backbone.View.extend({
 	 *  @param  {Backbone.Model} layer Layer to edit
 	 */
 	switchEdit : function(layer) {
-		var blockClass = '.b-'+this.block.get("order");
+		var layers = '.b-'+this.block.get("order")+' .layers';
 		var view = this.getLayerView(layer);
 
 		if (layer.get("editable")) {
 			$(blockClass+' .editable').removeClass("editable");
-			$(view.el).addClass("editable").appendTo(blockClass);
+			$(view.el).addClass("editable").appendTo(layers);
 		} else {
-			$(view.el).removeClass("editable").prependTo(blockClass);
+			$(view.el).removeClass("editable").prependTo(layers);
 		};
 	}
 
@@ -377,6 +377,7 @@ var BlockView = Backbone.View.extend({
 
 		// function that render Underscore templating
 		this.blockTemplate = _.template($("#block-template").html());
+		this.layersTabsTemplate = _.template($("#layers-tabs-template").html());
 
 		// correct gridWinDim.top
 		gridWinDim.top = gridWin.offset().top;
@@ -387,7 +388,7 @@ var BlockView = Backbone.View.extend({
 
 		// Bound events
 		this.model.on("change:width", this.resize, this);
-		// this.model.layers.on("change add", this.actualize, this);
+		this.model.layers.on("change add", this.actualize, this);
 	},
 
 	/**
@@ -431,8 +432,7 @@ var BlockView = Backbone.View.extend({
 	 *  Actualize the View.
 	 */
 	actualize : function() {
-		// TO-DO : can't rerender everything anymore, find another way to actualize tabs
-		$(this.el).html(this.blockTemplate({
+		this.$el.children(".layers-tabs").html(this.layersTabsTemplate({
 			layers : this.model.layers.models
 		}));
 

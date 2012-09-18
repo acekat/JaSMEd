@@ -14,6 +14,7 @@ script#layer-template(type="text/template")
 
 script#block-template(type="text/template")
 	ul.layers-tabs
+		//- <%= this.layersTabsTemplate(layers) %>
 		<% _.each(layers, function(layer) { %>
 		<% var selected = layer.get("editable") ? " selected" : ""; %>
 		li
@@ -22,3 +23,12 @@ script#block-template(type="text/template")
 		li
 			input.add-layer(type="text", placeholder=" +")
 	.layers
+
+script#layers-tabs-template(type="text/template")
+		<% _.each(layers, function(layer) { %>
+		<% var selected = layer.get("editable") ? " selected" : ""; %>
+		li
+			<button class="edit-layer subi-<%= layer.get("sub") %><%= selected %>"><%= layer.get("sub") %></button>
+		<% }); %>
+		li
+			input.add-layer(type="text", placeholder=" +")

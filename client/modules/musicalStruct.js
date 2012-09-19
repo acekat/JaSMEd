@@ -34,14 +34,14 @@ var Song = {
    */
   addTrack: function(name, layer) {
     var newTrack = utils.inherits(Track, {
-        name: name || 'Track ' + (this.tracks.length + 1),
-        songPitches: this.pitches
+        name: name || 'Track ' + (this.tracks.length + 1)
+      , songPitches: this.pitches
     });
     
     newTrack.addBlocks(this.blocks);
     
     if (layer)
-        newTrack.init(layer);
+      newTrack.init(layer);
     
     this.tracks.push(newTrack);
     
@@ -62,7 +62,7 @@ var Song = {
       , nTracks = this.tracks.length;
     
     for (i = 0; i < nTracks; i++)
-        this.tracks[i].addBlocks(n, pos);
+      this.tracks[i].addBlocks(n, pos);
     
     return (this.blocks += n || 1);
   }
@@ -109,7 +109,7 @@ var Track = {
     var layer = start.layer
       , noteStart = start.start
       , noteEnd = end.end
-      , pgcd;
+      , gcd;
     
 		if (start.layer != end.layer) {
       layer = utils.lcm(start.layer, end.layer);
@@ -117,10 +117,10 @@ var Track = {
       noteEnd = end.end * layer / end.layer;
     }
     
-    if ((pgcd = utils.gcd(layer, utils.gcd(noteEnd, noteStart))) != 1) {
-      layer /= pgcd;
-      noteStart /= pgcd;
-      noteEnd /= pgcd;
+    if ((gcd = utils.gcd(layer, utils.gcd(noteEnd, noteStart))) != 1) {
+      layer /= gcd;
+      noteStart /= gcd;
+      noteEnd /= gcd;
     }
     
     if (start.block == end.block) {
@@ -190,7 +190,7 @@ var Block = {
    * } The layer and duration of the new note.
    */
   addNote: function(pitch, layer, start, end, duration) {
-    var pgcd
+    var gcd
       , i
       , ghost = duration !== undefined && duration <= 0;
     
@@ -199,10 +199,10 @@ var Block = {
     } else if (layer < 0) {
       layer = -layer;
     } else if (duration === undefined) {
-      if ((pgcd = utils.gcd(layer, utils.gcd(end, start))) != 1) {
-        layer /= pgcd;
-        start /= pgcd;
-        end /= pgcd;
+      if ((gcd = utils.gcd(layer, utils.gcd(end, start))) != 1) {
+        layer /= gcd;
+        start /= gcd;
+        end /= gcd;
       }
     }
 
@@ -304,6 +304,7 @@ function importSong(song) {
 				_.each(track.blocks, function(block) {
 						block.__proto__ = Block;
 				});
+				
 				curSong.pitches = track.songPitches; //hack pour la ref
 			});
 		}

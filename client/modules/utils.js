@@ -30,7 +30,6 @@ utils.divisors = function(n) {
   return result; // sort ?
 };
 
-// 
 /**
  * Return the greatest common divisor (gcd) of two numbers.
  * @param {number} a
@@ -41,7 +40,6 @@ utils.gcd = function(a, b) {
   return b === 0 ? a : utils.gcd(b, a % b);
 };
 
-// ppcm
 /**
  * Return the least common multiple (lcm) of two numbers.
  * @param {number} a

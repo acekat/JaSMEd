@@ -22,9 +22,9 @@ var editor;
 /**
  *  CONFIGURATION
  */
-var defaultBlockWidth = 200
-  , resizeFactor = 50
-  , defaultSub = 4
+var DEFAULT_BLOCK_WIDTH = 200
+  , RESIZE_FACTOR = 50
+  , DEFAULT_SUB = 4
   ;
 
 
@@ -44,7 +44,7 @@ var Layer = Backbone.Model.extend({
   defaults: function() {
     return {
         block: null
-      , sub: defaultSub
+      , sub: DEFAULT_SUB
       , cellOn: {}
       , editable: true
     }
@@ -139,7 +139,7 @@ var Block = Backbone.Model.extend({
    */
   defaults: function() {
     return {
-      width: defaultBlockWidth,
+      width: DEFAULT_BLOCK_WIDTH,
       order: editor.grid.nextOrder()
     }
   },
@@ -169,12 +169,12 @@ var Block = Backbone.Model.extend({
   /**
    *  Set the new width.
    *  @param  {boolean} zoom                  true: increase width, false: descrease width
-   *  @param  {number} [factor=resizeFactor]  added/subtracted number of pixels when zoom in/out 
+   *  @param  {number} [factor=RESIZE_FACTOR]  added/subtracted number of pixels when zoom in/out 
    */
   resize: function(zoom) {
     var width = this.refWidth;
     var sub = this.layers.editable().get('sub');
-    var factor = _.isUndefined(arguments[1]) ? resizeFactor : arguments[1];
+    var factor = _.isUndefined(arguments[1]) ? RESIZE_FACTOR : arguments[1];
     var newWidth;
 
     if (zoom) {

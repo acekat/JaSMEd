@@ -2,12 +2,12 @@ var $ = require('jquery');
 
 // Single entry point into the application.
 $(function() {
-	var path = window.location.pathname.split('/')[1];
+	var path = window.location.pathname;
 	//var storePath = (path === 'app') ? path : path.split('store/')[1];
 	var storePath = path.split('store/')[1];
 	//use backbone router instead...
 	
-	require('./modules/communicator').initialize((storePath) ? storePath : path);
+	require('./modules/communicator').initialize((storePath) ? storePath : path.split('/')[1]);
 	
 	//Modules
 	require('./modules/visualStruct').initialize(storePath);

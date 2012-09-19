@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+var Glue = require('gluejs');
+var fs = require('fs');
+
+new Glue()
+	.basepath('../client') // perform all lookups from the dir
+  .include('../client')  // includes all files in the dir
+  .replace({
+		'socket.io': 'window.io',
+    'jquery': 'window.$', // binds require('jquery') to window.$
+		'underscore': 'window._',
+		'Backbone': 'window.Backbone',
+		'audiolib': 'window.audioLib'
+  })
+  .export('jasmed') // the package is output as window.App
+  .render(function (err, txt) {
+    // or write the result to a file
+    fs.writeFile('./public/javascripts/jasmed.js', txt);
+  });

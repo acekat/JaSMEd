@@ -1,13 +1,13 @@
 .DS_Store
 npm-debug.log
-node_modules
-myTODOs
-tmp
 dump.rdb
+node_modules
+
 public/stylesheets
-public/javascripts/vendor/backbone.js
-public/javascripts/vendor/backbone.min.js
-public/javascripts/vendor/jquery.js
-public/javascripts/vendor/jquery.min.js
-public/javascripts/vendor/underscore.js
-public/javascripts/vendor/underscore.min.js
+public/javascripts/vendor/backbone*.js
+public/javascripts/vendor/jquery*.js
+public/javascripts/vendor/underscore*.js
+public/javascripts/jasmed.js
+
+# folder one should create to store all the files he wants to gitignore... of course!
+gitignore/

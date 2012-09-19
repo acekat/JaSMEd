@@ -1,4 +1,11 @@
-(function(playerView) {
+var playerView = {};
+
+/**
+ *  DEPENDENCIES
+ */
+var Backbone = require('Backbone');
+var $ = require('jquery');
+require('../modules/mediator').installTo(playerView);
 
 /**
  *  Global variables
@@ -91,10 +98,10 @@ var PlayerView = Backbone.View.extend({
 			button.removeClass('playing');
 			button.html('play');
 		} else {
-			playerView.publish('playerViewPlay')
-			button.addClass('playing');;
+			playerView.publish('playerViewPlay');
+			button.addClass('playing');
 			button.html('pause');
-		}	
+		}
 	},
 
 	stop: function() {
@@ -128,8 +135,13 @@ playerView.subscribe('musicalStructTempo', function(tempo) {
 /**
  *  Module initialization method
  */
-playerView.initialize = function() {
+function initialize() {
 	view = new PlayerView();
 };
 
-})(jasmed.module('playerView'));
+/**
+ *  PUBLIC API
+ */
+module.exports = {
+	initialize: initialize
+}

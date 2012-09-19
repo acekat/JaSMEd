@@ -1,4 +1,11 @@
-(function(instrumentView) {
+var instrumentView = {};
+
+/**
+ *  DEPENDENCIES
+ */
+var Backbone = require('Backbone');
+var $ = require('jquery');
+require('../modules/mediator').installTo(instrumentView);
 
 /**
  *  Global variables
@@ -41,8 +48,13 @@ var InstrumentView = Backbone.View.extend({
 /**
  *  Module initialization method
  */
-instrumentView.initialize = function() {
+function initialize() {
 	view = new InstrumentView();
 };
 
-})(jasmed.module('instrumentView'));
+/**
+ *  PUBLIC API
+ */
+module.exports = {
+	initialize: initialize
+}

@@ -1,4 +1,11 @@
-(function(editorViews) {
+var editorViews = {};
+
+/**
+ *  DEPENDENCIES
+ */
+var Backbone = require('Backbone');
+var _ = require('underscore');
+require('../modules/mediator').installTo(editorViews);
 
 /**
  *  INSTANCES
@@ -221,7 +228,7 @@ var LayerView = Backbone.View.extend({
 	 */
 	endingCell : function(e) {
 		var id = e.target.id;
-		user = jasmed.user;
+		user = require('../modules/communicator').getUser();
 
 		// 0: Block, 1: Layer, 2: Pitch, 3: Cell
 		var idArray = id.split("-");
@@ -765,11 +772,15 @@ editorViews.subscribe('playerRepeat', function() {
 /**
  *  Module initialization method
  */
-editorViews.initialize = function(grid) {
-
+function initialize(grid) {
 	editorView = new EditorView({
 		collection: grid
 	});
 };
 
-})(jasmed.module("editorViews"));
+/**
+ *  PUBLIC API
+ */
+module.exports = {
+	initialize: initialize
+}

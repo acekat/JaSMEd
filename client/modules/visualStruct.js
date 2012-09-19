@@ -1,4 +1,11 @@
-(function(visualStruct) {
+var visualStruct = {};
+
+/**
+ *  DEPENDENCIES
+ */
+var Backbone = require('Backbone');
+var _ = require('underscore');
+require('./mediator').installTo(visualStruct);
 
 /**
  *  INSTANCES
@@ -264,7 +271,7 @@ var Editor = Backbone.Model.extend({
         this.grid = new Grid();
 
         // only on client-side
-        jasmed.module("editorViews").initialize(this.grid);
+        require('../views/editorViews').initialize(this.grid);
     },
     
     xport : function(opt) {
@@ -409,12 +416,14 @@ visualStruct.subscribe("serverSelection", function(selection) {
 /**
  *  Module initialization method
  */
-visualStruct.initialize = function(seqName) {
-
-    editor = new Editor();
-    
-    visualStruct.publish("visualStructInit", seqName);
-    //console.log('visualStruct published visualStructInit', seqName);
+function initialize(seqName) {
+	editor = new Editor();
+	visualStruct.publish("visualStructInit", seqName);
 };
 
-})(jasmed.module("visualStruct"));
+/**
+ *  PUBLIC API
+ */
+module.exports = {
+	initialize: initialize
+}

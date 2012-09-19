@@ -1,4 +1,11 @@
-(function(toolsView) {
+var toolsView = {};
+
+/**
+ *  DEPENDENCIES
+ */
+var Backbone = require('Backbone');
+require('../modules/mediator').installTo(toolsView);
+
 
 /**
  *  Global variables
@@ -72,8 +79,14 @@ var ToolsView = Backbone.View.extend({
 /**
  *  Module initialization method
  */
-toolsView.initialize = function() {
+function initialize() {
 	view = new ToolsView();
 };
 
-})(jasmed.module('toolsView'));
+
+/**
+ *  PUBLIC API
+ */
+module.exports = {
+	initialize: initialize
+}

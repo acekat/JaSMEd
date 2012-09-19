@@ -1,14 +1,16 @@
-(function(musicalStruct) {
+var musicalStruct = {};
 
 /**
  *  DEPENDENCIES
  */
-var utils = jasmed.module('utils');
+var utils = require('./utils');
+var _ = require('underscore');
+require('./mediator').installTo(musicalStruct);
 
 /**
  *  INSTANCES
  */
-var curSong, curTrack;
+var curSong, curTrack, selectedSong;
 
 /**
  *  CONSTRUCTORS / CLASSES
@@ -226,16 +228,24 @@ var Note = {
 };
 
 /**
- *  PUBLIC API
+ *  FUNCTIONS
  */
 
-musicalStruct.createSong = function(props) {
-    return utils.inherits(Song, _.extend(props||{}, {tracks: [], pitches: {}}));
-};
+function createSong(props) {
+	return utils.inherits(Song, _.extend(props||{}, {tracks: [], pitches: {}}));
+}
 
-musicalStruct.initialize = function(seqName) {
+/**
+ *  INITIALIZATION
+ */
+
+/**
+ *  Module initialization method
+ */
+function initialize(seqName) {
 	musicalStruct.publish('musicalStructInit', seqName);
-};
+}
+
 
 /**
  *  SUBSCRIBES
@@ -244,7 +254,7 @@ musicalStruct.initialize = function(seqName) {
 musicalStruct.subscribe('toolsExport', function(name) {
 	musicalStruct.publish('musicalStructExport', {
 		name : name,
-		data : musicalStruct.selectedSong
+		data : selectedSong
 	});
 });
 
@@ -277,11 +287,9 @@ function importSong(song) {
 }
 
 musicalStruct.subscribe('musicalStructServerInit', function(song) {
-	curSong = (song) ? importSong(song) : musicalStruct.createSong();
-	
+	curSong = (song) ? importSong(song) : createSong();
 	curTrack = curSong.tracks[0] || curSong.addTrack();
-
-	musicalStruct.selectedSong = curSong;
+	selectedSong = curSong;
 });
 
 musicalStruct.subscribe('toolsNewBlock', function() {
@@ -312,4 +320,14 @@ musicalStruct.subscribe('playerViewTempo', function(tempo) {
 	curSong.tempo = tempo;
 });
 
-})(jasmed.module('musicalStruct'));
+
+/**
+ *  PUBLIC API
+ */
+module.exports = {
+	initialize: initialize,
+	createSong: createSong,
+	getSelectedSong: function() {
+		return selectedSong;
+	}
+}

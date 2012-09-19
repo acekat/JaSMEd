@@ -6,7 +6,7 @@ var utils = module.exports;
  * @returns {number} The frequency in Hertz.
  */
 utils.midiToHertz = function(pitch) {
-    return 440*Math.pow(2, (pitch-69)/12);
+  return 440*Math.pow(2, (pitch-69)/12);
 };
 
 /**
@@ -15,13 +15,15 @@ utils.midiToHertz = function(pitch) {
  * @returns {number[]}
  */
 utils.divisors = function(n) {
-    var i, max = Math.floor(Math.sqrt(n)), result = [];
-    for(i = 2 ; i <= max ; i++) {
-        if(!n%i) {
-            result.push(i, n/i);
-        }
-    }
-    return result; // sort ?
+  var i
+    , max = Math.floor(Math.sqrt(n))
+    , result = [];
+  
+  for (i = 2; i <= max; i++)
+    if(!(n % i))
+      result.push(i, n / i);
+      
+  return result; // sort ?
 };
 
 /**
@@ -31,7 +33,7 @@ utils.divisors = function(n) {
  * @returns {number}
  */
 utils.pgcd = function(a, b) {
-    return b === 0 ? a : utils.pgcd(b, a%b);
+  return b === 0 ? a : utils.pgcd(b, a % b);
 };
 
 /**
@@ -41,9 +43,9 @@ utils.pgcd = function(a, b) {
  * @returns {number}
  */
 utils.ppcm = function(a, b) {
-    return a*b/utils.pgcd(a, b);
+  return a * b / utils.pgcd(a, b);
 };
 
 utils.inherits = function(parent, props) {
-    return _.extend(Object.create(parent), props);
+  return _.extend(Object.create(parent), props);
 };

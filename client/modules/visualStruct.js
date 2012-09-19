@@ -255,7 +255,7 @@ var Grid = Backbone.Collection.extend({
           , sub: sub
           , editable: false
         });
-      };
+      }
 
       var firstCell = (blockOrder === startBlock) ? startCell.cell : 1
         , lastCell = (blockOrder === endBlock) ? endCell.cell : sub
@@ -271,8 +271,8 @@ var Grid = Backbone.Collection.extend({
         className += ((cell === endCell.cell) && (blockOrder === endBlock)) ? ' note-end' : '';
 
         layers.getSub(sub).toggleCell(id, user, className);
-      };
-    };
+      }
+    }
   }
 });
 
@@ -353,7 +353,7 @@ var Editor = Backbone.Model.extend({
 
     // for (var i = 0; i < 32; i++) {
     //   this.grid.add();
-    // };
+    // }
     
     console.log('New Grid!');
   },
@@ -432,7 +432,7 @@ visualStruct.subscribe('serverSelection', function(selection) {
 function initialize(seqName) {
   editor = new Editor();
   visualStruct.publish('visualStructInit', seqName);
-};
+}
 
 /**
  *  PUBLIC API

@@ -1,0 +1,7 @@
+each layer in layers
+  selected = layer.get('editable') ? 'selected' : ''
+  sub = layer.get('sub')
+  li
+    button.edit-layer(class='subi-#{sub} #{selected}') #{sub}
+li
+  input.add-layer(type='text', placeholder=' +')

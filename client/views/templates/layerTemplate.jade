@@ -1,0 +1,7 @@
+- for (var o = octave; o > 0; o--)
+  each pitch, i in pitches
+    midiPitch = ((12 * (o + 1)) + (pitches.length - (i + 1)))
+    .pitch(class='#{pitch}#{o} p-#{midiPitch}')
+      - for (var n = 1; n <= sub; n++)
+        cellId = block + '-' + sub + '-' + midiPitch + '-' + n
+        .cell(id='#{cellId}', class='sc-#{n}')

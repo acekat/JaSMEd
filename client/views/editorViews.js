@@ -397,8 +397,11 @@ var BlockView = Backbone.View.extend({
     this.grid = this.model.collection;
 
     // function that render Underscore templating
-    this.blockTemplate = _.template($('#block-template').html());
-    this.layersTabsTemplate = _.template($('#layers-tabs-template').html());
+    // this.blockTemplate = _.template($('#block-template').html());
+    this.blockTemplate = require('./templates/blockTemplate');
+    // this.layersTabsTemplate = _.template($('#layers-tabs-template').html());
+    this.layersTabsTemplate = require('./templates/layersTabsTemplate');
+    
 
     // correct gridWinDim.top
     gridWinDim.top = gridWin.offset().top;

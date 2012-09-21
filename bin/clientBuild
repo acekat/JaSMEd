@@ -2,19 +2,19 @@
 
 var Glue = require('gluejs')
 	, fs = require('fs')
-	, _ = require('underscore')
-	, extensionRe = new RegExp('(.+)\\.utpl$') // re for underscore template files
+	, jade = require('jade')
+	, jadeRe = new RegExp('(.+)\\.jade$'); // re for jade template files
 
 var js = new Glue()
 	.basepath('../client') // perform all lookups from the dir
   .include('../client')  // includes all files in the dir
-  .handler(extensionRe, function(opts, done) {
+  .handler(jadeRe, function(opts, done) {
     var filename = opts.filename
-      , tpl = _.template(fs.readFileSync(filename, 'utf8'))
-      , template = 'module.exports = ' + tpl.source + ';';
+      , tpl = jade.compile(fs.readFileSync(filename, 'utf8'), { client: true, filename: filename, compileDebug: false })
+      , template = 'module.exports = ' + tpl + ';';
     
-  	done(filename.replace(extensionRe, '$1.js'), template);
-  }) // custome handler for (pre)compiling underscore templates
+  	done(filename.replace(jadeRe, '$1.js'), template);
+  }) // custome handler for (pre)compiling jade templates
   .replace({
 		'socket.io': 'window.io',
     'jquery': 'window.$', // binds require('jquery') to window.$

@@ -1,14 +1,11 @@
 script(src="/socket.io/socket.io.js")
 
-// Vendor (order matters)
-script(src="/javascripts/vendor/jquery.min.js")
-//script(src="/javascripts/vendor/jquery.js")
-script(src="/javascripts/vendor/underscore.min.js")
-//script(src="/javascripts/vendor/underscore.js")
-script(src="/javascripts/vendor/backbone.min.js")
-//script(src="/javascripts/vendor/backbone.js")
-script(src="/javascripts/vendor/audiolib.min.js")
-//script(src="/javascripts/vendor/audiolib.js")
+dev = false
+vendors = ['jquery', 'underscore', 'backbone', 'runtime', 'audiolib']
+
+// Vendor libraries (runtime is jade-runtime)
+each vendor in vendors
+  script(src='/javascripts/vendor/' + vendor + (dev ? '' : '.min') + '.js')
 
 // Backbone App
 script(src="/javascripts/jasmed.js")

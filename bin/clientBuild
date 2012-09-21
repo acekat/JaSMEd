@@ -1,11 +1,20 @@
 #!/usr/bin/env node
 
-var Glue = require('gluejs');
-var fs = require('fs');
+var Glue = require('gluejs')
+	, fs = require('fs')
+	, _ = require('underscore')
+	, extensionRe = new RegExp('(.+)\\.utpl$') // re for underscore template files
 
-new Glue()
+var js = new Glue()
 	.basepath('../client') // perform all lookups from the dir
   .include('../client')  // includes all files in the dir
+  .handler(extensionRe, function(opts, done) {
+    var filename = opts.filename
+      , tpl = _.template(fs.readFileSync(filename, 'utf8'))
+      , template = 'module.exports = ' + tpl.source + ';';
+    
+  	done(filename.replace(extensionRe, '$1.js'), template);
+  }) // custome handler for (pre)compiling underscore templates
   .replace({
 		'socket.io': 'window.io',
     'jquery': 'window.$', // binds require('jquery') to window.$
@@ -13,7 +22,7 @@ new Glue()
 		'Backbone': 'window.Backbone',
 		'audiolib': 'window.audioLib'
   })
-  .export('jasmed') // the package is output as window.App
+  .export('jasmed') // the package is output as window.jasmed
   .render(function (err, txt) {
     // or write the result to a file
     fs.writeFile('./public/javascripts/jasmed.js', txt);

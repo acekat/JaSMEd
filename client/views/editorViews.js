@@ -75,7 +75,8 @@ var LayerView = Backbone.View.extend({
   /** @constructs */
   initialize: function() {
     // function that render Underscore templating
-    this.layerTemplate = _.template($('#layer-template').html());
+    // this.layerTemplate = _.template($('#layer-template').html());
+    this.layerTemplate = require('./templates/layerTemplate');
 
     // Bound events
     this.model.on('change:cellOn', this.toggleCell);

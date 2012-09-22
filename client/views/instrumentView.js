@@ -4,11 +4,10 @@ var instrumentView = {};
  *  DEPENDENCIES
  */
 var Backbone = require('Backbone');
-var $ = require('jquery');
 require('../modules/mediator').installTo(instrumentView);
 
 /**
- *  Global variables
+ *  INSTANCES
  */
 var view;
 
@@ -18,30 +17,30 @@ var view;
  */
 var InstrumentView = Backbone.View.extend({
 
-	/**
-	 *  div associated to the View.
-	 *  @type {String}
-	 */
-	el: '.instrument',
+  /**
+   *  div associated to the View.
+   *  @type {String}
+   */
+  el: '.instrument',
 
-	/** @constructs */
-	initialize: function() {
-	},
+  /** @constructs */
+  initialize: function() {
+  },
 
-	events: {
-		'change .waveFormSelector input' : 'selectWaveForm',
-		"mouseup .sustainSlider input" : "slideSustain"
-	},
+  events: {
+    'change .waveFormSelector input' : 'selectWaveForm',
+    'mouseup .sustainSlider input' : 'slideSustain'
+  },
 
-	selectWaveForm: function() {
-		var wave = $(this.el).find('.waveFormSelector input:checked').val();
-		instrumentView.publish('instrumentViewWaveForm', wave);
-	},
+  selectWaveForm: function() {
+    var wave = this.$el.find('.waveFormSelector input:checked').val();
+    instrumentView.publish('instrumentViewWaveForm', wave);
+  },
 
-	slideSustain: function(e) {
-		var value = $(this.el).find(".sustainSlider input").val() / 100;
-		instrumentView.publish('instrumentViewSustain', value);
-	}
+  slideSustain: function(e) {
+    var value = this.$el.find('.sustainSlider input').val() / 100;
+    instrumentView.publish('instrumentViewSustain', value);
+  }
 
 });
 
@@ -49,12 +48,12 @@ var InstrumentView = Backbone.View.extend({
  *  Module initialization method
  */
 function initialize() {
-	view = new InstrumentView();
-};
+  view = new InstrumentView();
+}
 
 /**
  *  PUBLIC API
  */
 module.exports = {
-	initialize: initialize
-}
+  initialize: initialize
+};

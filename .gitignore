@@ -7,6 +7,7 @@ public/stylesheets
 public/javascripts/vendor/backbone*.js
 public/javascripts/vendor/jquery*.js
 public/javascripts/vendor/underscore*.js
+public/javascripts/vendor/runtime*.js
 public/javascripts/jasmed.js
 
 # folder one should create to store all the files he wants to gitignore... of course!

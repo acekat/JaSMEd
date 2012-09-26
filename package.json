@@ -23,7 +23,7 @@
 		"stylus": "~0.29.0",
 		"connect-redis": "~1.4.4",
 		"connect-flash": "~0.1.0",
-		"asset": "git://github.com/athibaud/asset.git#master"
+		"asset": "~0.4.13"
 	},
 	"devDependencies": {
 		"node-dev": "~0.2.8"

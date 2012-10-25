@@ -1,9 +1,9 @@
-var connect = require('express/node_modules/connect')
+var nodeCookie = require('express/node_modules/cookie')
   , stylus = require('stylus')
   , flash = require('connect-flash')
+  , signature = require('cookie-signature')
   , sessionSecret = 'whambaamthankyoumaaammm!'
   , sessionKey = 'JaSMEd.sid'
-  , cookieParser = connect.cookieParser(sessionSecret)
 
 /** 
  * expose locals to view before rendering
@@ -54,24 +54,22 @@ function socketIOConfig(io, sessionStore) {
       /* exposing session and sessionID to handshakeData so can be used by sio */
       if (!handshakeData.headers.cookie)
         return callback('No cookie', false);
-
-      var sessionID;
       
-      cookieParser(handshakeData, null, function(err) {
-        handshakeData.sessionID = sessionID = handshakeData.signedCookies[sessionKey];
+      var cookie = nodeCookie.parse(handshakeData.headers.cookie);
+      var signedSessionID = cookie[sessionKey];
+      var sessionID = signature.unsign(signedSessionID.slice(2), sessionSecret);
+
+      if (!sessionID)
+        return callback('SIDs don\'t match', false);
+
+      sessionStore.get(sessionID, function(err, session) {
+        if (err || !session)
+          return callback('Error loading session', false);
+
+        handshakeData.session = session;
         
-        if (!sessionID)
-          return callback('SIDs don\'t match', false);
-          
-        sessionStore.get(sessionID, function(err, session) {
-          if (err || !session)
-            return callback('Error loading session', false);
-
-          handshakeData.session = session;
-          callback(null, true);
-        });
+        return callback(null, true);
       });
-
     });
   });
 }

@@ -18,7 +18,7 @@
 		"underscore": "~1.4.4",
 		"async": "~0.2.5",
 		"jade": "~0.28.1",
-		"gluejs": "~0.1.0",
+		"gluejs": "git://github.com/mixu/gluejs.git#24d1c05bda",
 		"socket.io": "~0.9.13",
 		"stylus": "~0.32.0",
 		"connect-redis": "~1.4.5",

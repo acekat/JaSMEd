@@ -14,20 +14,20 @@
 		"url": "git://github.com/Acekat/JaSMEd.git"
 	},
 	"dependencies": {
-		"express": "~3.0.0",
-		"underscore": "~1.4.2",
-		"async": "~0.1.22",
-		"jade": "~0.27.6",
+		"express": "~3.1.0",
+		"underscore": "~1.4.4",
+		"async": "~0.2.5",
+		"jade": "~0.28.1",
 		"gluejs": "~0.1.0",
-		"socket.io": "~0.9.10",
-		"stylus": "~0.30.1",
-		"connect-redis": "~1.4.4",
+		"socket.io": "~0.9.13",
+		"stylus": "~0.32.0",
+		"connect-redis": "~1.4.5",
 		"connect-flash": "~0.1.0",
 		"asset": "~0.4.13",
 		"cookie-signature": "~0.0.1"
 	},
 	"devDependencies": {
-		"node-dev": "~0.2.8"
+		"node-dev": "~0.2.10"
 	},
 	"scripts": {
 		"postinstall": "./node_modules/.bin/asset; ./bin/setupStore",

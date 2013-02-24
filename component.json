@@ -1,0 +1,8 @@
+{
+  "name": "jasmed",
+  "description": "javascript musical editor",
+  "version": "0.1.0",
+  "paths": ["client"],
+  "local": ["boot"],
+  "license": "MIT"
+}

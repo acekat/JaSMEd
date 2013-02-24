@@ -6,7 +6,7 @@ var player = {};
  *  DEPENDENCIES
  */
 var utils = require('utils');
-var audioLib = require('audiolib');
+var audioLib = window.audioLib; //require('audiolib');
 require('mediator').installTo(player);
 
 /**

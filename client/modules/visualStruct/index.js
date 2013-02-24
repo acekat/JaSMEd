@@ -3,8 +3,8 @@ var visualStruct = {};
 /**
  *  DEPENDENCIES
  */
-var Backbone = require('Backbone')
-  , _ = require('underscore')
+var Backbone = window.Backbone //require('Backbone')
+  , _ = window._ //require('underscore')
   ;
 
 // test if on server or not

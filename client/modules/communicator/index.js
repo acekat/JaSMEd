@@ -3,7 +3,7 @@ var communicator = {};
 /**
  *  DEPENDENCIES
  */
-var io = require('socket.io');
+var io = window.io; //require('socket.io');
 require('mediator').installTo(communicator);
 
 /**

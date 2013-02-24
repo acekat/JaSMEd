@@ -3,7 +3,7 @@ var toolsView = {};
 /**
  *  DEPENDENCIES
  */
-var Backbone = require('Backbone');
+var Backbone = window.Backbone; //require('Backbone');
 require('mediator').installTo(toolsView);
 
 

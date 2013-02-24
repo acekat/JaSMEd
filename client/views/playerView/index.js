@@ -3,8 +3,8 @@ var playerView = {};
 /**
  *  DEPENDENCIES
  */
-var Backbone = require('Backbone')
-  , $ = require('jquery');
+var Backbone = window.Backbone  //require('Backbone')
+  , $ = window.$; //require('jquery');
 require('mediator').installTo(playerView);
 
 /**

@@ -3,8 +3,8 @@ var editorViews = {};
 /**
  *  DEPENDENCIES
  */
-var Backbone = require('Backbone')
-  , _ = require('underscore')
+var Backbone = window.Backbone //require('Backbone')
+  , _ = window._ //require('underscore')
   ;
 
 require('mediator').installTo(editorViews);

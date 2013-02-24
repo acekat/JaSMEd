@@ -3,7 +3,7 @@ var instrumentView = {};
 /**
  *  DEPENDENCIES
  */
-var Backbone = require('Backbone');
+var Backbone = window.Backbone; //require('Backbone');
 require('mediator').installTo(instrumentView);
 
 /**

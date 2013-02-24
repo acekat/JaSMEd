@@ -11,7 +11,7 @@ var Backbone = require('Backbone')
 // if (!onServer)  
   var editorViews = require('../views/editorViews');
 
-require('./mediator').installTo(visualStruct);
+require('mediator').installTo(visualStruct);
 
 /**
  *  INSTANCES

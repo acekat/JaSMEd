@@ -1,4 +1,6 @@
 {
   "name": "editorViews",
-  "scripts": ["index.js"]
+  "scripts": ["index.js"],
+  "local": ["mediator", "communicator"],
+  "path": ["../modules"]
 }

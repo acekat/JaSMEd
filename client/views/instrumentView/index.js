@@ -4,7 +4,7 @@ var instrumentView = {};
  *  DEPENDENCIES
  */
 var Backbone = require('Backbone');
-require('../modules/mediator').installTo(instrumentView);
+require('mediator').installTo(instrumentView);
 
 /**
  *  INSTANCES

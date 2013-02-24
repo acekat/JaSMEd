@@ -4,7 +4,7 @@ var communicator = {};
  *  DEPENDENCIES
  */
 var io = require('socket.io');
-require('./mediator').installTo(communicator);
+require('mediator').installTo(communicator);
 
 /**
  *  INSTANCES

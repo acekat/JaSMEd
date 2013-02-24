@@ -1,4 +1,6 @@
 {
   "name": "visualStruct",
-  "scripts": ["index.js"]
+  "scripts": ["index.js"],
+  "local": ["mediator", "editorViews"],
+  "path": ["../views"]
 }

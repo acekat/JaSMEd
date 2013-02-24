@@ -7,16 +7,16 @@ $(function() {
     , storePath = path.split('store/')[1];
   // TODO: try using backbone router instead...
   
-  require('./modules/communicator').initialize((storePath) ? storePath : path.split('/')[1]);
+  require('communicator').initialize((storePath) ? storePath : path.split('/')[1]);
   
   // Modules
-  require('./modules/visualStruct').initialize(storePath);
-  require('./modules/musicalStruct').initialize(storePath);
+  require('visualStruct').initialize(storePath);
+  require('musicalStruct').initialize(storePath);
   // TODO: envoi ici un message au lieu de initialize... pour init les deux...
-  require('./modules/player').initialize();
+  require('player').initialize();
   
   // Views
-  require('./views/toolsView').initialize();
-  require('./views/playerView').initialize();
-  require('./views/instrumentView').initialize();
+  require('toolsView').initialize();
+  require('playerView').initialize();
+  require('instrumentView').initialize();
 });

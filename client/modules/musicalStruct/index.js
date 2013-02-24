@@ -3,9 +3,9 @@ var musicalStruct = {};
 /**
  *  DEPENDENCIES
  */
-var utils = require('./utils')
+var utils = require('utils')
   , _ = require('underscore');
-require('./mediator').installTo(musicalStruct);
+require('mediator').installTo(musicalStruct);
 
 /**
  *  INSTANCES

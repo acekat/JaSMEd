@@ -1,4 +1,5 @@
 {
   "name": "musicalStruct",
-  "scripts": ["index.js"]
+  "scripts": ["index.js"],
+  "local": ["utils", "mediator"]
 }

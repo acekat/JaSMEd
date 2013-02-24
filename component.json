@@ -2,7 +2,19 @@
   "name": "jasmed",
   "description": "javascript musical editor",
   "version": "0.1.0",
-  "paths": ["client"],
-  "local": ["boot"],
+  "dependencies": {
+  },
+  "paths": ["client/modules", "client/views"],
+  "local": [
+    "communicator",
+    "visualStruct",
+    "musicalStruct",
+    "player",
+    "toolsView",
+    "playerView",
+    "instrumentView"
+  ],
+  "scripts": ["client/index.js"],
+  "main": ["client/index.js"],
   "license": "MIT"
 }

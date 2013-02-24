@@ -1,4 +1,6 @@
 {
   "name": "playerView",
-  "scripts": ["index.js"]
+  "scripts": ["index.js"],
+  "local": ["mediator"],
+  "path": ["../modules"]
 }

@@ -5,7 +5,7 @@ var playerView = {};
  */
 var Backbone = require('Backbone')
   , $ = require('jquery');
-require('../modules/mediator').installTo(playerView);
+require('mediator').installTo(playerView);
 
 /**
  *  INSTANCES

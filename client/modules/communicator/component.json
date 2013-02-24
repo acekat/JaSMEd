@@ -1,4 +1,5 @@
 {
   "name": "communicator",
-  "scripts": ["index.js"]
+  "scripts": ["index.js"],
+  "local": ["mediator"]
 }

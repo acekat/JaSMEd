@@ -4,7 +4,7 @@ var toolsView = {};
  *  DEPENDENCIES
  */
 var Backbone = require('Backbone');
-require('../modules/mediator').installTo(toolsView);
+require('mediator').installTo(toolsView);
 
 
 /**

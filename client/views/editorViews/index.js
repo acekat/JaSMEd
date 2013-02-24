@@ -7,7 +7,7 @@ var Backbone = require('Backbone')
   , _ = require('underscore')
   ;
 
-require('../modules/mediator').installTo(editorViews);
+require('mediator').installTo(editorViews);
 
 /**
  *  INSTANCES
@@ -238,7 +238,7 @@ var LayerView = Backbone.View.extend({
    */
   endingCell: function(e) {
     var id = e.target.id;
-    user = require('../modules/communicator').getUser();
+    user = require('communicator').getUser();
 
     // 0: Block, 1: Layer, 2: Pitch, 3: Cell
     var idArray = id.split('-');

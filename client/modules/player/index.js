@@ -5,9 +5,9 @@ var player = {};
 /**
  *  DEPENDENCIES
  */
-var utils = require('./utils');
+var utils = require('utils');
 var audioLib = require('audiolib');
-require('./mediator').installTo(player);
+require('mediator').installTo(player);
 
 /**
  *  PARAMS
@@ -237,7 +237,7 @@ player.subscribe('newPitch', function(pitch) {
 
 player.subscribe('playerViewPlay', function() {
 	if (stopped)
-		init(require('./musicalStruct').getSelectedSong());
+		init(require('musicalStruct').getSelectedSong());
 	else
 		player.publish('playerResume', blocknum); // hack for cursorResume...
 

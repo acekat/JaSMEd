@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 
-./bin/clientBuild -dev &
+make &
 ./node_modules/.bin/node-dev server.js

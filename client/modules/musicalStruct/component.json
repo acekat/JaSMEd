@@ -1,5 +1,8 @@
 {
   "name": "musicalStruct",
+  "dependencies": {
+    "component/bus": "*"
+  },
   "scripts": ["index.js"],
-  "local": ["utils", "mediator"]
+  "local": ["utils"]
 }

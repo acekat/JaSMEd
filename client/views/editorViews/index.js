@@ -5,9 +5,9 @@ var editorViews = {};
  */
 var Backbone = window.Backbone //require('Backbone')
   , _ = window._ //require('underscore')
+  , bus = require('bus')
   ;
 
-require('mediator').installTo(editorViews);
 
 /**
  *  INSTANCES
@@ -280,7 +280,7 @@ var LayerView = Backbone.View.extend({
 
     // send to communication
     if (selectable)
-      editorViews.publish('editorViewsSelection', {
+      bus.emit('editorViewsSelection', {
           pitch: pitch
         , startCell: startCell
         , endCell: endCell
@@ -743,7 +743,7 @@ var EditorView = Backbone.View.extend({
  *  @param  {{Backbone.Collection} layers,
  *           {Backbone.Model} block} models Collection and Block associated to the view
  */
-editorViews.subscribe('visualStructNewLayers', function(models) {
+bus.on('visualStructNewLayers', function(models) {
   var layersView = new LayersView({
     collection: models.layers
   });
@@ -754,37 +754,37 @@ editorViews.subscribe('visualStructNewLayers', function(models) {
  *  Zoom In/Out
  *  @param  {boolean} arg true: zoom in; false: zoom out
  */
-editorViews.subscribe('toolsZoom', function(arg) {
+bus.on('toolsZoom', function(arg) {
   editorView.zoom(arg);
 });
 
-editorViews.subscribe('toolsFocus', function() {
+bus.on('toolsFocus', function() {
   editorView.focusCursor();
 });
 
-editorViews.subscribe('playerNextBlock', function(blockNum) {
+bus.on('playerNextBlock', function(blockNum) {
   editorView.moveCursor(blockNum);
 });
 
-editorViews.subscribe('playerViewStop', function() {
+bus.on('playerViewStop', function() {
   editorView.resetCursor();
 });
 
 //hack for cursorPause (?not really a hack...) ?what code of yours is not a hack? => FUCK YOU :)
-editorViews.subscribe('playerPause', function(blockNum) {
+bus.on('playerPause', function(blockNum) {
   editorView.pauseCursor(blockNum);
 });
 
-editorViews.subscribe('playerResume', function(blockNum) {
+bus.on('playerResume', function(blockNum) {
   editorView.resumeCursor(blockNum);
 });
 
 //tempo business
-editorViews.subscribe('playerTempo', function(tmpo) {
+bus.on('playerTempo', function(tmpo) {
   TEMPO = tmpo;
 });
 
-editorViews.subscribe('playerRepeat', function() {
+bus.on('playerRepeat', function() {
   console.log('repeat!');
   editorView.resetCursor(true);
 });

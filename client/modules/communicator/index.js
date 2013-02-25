@@ -3,8 +3,8 @@ var communicator = {};
 /**
  *  DEPENDENCIES
  */
-var io = window.io; //require('socket.io');
-require('mediator').installTo(communicator);
+var io = window.io //require('socket.io');
+  , bus = require('bus');
 
 /**
  *  INSTANCES
@@ -52,19 +52,19 @@ function listeners() {
   });
 
   socket.on('serverSelection', function(selection) {
-    communicator.publish('serverSelection', selection);
+    bus.emit('serverSelection', selection);
   });
 
   socket.on('serverNewBlock', function() {
-    communicator.publish('serverNewBlock');
+    bus.emit('serverNewBlock');
   });
 
   socket.on('serverInit', function(seq) {
-    communicator.publish('serverInit', seq);
+    bus.emit('serverInit', seq);
   });
 
   socket.on('musicalStructServerInit', function(seq) {
-    communicator.publish('musicalStructServerInit', seq);
+    bus.emit('musicalStructServerInit', seq);
   });
 }
 
@@ -72,27 +72,27 @@ function listeners() {
  *  SUBSCRIBE => EMIT
  */
 
-communicator.subscribe('musicalStructSelection', function(selection) {
+bus.on('musicalStructSelection', function(selection) {
   socket.emit('musicalStructSelection', selection);
 });
 
-communicator.subscribe('musicalStructNewBlock', function() {
+bus.on('musicalStructNewBlock', function() {
   socket.emit('musicalStructNewBlock');
 });
 
-communicator.subscribe('visualStructExport', function(seq) {
+bus.on('visualStructExport', function(seq) {
   socket.emit('visualStructExport', seq);
 });
 
-communicator.subscribe('musicalStructExport', function(seq) {
+bus.on('musicalStructExport', function(seq) {
   socket.emit('musicalStructExport', seq);
 });
 
-communicator.subscribe('visualStructInit', function(seqName) {
+bus.on('visualStructInit', function(seqName) {
   socket.emit('visualStructInit', seqName);
 });
 
-communicator.subscribe('musicalStructInit', function(seqName) {
+bus.on('musicalStructInit', function(seqName) {
   socket.emit('musicalStructInit', seqName);
 });
 

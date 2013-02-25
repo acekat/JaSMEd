@@ -1,11 +1,14 @@
 {
   "name": "editorViews",
+  "dependencies": {
+    "component/bus": "*"
+  },
   "scripts": ["index.js"],
   "templates": [
     "templates/layerTemplate.jade",
     "templates/blockTemplate.jade",
     "templates/layersTabsTemplate.jade"
   ],
-  "local": ["mediator", "communicator"],
+  "local": ["communicator"],
   "path": ["../modules"]
 }

@@ -3,8 +3,8 @@ var toolsView = {};
 /**
  *  DEPENDENCIES
  */
-var Backbone = window.Backbone; //require('Backbone');
-require('mediator').installTo(toolsView);
+var Backbone = window.Backbone //require('Backbone');
+  , bus = require('bus');
 
 
 /**
@@ -42,19 +42,19 @@ var ToolsView = Backbone.View.extend({
   },
 
   newBlock: function() {
-    toolsView.publish('toolsNewBlock');
+    bus.emit('toolsNewBlock');
   },
 
   zoomIn: function() {
-    toolsView.publish('toolsZoom', true);
+    bus.emit('toolsZoom', true);
   },
 
   zoomOut: function() {
-    toolsView.publish('toolsZoom', false);
+    bus.emit('toolsZoom', false);
   },
 
   focusCursor: function() {
-    toolsView.publish('toolsFocus');
+    bus.emit('toolsFocus');
   },
 
   exportAs: function() {
@@ -70,7 +70,7 @@ var ToolsView = Backbone.View.extend({
       return;
     }
 
-    toolsView.publish('toolsExport', name);
+    bus.emit('toolsExport', name);
   }
 
 });

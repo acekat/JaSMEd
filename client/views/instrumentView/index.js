@@ -3,8 +3,8 @@ var instrumentView = {};
 /**
  *  DEPENDENCIES
  */
-var Backbone = window.Backbone; //require('Backbone');
-require('mediator').installTo(instrumentView);
+var Backbone = window.Backbone //require('Backbone');
+  , bus = require('bus');
 
 /**
  *  INSTANCES
@@ -34,12 +34,12 @@ var InstrumentView = Backbone.View.extend({
 
   selectWaveForm: function() {
     var wave = this.$el.find('.waveFormSelector input:checked').val();
-    instrumentView.publish('instrumentViewWaveForm', wave);
+    bus.emit('instrumentViewWaveForm', wave);
   },
 
   slideSustain: function(e) {
     var value = this.$el.find('.sustainSlider input').val() / 100;
-    instrumentView.publish('instrumentViewSustain', value);
+    bus.emit('instrumentViewSustain', value);
   }
 
 });

@@ -1,6 +1,7 @@
 {
   "name": "playerView",
-  "scripts": ["index.js"],
-  "local": ["mediator"],
-  "path": ["../modules"]
+  "dependencies": {
+    "component/bus": "*"
+  },
+  "scripts": ["index.js"]
 }

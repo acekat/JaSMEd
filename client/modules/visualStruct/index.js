@@ -5,13 +5,10 @@ var visualStruct = {};
  */
 var Backbone = window.Backbone //require('Backbone')
   , _ = window._ //require('underscore')
+  , editorViews = require('editorViews')
+  , bus = require('bus')
   ;
 
-// test if on server or not
-// if (!onServer)  
-  var editorViews = require('editorViews');
-
-require('mediator').installTo(visualStruct);
 
 /**
  *  INSTANCES
@@ -153,7 +150,7 @@ var Block = Backbone.Model.extend({
     this.layers = new Layers();
 
     // only on client-side
-    visualStruct.publish('visualStructNewLayers', {
+    bus.emit('visualStructNewLayers', {
         layers: this.layers
       , block: this
     })
@@ -374,7 +371,7 @@ var Editor = Backbone.Model.extend({
  *  Initialize editor (response from server)
  *  @param  {object} grid object if exists, null otherwise
  */
-visualStruct.subscribe('serverInit', function(seq) {
+bus.on('serverInit', function(seq) {
   if (!seq)
     return editor.newGrid();
     
@@ -385,8 +382,8 @@ visualStruct.subscribe('serverInit', function(seq) {
 /**
  *  Export grid
  */
-visualStruct.subscribe('toolsExport', function(name) {
-  visualStruct.publish('visualStructExport', {
+bus.on('toolsExport', function(name) {
+  bus.emit('visualStructExport', {
       name: name
     , data: editor.xport()
   });
@@ -395,14 +392,14 @@ visualStruct.subscribe('toolsExport', function(name) {
 /**
  *  Add new Block
  */
-visualStruct.subscribe('musicalStructNewBlock', function() {
+bus.on('musicalStructNewBlock', function() {
   var width = editor.grid.last().refWidth;
   editor.grid.add({
     width: width
   });
 });
 
-visualStruct.subscribe('serverNewBlock', function() {
+bus.on('serverNewBlock', function() {
   var width = editor.grid.last().refWidth;
   editor.grid.add({
     width: width
@@ -413,11 +410,11 @@ visualStruct.subscribe('serverNewBlock', function() {
  *  Selection from structure
  *  @param  {object} selection object with the selection variables
  */
-visualStruct.subscribe('musicalStructSelection', function(selection) {
+bus.on('musicalStructSelection', function(selection) {
   editor.grid.selectRange(selection);
 });
 
-visualStruct.subscribe('serverSelection', function(selection) {
+bus.on('serverSelection', function(selection) {
   editor.grid.selectRange(selection);
 });
 
@@ -431,7 +428,7 @@ visualStruct.subscribe('serverSelection', function(selection) {
  */
 function initialize(seqName) {
   editor = new Editor();
-  visualStruct.publish('visualStructInit', seqName);
+  bus.emit('visualStructInit', seqName);
 }
 
 /**

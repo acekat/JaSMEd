@@ -4,8 +4,8 @@ var playerView = {};
  *  DEPENDENCIES
  */
 var Backbone = window.Backbone  //require('Backbone')
-  , $ = window.$; //require('jquery');
-require('mediator').installTo(playerView);
+  , $ = window.$ //require('jquery');
+  , bus = require('bus');
 
 /**
  *  INSTANCES
@@ -67,7 +67,7 @@ var PlayerView = Backbone.View.extend({
 
     this.updateTempoSlide(val);
     
-    playerView.publish('playerViewTempo', val);
+    bus.emit('playerViewTempo', val);
   },
   
   changeTempoSlide: function() {
@@ -78,7 +78,7 @@ var PlayerView = Backbone.View.extend({
     this.updateTempoText(val);
     tempoEl.removeClass('verySlow veryFast');
     
-    playerView.publish('playerViewTempo', val);
+    bus.emit('playerViewTempo', val);
   },
   
   updateTempoSlide: function(val) {
@@ -95,11 +95,11 @@ var PlayerView = Backbone.View.extend({
       , isPlaying = button.hasClass('playing');
     
     if (isPlaying) {
-      playerView.publish('playerViewPause');
+      bus.emit('playerViewPause');
       button.removeClass('playing');
       button.html('play');
     } else {
-      playerView.publish('playerViewPlay');
+      bus.emit('playerViewPlay');
       button.addClass('playing');
       button.html('pause');
     }
@@ -108,14 +108,14 @@ var PlayerView = Backbone.View.extend({
   stop: function() {
     var button = this.$el.find('.playPause');
     
-    playerView.publish('playerViewStop');
+    bus.emit('playerViewStop');
     button.removeClass('playing');
     button.html('play');
   },
 
   repeat: function(ev) {
     var on = $(ev.target).is(':checked');
-    playerView.publish('playerViewRepeat', on);
+    bus.emit('playerViewRepeat', on);
   }
 });
 
@@ -123,11 +123,11 @@ var PlayerView = Backbone.View.extend({
 /**
  *  SUBSCRIBES
  */
-playerView.subscribe('playerStop', function() {
+bus.on('playerStop', function() {
   view.stop();
 });
 
-playerView.subscribe('musicalStructTempo', function(tempo) {
+bus.on('musicalStructTempo', function(tempo) {
   view.updateTempoText(tempo);
   view.updateTempoSlide(tempo);
 });

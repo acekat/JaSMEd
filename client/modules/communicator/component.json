@@ -1,5 +1,7 @@
 {
   "name": "communicator",
-  "scripts": ["index.js"],
-  "local": ["mediator"]
+  "dependencies": {
+    "component/bus": "*"
+  },
+  "scripts": ["index.js"]
 }

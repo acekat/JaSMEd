@@ -4,8 +4,8 @@ var musicalStruct = {};
  *  DEPENDENCIES
  */
 var utils = require('utils')
-  , _ = window._; //require('underscore');
-require('mediator').installTo(musicalStruct);
+  , _ = window._ //require('underscore');
+  , bus = require('bus');
 
 /**
  *  INSTANCES
@@ -97,7 +97,7 @@ var Track = {
     if (this.songPitches[pitch]) this.songPitches[pitch]++;
     else {
       this.songPitches[pitch] = 1;
-      musicalStruct.publish('newPitch', pitch);
+      bus.emit('newPitch', pitch);
     }
     this.songPitches[pitch]++ || (this.songPitches[pitch] = 1);
     
@@ -269,7 +269,7 @@ function createSong(props) {
  *  Module initialization method
  */
 function initialize(seqName) {
-	musicalStruct.publish('musicalStructInit', seqName);
+	bus.emit('musicalStructInit', seqName);
 }
 
 
@@ -277,8 +277,8 @@ function initialize(seqName) {
  *  SUBSCRIBES
  */
 
-musicalStruct.subscribe('toolsExport', function(name) {
-	musicalStruct.publish('musicalStructExport', {
+bus.on('toolsExport', function(name) {
+	bus.emit('musicalStructExport', {
 	    name : name
 	  , data : selectedSong
 	});
@@ -295,7 +295,7 @@ function importSong(song) {
 		
 		//update playerViewTempo.
 		if (key === 'tempo' && val !== Song.tempo)
-			musicalStruct.publish('musicalStructTempo', val);
+			bus.emit('musicalStructTempo', val);
 
 		if (key === 'tracks') {
 			_.each(val, function(track) {
@@ -313,22 +313,22 @@ function importSong(song) {
 	return curSong;
 }
 
-musicalStruct.subscribe('musicalStructServerInit', function(song) {
+bus.on('musicalStructServerInit', function(song) {
 	curSong = (song) ? importSong(song) : createSong();
 	curTrack = curSong.tracks[0] || curSong.addTrack();
 	selectedSong = curSong;
 });
 
-musicalStruct.subscribe('toolsNewBlock', function() {
+bus.on('toolsNewBlock', function() {
   curSong.addBlocks();
-  musicalStruct.publish('musicalStructNewBlock');
+  bus.emit('musicalStructNewBlock');
 });
 
-musicalStruct.subscribe('serverNewBlock', function() {
+bus.on('serverNewBlock', function() {
   curSong.addBlocks();
 });
 
-musicalStruct.subscribe('editorViewsSelection', function(selection) {
+bus.on('editorViewsSelection', function(selection) {
   selection.startCell.start = selection.startCell.cell - 1;
   selection.endCell.end = selection.endCell.cell;
   var result = curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
@@ -336,15 +336,15 @@ musicalStruct.subscribe('editorViewsSelection', function(selection) {
   selection.startCell.start = result.start;
   selection.startCell.cell = result.start + 1;
   selection.endCell.end = selection.endCell.cell = (result.start + result.duration - 1) % result.layer + 1;
-  musicalStruct.publish('musicalStructSelection', selection);
+  bus.emit('musicalStructSelection', selection);
 });
 
-musicalStruct.subscribe('serverSelection', function(selection) {
+bus.on('serverSelection', function(selection) {
   // TODO alléger la modification des clients distants
   curTrack.addNote(selection.pitch, selection.startCell, selection.endCell);
 });
 
-musicalStruct.subscribe('playerViewTempo', function(tempo) {
+bus.on('playerViewTempo', function(tempo) {
 	curSong.tempo = tempo;
 });
 

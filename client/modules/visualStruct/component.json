@@ -1,6 +1,9 @@
 {
   "name": "visualStruct",
+  "dependencies": {
+    "component/bus": "*"
+  },
   "scripts": ["index.js"],
-  "local": ["mediator", "editorViews"],
+  "local": ["editorViews"],
   "path": ["../views"]
 }

@@ -1,6 +1,6 @@
 JS = $(wildcard client/*/*.js)
 JSON = $(wildcard client/*/*.json)
-JADE = $(wildcard client/**/*.jade)
+JADE = $(wildcard client/*/*.jade)
 
 all: link
 

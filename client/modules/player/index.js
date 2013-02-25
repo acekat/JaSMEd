@@ -5,9 +5,9 @@ var player = {};
 /**
  *  DEPENDENCIES
  */
-var utils = require('utils');
-var audioLib = window.audioLib; //require('audiolib');
-require('mediator').installTo(player);
+var utils = require('utils')
+  , audioLib = window.audioLib //require('audiolib');
+  , bus = require('bus');
 
 /**
  *  PARAMS
@@ -133,7 +133,7 @@ function loadBlock() {
 	if (++blocknum == blocks) {
 		if(repeat) {
 			blocknum = 0;
-			player.publish('playerRepeat');
+			bus.emit('playerRepeat');
 		} else {
 			return false;
 		}
@@ -163,14 +163,14 @@ function loadBlock() {
 	}
 	
 	//publish
-	player.publish('playerNextBlock', blocknum);
+	bus.emit('playerNextBlock', blocknum);
 	
 	return true;
 }
 
 function init(song) {
 	track = song.tracks[trackNum];
-    player.publish('playerTempo', song.tempo);
+    bus.emit('playerTempo', song.tempo);
 	blocklength = Math.round(song.tempo*sampleRate);
 	blocks = song.blocks;
 	compress = audioLib.Compressor(sampleRate, 0, 0.5);
@@ -217,14 +217,14 @@ function stop() {
 
 function playerStop() {
 	stop();
-	player.publish('playerStop');
+	bus.emit('playerStop');
 };
 
 /**
  *  SUBSCRIBES
  */
 
-player.subscribe('newPitch', function(pitch) {
+bus.on('newPitch', function(pitch) {
     if(stopped) return;
     
     instrument[pitch] = {
@@ -235,33 +235,33 @@ player.subscribe('newPitch', function(pitch) {
 	instrument[pitch].envelope.triggerGate(true);
 });
 
-player.subscribe('playerViewPlay', function() {
+bus.on('playerViewPlay', function() {
 	if (stopped)
 		init(require('musicalStruct').getSelectedSong());
 	else
-		player.publish('playerResume', blocknum); // hack for cursorResume...
+		bus.emit('playerResume', blocknum); // hack for cursorResume...
 
 	play();
 });
 
-player.subscribe('playerViewPause', function() {
+bus.on('playerViewPause', function() {
 	pause();
-	player.publish('playerPause', blocknum); // hack for cursorPause...
+	bus.emit('playerPause', blocknum); // hack for cursorPause...
 });
 
-player.subscribe('playerViewStop', function() {
+bus.on('playerViewStop', function() {
 	stop();
 });
 
-player.subscribe('playerViewRepeat', function(bool) {
+bus.on('playerViewRepeat', function(bool) {
 	repeat = bool;
 });
 
-player.subscribe('instrumentViewWaveForm', function(wave) {
+bus.on('instrumentViewWaveForm', function(wave) {
 	curWaveForm = wave;
 });
 
-player.subscribe('instrumentViewSustain', function(value) {
+bus.on('instrumentViewSustain', function(value) {
 	sustain = value;
 });
 

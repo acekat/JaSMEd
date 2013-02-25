@@ -1,5 +1,8 @@
 {
   "name": "player",
+  "dependencies": {
+    "component/bus": "*"
+  },
   "scripts": ["index.js"],
-  "local": ["utils", "mediator", "musicalStruct"]
+  "local": ["utils", "musicalStruct"]
 }

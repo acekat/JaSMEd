@@ -76,7 +76,7 @@ var LayerView = Backbone.View.extend({
   initialize: function() {
     // function that render Underscore templating
     // this.layerTemplate = _.template($('#layer-template').html());
-    this.layerTemplate = require('./templates/layerTemplate');
+    this.layerTemplate = require('./templates/layerTemplate.jade');
 
     // Bound events
     this.model.on('change:cellOn', this.toggleCell);
@@ -398,9 +398,9 @@ var BlockView = Backbone.View.extend({
 
     // function that render Underscore templating
     // this.blockTemplate = _.template($('#block-template').html());
-    this.blockTemplate = require('./templates/blockTemplate');
+    this.blockTemplate = require('./templates/blockTemplate.jade');
     // this.layersTabsTemplate = _.template($('#layers-tabs-template').html());
-    this.layersTabsTemplate = require('./templates/layersTabsTemplate');
+    this.layersTabsTemplate = require('./templates/layersTabsTemplate.jade');
     
 
     // correct gridWinDim.top

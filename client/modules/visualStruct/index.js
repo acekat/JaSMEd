@@ -9,7 +9,7 @@ var Backbone = window.Backbone //require('Backbone')
 
 // test if on server or not
 // if (!onServer)  
-  var editorViews = require('../views/editorViews');
+  var editorViews = require('editorViews');
 
 require('mediator').installTo(visualStruct);
 

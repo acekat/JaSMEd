@@ -1,6 +1,11 @@
 {
   "name": "editorViews",
   "scripts": ["index.js"],
+  "templates": [
+    "templates/layerTemplate.jade",
+    "templates/blockTemplate.jade",
+    "templates/layersTabsTemplate.jade"
+  ],
   "local": ["mediator", "communicator"],
   "path": ["../modules"]
 }

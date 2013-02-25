@@ -10,5 +10,9 @@ public/javascripts/vendor/underscore*.js
 public/javascripts/vendor/runtime*.js
 public/javascripts/jasmed.js
 
+# component
+components/
+build/
+
 # folder one should create to store all the files he wants to gitignore... of course!
 gitignore/
